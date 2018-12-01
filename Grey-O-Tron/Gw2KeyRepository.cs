@@ -50,12 +50,13 @@ namespace GreyOTron
 
     public class DiscordClientWithKey : TableEntity
     {
-        public DiscordClientWithKey(string guildId, string userId, string username, string gw2Key)
+        public DiscordClientWithKey(string guildId, string userId, string username, string gw2Key, string servername)
         {
             PartitionKey = guildId;
             RowKey = userId;
             Gw2Key = gw2Key;
             Username = username;
+            Servername = servername;
         }
 
         public DiscordClientWithKey()
@@ -63,6 +64,7 @@ namespace GreyOTron
 
         }
 
+        public string Servername { get; set; }
         public string Username { get; set; }
         public string Gw2Key { get; set; }
     }

@@ -97,7 +97,7 @@ namespace GreyOTron
                             await gw2KeyRepository.Set(new DiscordClientWithKey(guildUser.Guild.Id.ToString(),
                                 guildUser.Id.ToString(),
                                 $"{socketMessage.Author.Username}#{socketMessage.Author.Discriminator}",
-                                acInfo.TokenInfo.Id));
+                                acInfo.TokenInfo.Id, guildUser.Guild.Name));
                         }
                     }
                     else
