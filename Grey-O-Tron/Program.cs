@@ -70,7 +70,7 @@ namespace GreyOTron
             {
                 var key = socketMessage.Content.Replace("got#gw2-key", "").Trim();
                 var acInfo = Gw2Api.GetInformationForUserByKey(key);
-                if (acInfo.TokenInfo.Name == $"{socketMessage.Author.Username}#{socketMessage.Author.Discriminator}")
+                if (acInfo.TokenInfo != null && acInfo.TokenInfo.Name == $"{socketMessage.Author.Username}#{socketMessage.Author.Discriminator}")
                 {
 
                     if (socketMessage.Author is SocketGuildUser guildUser)
@@ -78,7 +78,7 @@ namespace GreyOTron
                         var worlds =
                             (await discordGuildGw2WorldRepository.Get(guildUser.Guild.Id.ToString())).Select(x =>
                                 x.RowKey);
-                        if (worlds.Contains(acInfo.WorldInfo.Name.ToLowerInvariant()))
+                        if (acInfo.WorldInfo != null && worlds.Contains(acInfo.WorldInfo.Name.ToLowerInvariant()))
                         {
                             var role = guildUser.Guild.Roles.FirstOrDefault(x => x.Name == acInfo.WorldInfo.Name);
 
@@ -97,13 +97,13 @@ namespace GreyOTron
                             await gw2KeyRepository.Set(new DiscordClientWithKey(guildUser.Guild.Id.ToString(),
                                 guildUser.Id.ToString(),
                                 $"{socketMessage.Author.Username}#{socketMessage.Author.Discriminator}",
-                                acInfo.TokenInfo.Id, guildUser.Guild.Name));
+                                key, guildUser.Guild.Name));
                         }
                     }
                     else
                     {
                         await socketMessage.Author.SendMessageAsync(
-                            "You will have to use the got#gw2-key command from the server you want to be assigned to.");
+                            "You will have to use the got#gw2-key command from the discord server you want to be assigned to.");
                     }
                 }
                 else
