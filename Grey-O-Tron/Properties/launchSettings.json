@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "Grey-O-Tron": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "Environment": "Development"
+      }
+    }
+  }
+}
