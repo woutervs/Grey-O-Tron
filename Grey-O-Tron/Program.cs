@@ -68,6 +68,11 @@ namespace GreyOTron
         {
             if (socketMessage.Content.StartsWith("got#gw2-key"))
             {
+                if (socketMessage.Author.Id == 291207609791283212)
+                {
+                    await socketMessage.Author.SendMessageAsync("Go back to your own corner pleb!");
+                }
+
                 var key = socketMessage.Content.Replace("got#gw2-key", "").Trim();
                 var acInfo = Gw2Api.GetInformationForUserByKey(key);
                 if (acInfo.TokenInfo != null && acInfo.TokenInfo.Name == $"{socketMessage.Author.Username}#{socketMessage.Author.Discriminator}")
@@ -98,6 +103,11 @@ namespace GreyOTron
                                 guildUser.Id.ToString(),
                                 $"{socketMessage.Author.Username}#{socketMessage.Author.Discriminator}",
                                 key, guildUser.Guild.Name));
+                        }
+                        else
+                        {
+                            await guildUser.SendMessageAsync(
+                                "Your gw2 key does not belong to the verified worlds of this discord server, I can't assign your world role sorry!");
                         }
                     }
                     else
