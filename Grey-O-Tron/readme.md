@@ -2,7 +2,9 @@ The application expects the following to be set in the application settings:
 ---
 
 **StorageConnectionString**: Tablestorage connectionstring
+
 **GreyOtron-Token**: Discord bot token
+
 
 This can be done the conventional way in an azure web app for example.
 
