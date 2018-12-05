@@ -6,15 +6,15 @@ using Microsoft.WindowsAzure.Storage.Table;
 
 namespace GreyOTron.TableStorage
 {
-    public class Gw2KeyRepository
+    public class KeyRepository
     {
         private readonly CloudTable _gw2KeysTable;
 
-        public Gw2KeyRepository(IConfigurationRoot Configuration)
+        public KeyRepository(IConfiguration configuration)
         {
-            var storageAccount = CloudStorageAccount.Parse(Configuration["StorageConnectionString"]);
+            var storageAccount = CloudStorageAccount.Parse(configuration["StorageConnectionString"]);
             var greyotronClient = storageAccount.CreateCloudTableClient();
-            _gw2KeysTable = greyotronClient.GetTableReference("gw2keys");
+            _gw2KeysTable = greyotronClient.GetTableReference("discorduserkeys");
             _gw2KeysTable.CreateIfNotExistsAsync().Wait();
         }
 
@@ -24,16 +24,16 @@ namespace GreyOTron.TableStorage
             await _gw2KeysTable.ExecuteAsync(insertOperation);
         }
 
-        public async Task<DiscordClientWithKey> Get(string guildId, string userId)
+        public async Task<DiscordClientWithKey> Get(string game, string userId)
         {
-            var retrieveOperation = TableOperation.Retrieve<DiscordClientWithKey>(guildId, userId);
+            var retrieveOperation = TableOperation.Retrieve<DiscordClientWithKey>(game, userId);
             var result = await _gw2KeysTable.ExecuteAsync(retrieveOperation);
             return (DiscordClientWithKey)result.Result;
         }
 
-        public async Task<List<DiscordClientWithKey>> Get(string guildId)
+        public async Task<List<DiscordClientWithKey>> Get(string game)
         {
-            var query = new TableQuery<DiscordClientWithKey>().Where(TableQuery.GenerateFilterCondition("PartitionKey", QueryComparisons.Equal, guildId));
+            var query = new TableQuery<DiscordClientWithKey>().Where(TableQuery.GenerateFilterCondition("PartitionKey", QueryComparisons.Equal, game));
             TableContinuationToken continuationToken = null;
             var clients = new List<DiscordClientWithKey>();
             do
@@ -51,13 +51,12 @@ namespace GreyOTron.TableStorage
 
     public class DiscordClientWithKey : TableEntity
     {
-        public DiscordClientWithKey(string guildId, string userId, string username, string gw2Key, string servername)
+        public DiscordClientWithKey(string game, string userId, string username, string key)
         {
-            PartitionKey = guildId;
+            PartitionKey = game;
             RowKey = userId;
-            Gw2Key = gw2Key;
+            Key = key;
             Username = username;
-            Servername = servername;
         }
 
         public DiscordClientWithKey()
@@ -65,8 +64,7 @@ namespace GreyOTron.TableStorage
 
         }
 
-        public string Servername { get; set; }
         public string Username { get; set; }
-        public string Gw2Key { get; set; }
+        public string Key { get; set; }
     }
 }

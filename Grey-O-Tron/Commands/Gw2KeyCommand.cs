@@ -1,10 +1,11 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Discord;
 using Discord.WebSocket;
 using GreyOTron.ApiClients;
+using GreyOTron.Helpers;
 using GreyOTron.TableStorage;
+using Microsoft.Extensions.Configuration;
 
 namespace GreyOTron.Commands
 {
@@ -12,14 +13,16 @@ namespace GreyOTron.Commands
     public class Gw2KeyCommand : ICommand
     {
         private readonly Gw2Api _gw2Api;
-        private readonly DiscordGuildGw2WorldRepository _discordGuildGw2WorldRepository;
-        private readonly Gw2KeyRepository _gw2KeyRepository;
+        private readonly KeyRepository _gw2KeyRepository;
+        private readonly IConfigurationRoot _configuration;
+        private readonly VerifyUser _verifyUser;
 
-        public Gw2KeyCommand(Gw2Api gw2Api, DiscordGuildGw2WorldRepository discordGuildGw2WorldRepository, Gw2KeyRepository gw2KeyRepository)
+        public Gw2KeyCommand(Gw2Api gw2Api, KeyRepository gw2KeyRepository, IConfigurationRoot configuration, VerifyUser verifyUser)
         {
             _gw2Api = gw2Api;
-            _discordGuildGw2WorldRepository = discordGuildGw2WorldRepository;
             _gw2KeyRepository = gw2KeyRepository;
+            _configuration = configuration;
+            _verifyUser = verifyUser;
         }
 
         public async Task Execute(SocketMessage socketMessage)
@@ -33,43 +36,17 @@ namespace GreyOTron.Commands
             var acInfo = _gw2Api.GetInformationForUserByKey(key);
             if (acInfo.TokenInfo != null && acInfo.TokenInfo.Name == $"{socketMessage.Author.Username}#{socketMessage.Author.Discriminator}")
             {
+                await _gw2KeyRepository.Set(new DiscordClientWithKey("Gw2", socketMessage.Author.Id.ToString(),
+    $"{socketMessage.Author.Username}#{socketMessage.Author.Discriminator}",
+    key));
 
                 if (socketMessage.Author is SocketGuildUser guildUser)
                 {
-                    var worlds =
-                        (await _discordGuildGw2WorldRepository.Get(guildUser.Guild.Id.ToString())).Select(x =>
-                            x.RowKey);
-                    if (acInfo.WorldInfo != null && worlds.Contains(acInfo.WorldInfo.Name.ToLowerInvariant()))
-                    {
-                        var role = guildUser.Guild.Roles.FirstOrDefault(x => x.Name == acInfo.WorldInfo.Name);
-
-
-                        if (role == null)
-                        {
-                            var restRole =
-                                await guildUser.Guild.CreateRoleAsync(acInfo.WorldInfo.Name, GuildPermissions.None);
-                            await guildUser.AddRoleAsync(restRole);
-                        }
-                        else
-                        {
-                            await guildUser.AddRoleAsync(role);
-                        }
-
-                        await _gw2KeyRepository.Set(new DiscordClientWithKey(guildUser.Guild.Id.ToString(),
-                            guildUser.Id.ToString(),
-                            $"{socketMessage.Author.Username}#{socketMessage.Author.Discriminator}",
-                            key, guildUser.Guild.Name));
-                    }
-                    else
-                    {
-                        await guildUser.SendMessageAsync(
-                            "Your gw2 key does not belong to the verified worlds of this discord server, I can't assign your world role sorry!");
-                    }
+                    await _verifyUser.Verify(acInfo, guildUser);
                 }
                 else
                 {
-                    await socketMessage.Author.SendMessageAsync("You must use the gw2-key command from within the discord server you try to get verified on.");
-                    //await socketMessage.Author.SendMessageAsync("I've stored your key, you can now self verify on a discord server by using got#verify.");
+                    await socketMessage.Author.SendMessageAsync($"Your key has been stored, don't forget to use {_configuration["command-prefix"]}gw2-verify on the server you whish to get verified on.");
                 }
             }
             else
