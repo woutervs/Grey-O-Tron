@@ -1,11 +1,11 @@
 ﻿using System.Net.Http;
 using System.Threading.Tasks;
 
-namespace GreyOTron
+namespace GreyOTron.ApiClients
 {
     public class DadJokes
     {
-        public static async Task<string> GetJoke()
+        public async Task<string> GetJoke()
         {
             using (var cli = new HttpClient())
             {

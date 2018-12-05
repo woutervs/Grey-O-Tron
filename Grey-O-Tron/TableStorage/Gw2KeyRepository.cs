@@ -1,17 +1,18 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Table;
 
-namespace GreyOTron
+namespace GreyOTron.TableStorage
 {
     public class Gw2KeyRepository
     {
         private readonly CloudTable _gw2KeysTable;
 
-        public Gw2KeyRepository(string connectionString)
+        public Gw2KeyRepository(IConfigurationRoot Configuration)
         {
-            var storageAccount = CloudStorageAccount.Parse(connectionString);
+            var storageAccount = CloudStorageAccount.Parse(Configuration["StorageConnectionString"]);
             var greyotronClient = storageAccount.CreateCloudTableClient();
             _gw2KeysTable = greyotronClient.GetTableReference("gw2keys");
             _gw2KeysTable.CreateIfNotExistsAsync().Wait();

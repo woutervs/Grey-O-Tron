@@ -1,19 +1,26 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using GreyOTron.Helpers;
 using RestSharp;
 
-namespace GreyOTron
+namespace GreyOTron.ApiClients
 {
-    public static class Gw2Api
+    public class Gw2Api
     {
-        public static AccountInfo GetInformationForUserByKey(string key)
+        private readonly Cache cache;
+
+        public Gw2Api(Cache cache)
+        {
+            this.cache = cache;
+        }
+        public AccountInfo GetInformationForUserByKey(string key)
         {
             var client = new RestClient("https://api.guildwars2.com");
             client.AddDefaultHeader("Authorization", $"Bearer {key}");
             var request = new RestRequest("v2/tokeninfo");
             var tokenInfo = client.Execute<TokenInfo>(request, Method.GET).Data;
-            var worlds = Cache.GetFromCache("worlds", TimeSpan.FromDays(1), () =>
+            var worlds = cache.GetFromCache("worlds", TimeSpan.FromDays(1), () =>
             {
                 request = new RestRequest("v2/worlds?ids=all");
                 return client.Execute<List<World>>(request, Method.GET).Data;

@@ -3,8 +3,12 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using Autofac;
 using Discord;
 using Discord.WebSocket;
+using GreyOTron.ApiClients;
+using GreyOTron.Helpers;
+using GreyOTron.TableStorage;
 using Microsoft.Extensions.Configuration;
 
 namespace GreyOTron
@@ -14,56 +18,26 @@ namespace GreyOTron
         private static DiscordSocketClient client;
         private static Gw2KeyRepository gw2KeyRepository;
         private static DiscordGuildGw2WorldRepository discordGuildGw2WorldRepository;
+        private static Gw2Api gw2Api;
         public static async Task Main()
         {
-            BootstrapConfiguration();
+            var container = AutofacConfiguration.Build();
+
+            gw2KeyRepository = container.Resolve<Gw2KeyRepository>();
+            discordGuildGw2WorldRepository = container.Resolve<DiscordGuildGw2WorldRepository>();
+            gw2Api = container.Resolve<Gw2Api>();
+
+            var configuration = container.Resolve<IConfigurationRoot>();
+
             client = new DiscordSocketClient();
-            var token = Configuration["GreyOTron-Token"];
-            gw2KeyRepository = new Gw2KeyRepository(Configuration["StorageConnectionString"]);
-            discordGuildGw2WorldRepository = new DiscordGuildGw2WorldRepository(Configuration["StorageConnectionString"]);
-            AppDomain.CurrentDomain.UnhandledException += async (sender, args) =>
-            {
-                try
-                {
-                    client.Dispose();
-                    client = new DiscordSocketClient();
-                    await StartClient(token);
-                }
-                catch
-                {
-                    // ignored
-                }
-            };
-
-            await StartClient(token);
-            Console.ReadLine();
-        }
-
-        private static async Task StartClient(string token)
-        {
-            await client.LoginAsync(TokenType.Bot, token);
+            await client.LoginAsync(TokenType.Bot, configuration["GreyOTron-Token"]);
             await client.StartAsync();
             client.MessageReceived += ClientOnMessageReceived;
             await client.SetGameAsync("got#help");
+
+
+            Console.ReadLine();
         }
-
-        private static void BootstrapConfiguration()
-        {
-            Trace.WriteLine("Setting up configuration");
-            var builder = new ConfigurationBuilder();
-            string env = Environment.GetEnvironmentVariable("Environment");
-            Trace.WriteLine(env);
-
-            if (env == "Development")
-            {
-                builder.AddUserSecrets<Program>();
-            }
-            builder.AddEnvironmentVariables();
-            Configuration = builder.Build();
-        }
-
-        public static IConfigurationRoot Configuration { get; set; }
-
         private static async Task ClientOnMessageReceived(SocketMessage socketMessage)
         {
             if (socketMessage.Content.StartsWith("got#gw2-key"))
@@ -74,7 +48,7 @@ namespace GreyOTron
                 }
 
                 var key = socketMessage.Content.Replace("got#gw2-key", "").Trim();
-                var acInfo = Gw2Api.GetInformationForUserByKey(key);
+                var acInfo = gw2Api.GetInformationForUserByKey(key);
                 if (acInfo.TokenInfo != null && acInfo.TokenInfo.Name == $"{socketMessage.Author.Username}#{socketMessage.Author.Discriminator}")
                 {
 
@@ -112,8 +86,7 @@ namespace GreyOTron
                     }
                     else
                     {
-                        await socketMessage.Author.SendMessageAsync(
-                            "You will have to use the got#gw2-key command from the discord server you want to be assigned to.");
+                        await socketMessage.Author.SendMessageAsync("I've stored your key, you can now self verify on a discord server by using got#verify.");
                     }
                 }
                 else
@@ -127,8 +100,8 @@ namespace GreyOTron
 
             if (socketMessage.Content.StartsWith("got#joke"))
             {
-                await socketMessage.Channel.SendMessageAsync(await DadJokes.GetJoke());
-                await socketMessage.Channel.DeleteMessagesAsync(new List<SocketMessage> { socketMessage });
+                //await socketMessage.Channel.SendMessageAsync(await DadJokes.GetJoke());
+                //await socketMessage.Channel.DeleteMessagesAsync(new List<SocketMessage> { socketMessage });
             }
 
             if (socketMessage.Content.StartsWith("got#help"))

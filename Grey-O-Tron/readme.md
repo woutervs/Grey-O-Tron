@@ -5,6 +5,9 @@ The application expects the following to be set in the application settings:
 
 **GreyOtron-Token**: Discord bot token
 
+In local development you can use:
+dotnet user-secrets set {name} "value" --project {projectName}
+
 
 This can be done the conventional way in an azure web app for example.
 
