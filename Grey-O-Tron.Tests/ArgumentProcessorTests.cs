@@ -1,4 +1,4 @@
-using GreyOTron.CommandParser;
+using GreyOTron.Commands;
 using Xunit;
 
 namespace Grey_O_Tron.Tests
@@ -8,7 +8,7 @@ namespace Grey_O_Tron.Tests
         [Fact]
         public void TestProcessor()
         {
-            var processor = new ArgumentProcessor("got#");
+            var processor = new CommandProcessor("got#", null);
             var result = processor.Parse("got#help");
             var result2 = processor.Parse("got#gw2-key EBJKQEJIO-EJITJWO-DJKEJEFI");
 
