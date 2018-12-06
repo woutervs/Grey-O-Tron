@@ -10,7 +10,7 @@ namespace GreyOTron.TableStorage
     {
         private readonly CloudTable _gw2KeysTable;
 
-        public KeyRepository(IConfiguration configuration)
+        public KeyRepository(IConfigurationRoot configuration)
         {
             var storageAccount = CloudStorageAccount.Parse(configuration["StorageConnectionString"]);
             var greyotronClient = storageAccount.CreateCloudTableClient();

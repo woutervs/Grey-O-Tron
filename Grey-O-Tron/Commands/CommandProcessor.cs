@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Autofac;
 using Autofac.Features.Metadata;
@@ -36,10 +37,16 @@ namespace GreyOTron.Commands
             {
                 commandName = commandName.Trim().ToLowerInvariant();
             }
-
             var command = _container.Resolve<IEnumerable<Meta<ICommand>>>()
-                .First(a => a.Metadata["CommandName"].Equals(commandName)).Value;
-            command.Arguments = message;
+                .FirstOrDefault(a => a.Metadata.ContainsKey("CommandName") && a.Metadata["CommandName"].Equals(commandName))?.Value;
+            if (command != null)
+            {
+                command.Arguments = message;
+            }
+            else
+            {
+                command = new NotFoundCommand { Arguments = commandName };
+            }
             return command;
         }
     }
