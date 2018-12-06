@@ -1,17 +1,18 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Table;
 
-namespace GreyOTron
+namespace GreyOTron.TableStorage
 {
     public class DiscordGuildGw2WorldRepository
     {
         private readonly CloudTable _discordGuildGw2WorldTable;
 
-        public DiscordGuildGw2WorldRepository(string connectionString)
+        public DiscordGuildGw2WorldRepository(IConfigurationRoot configuration)
         {
-            var storageAccount = CloudStorageAccount.Parse(connectionString);
+            var storageAccount = CloudStorageAccount.Parse(configuration["StorageConnectionString"]);
             var greyotronClient = storageAccount.CreateCloudTableClient();
             _discordGuildGw2WorldTable = greyotronClient.GetTableReference("discordguildgw2world");
             _discordGuildGw2WorldTable.CreateIfNotExistsAsync().Wait();

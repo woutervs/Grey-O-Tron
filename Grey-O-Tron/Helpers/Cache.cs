@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Runtime.Caching;
 
-namespace GreyOTron
+namespace GreyOTron.Helpers
 {
-    public static class Cache
+    public class Cache
     {
-        public static T GetFromCache<T>(string name, TimeSpan? slidingExpiration, Func<T> create)
+        public T GetFromCache<T>(string name, TimeSpan? slidingExpiration, Func<T> create)
         {
             var cache = MemoryCache.Default;
             var obj = (T) cache[name];
