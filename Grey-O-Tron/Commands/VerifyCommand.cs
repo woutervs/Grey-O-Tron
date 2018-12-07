@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using Discord;
 using Discord.WebSocket;
 using GreyOTron.ApiClients;
@@ -49,6 +50,7 @@ namespace GreyOTron.Commands
             {
                 await message.Author.SendMessageAsync("You must use the gw2-verify command from within the discord server you try to get verified on.");
             }
+            await message.Channel.DeleteMessagesAsync(new List<SocketMessage> { message });
         }
 
         public string Arguments { get; set; }
