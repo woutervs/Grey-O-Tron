@@ -46,7 +46,7 @@ namespace GreyOTron
             await client.LoginAsync(TokenType.Bot, configuration["GreyOTron-Token"]);
             await client.StartAsync();
             client.MessageReceived += ClientOnMessageReceived;
-            await client.SetGameAsync($"{configuration["command-prefix"]}help");
+            await client.SetGameAsync($"{configuration["command-prefix"]}help | greyotron.eu");
             client.Disconnected += async exception =>
             {
                 Trace.WriteLine(exception.Message);
