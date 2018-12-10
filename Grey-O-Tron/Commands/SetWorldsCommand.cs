@@ -52,7 +52,11 @@ namespace GreyOTron.Commands
                         "The set-worlds command must be used from within the server to which you want to apply it.");
                 }
             }
-            await message.Channel.DeleteMessagesAsync(new List<SocketMessage> { message });
+
+            if (!(message.Channel is SocketDMChannel))
+            {
+                await message.DeleteAsync();
+            }
         }
 
         public string Arguments { get; set; }

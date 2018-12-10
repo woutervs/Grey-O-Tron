@@ -17,7 +17,10 @@ namespace GreyOTron.Commands
         public async Task Execute(SocketMessage message)
         {
             await message.Channel.SendMessageAsync(await _dadJokes.GetJoke());
-            await message.Channel.DeleteMessagesAsync(new List<SocketMessage> { message });
+            if (!(message.Channel is SocketDMChannel))
+            {
+                await message.DeleteAsync();
+            }
         }
         public string Arguments { get; set; }
     }

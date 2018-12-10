@@ -25,37 +25,39 @@ namespace GreyOTron.Commands
             _verifyUser = verifyUser;
         }
 
-        public async Task Execute(SocketMessage socketMessage)
+        public async Task Execute(SocketMessage message)
         {
-            if (socketMessage.Author.Id == 291207609791283212)
+            if (message.Author.Id == 291207609791283212)
             {
-                await socketMessage.Author.SendMessageAsync("Go back to your own corner pleb!");
+                await message.Author.SendMessageAsync("Go back to your own corner pleb!");
             }
 
             var key = Arguments;
             var acInfo = _gw2Api.GetInformationForUserByKey(key);
-            if (acInfo.TokenInfo != null && acInfo.TokenInfo.Name == $"{socketMessage.Author.Username}#{socketMessage.Author.Discriminator}")
+            if (acInfo.TokenInfo != null && acInfo.TokenInfo.Name == $"{message.Author.Username}#{message.Author.Discriminator}")
             {
-                await _gw2KeyRepository.Set(new DiscordClientWithKey("Gw2", socketMessage.Author.Id.ToString(),
-    $"{socketMessage.Author.Username}#{socketMessage.Author.Discriminator}",
+                await _gw2KeyRepository.Set(new DiscordClientWithKey("Gw2", message.Author.Id.ToString(),
+    $"{message.Author.Username}#{message.Author.Discriminator}",
     key));
 
-                if (socketMessage.Author is SocketGuildUser guildUser)
+                if (message.Author is SocketGuildUser guildUser)
                 {
                     await _verifyUser.Verify(acInfo, guildUser);
                 }
                 else
                 {
-                    await socketMessage.Author.SendMessageAsync($"Your key has been stored, don't forget to use {_configuration["command-prefix"]}gw2-verify on the server you whish to get verified on.");
+                    await message.Author.SendMessageAsync($"Your key has been stored, don't forget to use {_configuration["command-prefix"]}gw2-verify on the server you whish to get verified on.");
                 }
             }
             else
             {
-                await socketMessage.Author.SendMessageAsync($"Please make sure your GW2 application key's name is the same as your discord username: {socketMessage.Author.Username}#{socketMessage.Author.Discriminator}");
-                await socketMessage.Author.SendMessageAsync("You can view, create and edit your GW2 application key's on https://account.arena.net/applications");
+                await message.Author.SendMessageAsync($"Please make sure your GW2 application key's name is the same as your discord username: {message.Author.Username}#{message.Author.Discriminator}");
+                await message.Author.SendMessageAsync("You can view, create and edit your GW2 application key's on https://account.arena.net/applications");
             }
-
-            await socketMessage.Channel.DeleteMessagesAsync(new List<SocketMessage> { socketMessage });
+            if (!(message.Channel is SocketDMChannel))
+            {
+                await message.DeleteAsync();
+            }
         }
 
         public string Arguments { get; set; }

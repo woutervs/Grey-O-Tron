@@ -50,7 +50,11 @@ namespace GreyOTron.Commands
             {
                 await message.Author.SendMessageAsync("You must use the gw2-verify command from within the discord server you try to get verified on.");
             }
-            await message.Channel.DeleteMessagesAsync(new List<SocketMessage> { message });
+
+            if (!(message.Channel is SocketDMChannel))
+            {
+                await message.DeleteAsync();
+            }
         }
 
         public string Arguments { get; set; }
