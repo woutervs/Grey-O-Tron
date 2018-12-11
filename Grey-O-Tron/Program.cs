@@ -67,6 +67,8 @@ namespace GreyOTron
             }
             catch (Exception e)
             {
+                Log.TrackTrace($"{socketMessage.Author.Username}#{socketMessage.Author.Discriminator}");
+                Log.TrackTrace(socketMessage.Content);
                 Log.TrackException(e);
             }
 
