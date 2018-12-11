@@ -20,41 +20,31 @@ namespace GreyOTron
         {
             container = AutofacConfiguration.Build();
             await Setup();
-            Console.ReadLine();
+            Environment.Exit(-1);
         }
 
         private static async Task Setup()
         {
             Log.TrackTrace("Bot started.");
-            Trace.WriteLine("Bot started.");
-            if (client != null)
-            {
-                try
-                {
-                    client.Dispose();
-                    client = null;
-                }
-                catch (Exception e)
-                {
-                    Trace.WriteLine(e);
-                }
-            }
             var configuration = container.Resolve<IConfigurationRoot>();
-            Trace.WriteLine("Configuration loaded.");
             client = new DiscordSocketClient();
-            Trace.WriteLine("Logging in.");
             await client.LoginAsync(TokenType.Bot, configuration["GreyOTron-Token"]);
             await client.StartAsync();
             await client.SetGameAsync($"{configuration["command-prefix"]}help | greyotron.eu");
-            Trace.WriteLine("Start + SetGameAsync");
 
-            client.Disconnected += async exception =>
+            var isLoggedIn = false;
+            client.LoggedIn += async () =>
             {
-                Trace.WriteLine(exception.Message);
-                await Setup();
+                isLoggedIn = true;
+                await Task.CompletedTask;
             };
 
             client.MessageReceived += ClientOnMessageReceived;
+
+            while (isLoggedIn == false || client.ConnectionState == ConnectionState.Connecting || client.ConnectionState == ConnectionState.Connected)
+            {
+                await Task.Delay(TimeSpan.FromSeconds(10));
+            }
         }
 
         private static async Task ClientOnMessageReceived(SocketMessage socketMessage)

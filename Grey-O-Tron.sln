@@ -5,7 +5,7 @@ VisualStudioVersion = 15.0.28307.136
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Grey-O-Tron", "Grey-O-Tron\Grey-O-Tron.csproj", "{EB8EACF5-78ED-4D6C-B6BD-86EBA7C0F3D2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Grey-O-Tron.Tests", "Grey-O-Tron.Tests\Grey-O-Tron.Tests.csproj", "{C34C7A5F-7069-420B-ACE4-D422D701392B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Grey-O-Tron.Tests", "Grey-O-Tron.Tests\Grey-O-Tron.Tests.csproj", "{C34C7A5F-7069-420B-ACE4-D422D701392B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
