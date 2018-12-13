@@ -21,6 +21,10 @@ namespace GreyOTron.Helpers
             var worlds =
                 (await discordGuildSettingsRepository.Get(DiscordGuildSetting.World, guildUser.Guild.Id.ToString())).Select(x =>
                     x.RowKey);
+            //clear previous roles associated to this discord guild.
+            var oldRoles = guildUser.Roles.Where(x => worlds.Contains(x.Name.ToLowerInvariant()));
+            await guildUser.RemoveRolesAsync(oldRoles);
+
             if (gw2AccountInfo.WorldInfo != null && worlds.Contains(gw2AccountInfo.WorldInfo.Name.ToLowerInvariant()))
             {
                 var role = guildUser.Guild.Roles.FirstOrDefault(x => x.Name == gw2AccountInfo.WorldInfo.Name);
