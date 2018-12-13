@@ -1,13 +1,17 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Linq;
 using System.Threading.Tasks;
 using Autofac;
 using Discord;
 using Discord.WebSocket;
+using GreyOTron.ApiClients;
 using GreyOTron.Commands;
 using GreyOTron.Helpers;
+using GreyOTron.TableStorage;
 using Microsoft.ApplicationInsights;
 using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json;
 
 namespace GreyOTron
 {
@@ -43,7 +47,37 @@ namespace GreyOTron
 
             while (isLoggedIn == false || client.ConnectionState == ConnectionState.Connecting || client.ConnectionState == ConnectionState.Connected)
             {
-                await Task.Delay(TimeSpan.FromSeconds(10));
+                
+                var interval = TimeSpan.FromSeconds(10);
+                SocketGuildUser currentUser = null;
+                try
+                {
+                    if (Math.Abs(DateTime.Now.TimeOfDay.Subtract(new TimeSpan(0, 23, 0, 0)).TotalMilliseconds) <= interval.TotalMilliseconds / 2)
+                    {
+                        foreach (var guildUser in client.Guilds.SelectMany(x => x.Users))
+                        {
+                            currentUser = guildUser;
+                            var keyRepository = container.Resolve<KeyRepository>();
+                            var gw2Api = container.Resolve<Gw2Api>();
+                            var verifyUser = container.Resolve<VerifyUser>();
+                            var discordClientWithKey = await keyRepository.Get("Gw2", guildUser.Id.ToString());
+                            if (discordClientWithKey == null) continue;
+                            var acInfo = gw2Api.GetInformationForUserByKey(discordClientWithKey.Key);
+                            await verifyUser.Verify(acInfo, guildUser);
+                        }
+                    }
+                }
+                catch (Exception e)
+                {
+                    if (currentUser != null)
+                    {
+                        Log.TrackTrace(JsonConvert.SerializeObject(currentUser, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }));
+                    }
+                    Log.TrackException(e);
+                }
+
+                
+                await Task.Delay(interval);
             }
         }
 
