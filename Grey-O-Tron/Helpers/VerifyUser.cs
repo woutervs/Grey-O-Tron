@@ -27,8 +27,8 @@ namespace GreyOTron.Helpers
 
             if (gw2AccountInfo.WorldInfo != null && worlds.Contains(gw2AccountInfo.WorldInfo.Name.ToLowerInvariant()))
             {
-                var userWorldRole = userOwnedRolesMatchingWorlds.FirstOrDefault(x => string.Equals(x.Name, gw2AccountInfo.WorldInfo.Name, StringComparison.InvariantCultureIgnoreCase));
-                if (userWorldRole == null)
+                var roleExistsAlready = userOwnedRolesMatchingWorlds.FirstOrDefault(x => string.Equals(x.Name, gw2AccountInfo.WorldInfo.Name, StringComparison.InvariantCultureIgnoreCase));
+                if (roleExistsAlready == null)
                 {
                     var role = guildUser.Guild.Roles.FirstOrDefault(x => x.Name == gw2AccountInfo.WorldInfo.Name);
 
@@ -45,7 +45,7 @@ namespace GreyOTron.Helpers
                     }
                     await guildUser.SendMessageAsync($"You have been assigned role: {role} on {guildUser.Guild.Name}");
                 }
-                userOwnedRolesMatchingWorlds.Remove(userWorldRole);
+                userOwnedRolesMatchingWorlds.Remove(roleExistsAlready);
             }
             else
             {
