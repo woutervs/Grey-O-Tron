@@ -36,6 +36,7 @@ namespace GreyOTron.Commands
             else
             {
                 commandName = commandName.Trim().ToLowerInvariant();
+                message = string.Empty;
             }
             var command = _container.Resolve<IEnumerable<Meta<ICommand>>>()
                 .FirstOrDefault(a => a.Metadata.ContainsKey("CommandName") && a.Metadata["CommandName"].Equals(commandName))?.Value;

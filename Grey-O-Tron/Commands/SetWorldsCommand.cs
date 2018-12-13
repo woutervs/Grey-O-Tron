@@ -8,14 +8,14 @@ using GreyOTron.TableStorage;
 
 namespace GreyOTron.Commands
 {
-    [Command("set-worlds")]
+    [Command("gw2-set-worlds")]
     public class SetWorldsCommand : ICommand
     {
-        private readonly DiscordGuildGw2WorldRepository _discordGuildGw2WorldRepository;
+        private readonly DiscordGuildSettingsRepository discordGuildSettingsRepository;
 
-        public SetWorldsCommand(DiscordGuildGw2WorldRepository discordGuildGw2WorldRepository)
+        public SetWorldsCommand(DiscordGuildSettingsRepository discordGuildSettingsRepository)
         {
-            _discordGuildGw2WorldRepository = discordGuildGw2WorldRepository;
+            this.discordGuildSettingsRepository = discordGuildSettingsRepository;
         }
 
         public async Task Execute(SocketMessage message)
@@ -32,10 +32,10 @@ namespace GreyOTron.Commands
                 {
                     if (guildUser.GuildPermissions.Administrator)
                     {
-                        await _discordGuildGw2WorldRepository.Clear(guildUser.Guild.Id.ToString());
+                        await discordGuildSettingsRepository.Clear(DiscordGuildSetting.World, guildUser.Guild.Id.ToString());
                         foreach (var world in worlds)
                         {
-                            await _discordGuildGw2WorldRepository.Set(new DiscordGw2World(guildUser.Guild.Id.ToString(),
+                            await discordGuildSettingsRepository.Set(new DiscordGuildSetting(guildUser.Guild.Id.ToString(),guildUser.Guild.Name,DiscordGuildSetting.World,
                                 world.ToLowerInvariant()));
                             await guildUser.SendMessageAsync($"{world} set for {guildUser.Guild.Name}");
                         }

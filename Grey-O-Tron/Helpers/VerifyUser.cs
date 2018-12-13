@@ -9,17 +9,17 @@ namespace GreyOTron.Helpers
 {
     public class VerifyUser
     {
-        private readonly DiscordGuildGw2WorldRepository _discordGuildGw2WorldRepository;
+        private readonly DiscordGuildSettingsRepository discordGuildSettingsRepository;
 
-        public VerifyUser(DiscordGuildGw2WorldRepository discordGuildGw2WorldRepository)
+        public VerifyUser(DiscordGuildSettingsRepository discordGuildSettingsRepository)
         {
-            _discordGuildGw2WorldRepository = discordGuildGw2WorldRepository;
+            this.discordGuildSettingsRepository = discordGuildSettingsRepository;
         }
 
         public async Task Verify(AccountInfo gw2AccountInfo, SocketGuildUser guildUser)
         {
             var worlds =
-                (await _discordGuildGw2WorldRepository.Get(guildUser.Guild.Id.ToString())).Select(x =>
+                (await discordGuildSettingsRepository.Get(DiscordGuildSetting.World, guildUser.Guild.Id.ToString())).Select(x =>
                     x.RowKey);
             if (gw2AccountInfo.WorldInfo != null && worlds.Contains(gw2AccountInfo.WorldInfo.Name.ToLowerInvariant()))
             {
