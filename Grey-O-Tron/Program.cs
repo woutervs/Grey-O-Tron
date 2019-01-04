@@ -44,11 +44,10 @@ namespace GreyOTron
             };
 
             client.MessageReceived += ClientOnMessageReceived;
-
+            var interval = TimeSpan.FromSeconds(10);
             while (isLoggedIn == false || client.ConnectionState == ConnectionState.Connecting || client.ConnectionState == ConnectionState.Connected)
-            {
-                
-                var interval = TimeSpan.FromSeconds(10);
+            {               
+                await client.SetGameAsync($"{configuration["command-prefix"]}help | greyotron.eu | v{VersionResolver.Get()}");
                 SocketGuildUser currentUser = null;
                 try
                 {
