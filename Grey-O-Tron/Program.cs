@@ -61,7 +61,7 @@ namespace GreyOTron
                             var discordClientWithKey = await keyRepository.Get("Gw2", guildUser.Id.ToString());
                             if (discordClientWithKey == null) continue;
                             var acInfo = gw2Api.GetInformationForUserByKey(discordClientWithKey.Key);
-                            await verifyUser.Verify(acInfo, guildUser);
+                            await verifyUser.Verify(acInfo, guildUser, true);
                         }
                     }
                 }

@@ -19,13 +19,13 @@ namespace GreyOTron.Helpers
             this.discordGuildSettingsRepository = discordGuildSettingsRepository;
         }
 
-        public async Task Verify(AccountInfo gw2AccountInfo, SocketGuildUser guildUser)
+        public async Task Verify(AccountInfo gw2AccountInfo, SocketGuildUser guildUser, bool bypassNotBelongingMessage = false)
         {
             var worlds =
                 (await discordGuildSettingsRepository.Get(DiscordGuildSetting.World, guildUser.Guild.Id.ToString())).Select(x =>
                     x.Value);
             var mainWorld = (await discordGuildSettingsRepository.Get(DiscordGuildSetting.MainWorld, guildUser.Guild.Id.ToString())).Select(x =>
-                x.Value).FirstOrDefault(); 
+                x.Value).FirstOrDefault();
 
             var userOwnedRolesMatchingWorlds = guildUser.Roles.Where(x => worlds.Contains(x.Name.ToLowerInvariant()) || x.Name.Equals(LinkedServerRole, StringComparison.InvariantCultureIgnoreCase)).ToList();
 
@@ -36,11 +36,15 @@ namespace GreyOTron.Helpers
             }
             else if (gw2AccountInfo.WorldInfo != null && gw2AccountInfo.WorldInfo.LinkedWorlds.Any(x => string.Equals(x.Name, mainWorld, StringComparison.InvariantCultureIgnoreCase)))
             {
-                await CreateRoleIfNotExistsAndAssignIfNeeded(guildUser, userOwnedRolesMatchingWorlds, LinkedServerRole);
+                if (!bypassNotBelongingMessage)
+                {
+                    await CreateRoleIfNotExistsAndAssignIfNeeded(guildUser, userOwnedRolesMatchingWorlds,
+                        LinkedServerRole);
+                }
             }
             else
             {
-                await guildUser.SendMessageAsync("Your gw2 key does not belong to the verified worlds of this discord server, I can't assign your world role sorry!");
+                await guildUser.SendMessageAsync($"Your gw2 world does not belong to the verified worlds of '{guildUser.Guild.Name}' discord server, I can't assign your world role sorry!");
             }
             await guildUser.RemoveRolesAsync(userOwnedRolesMatchingWorlds);
         }

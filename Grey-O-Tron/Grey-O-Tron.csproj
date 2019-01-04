@@ -6,7 +6,7 @@
     <AssemblyName>GreyOTron</AssemblyName>
     <LangVersion>7.3</LangVersion>
     <UserSecretsId>41972DC2-BCE1-4FF6-A516-B6C362E0845C</UserSecretsId>
-    <AssemblyVersion>3.0.0.0</AssemblyVersion>
+    <AssemblyVersion>3.0.2.0</AssemblyVersion>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Autofac" Version="4.8.1" />
