@@ -36,15 +36,17 @@ namespace GreyOTron.Helpers
             }
             else if (gw2AccountInfo.WorldInfo != null && gw2AccountInfo.WorldInfo.LinkedWorlds.Any(x => string.Equals(x.Name, mainWorld, StringComparison.InvariantCultureIgnoreCase)))
             {
-                if (!bypassNotBelongingMessage)
-                {
-                    await CreateRoleIfNotExistsAndAssignIfNeeded(guildUser, userOwnedRolesMatchingWorlds,
-                        LinkedServerRole);
-                }
+                await CreateRoleIfNotExistsAndAssignIfNeeded(guildUser, userOwnedRolesMatchingWorlds,
+                    LinkedServerRole);
+
             }
             else
             {
-                await guildUser.SendMessageAsync($"Your gw2 world does not belong to the verified worlds of '{guildUser.Guild.Name}' discord server, I can't assign your world role sorry!");
+                if (!bypassNotBelongingMessage)
+                {
+                    await guildUser.SendMessageAsync(
+                        $"Your gw2 world does not belong to the verified worlds of '{guildUser.Guild.Name}' discord server, I can't assign your world role sorry!");
+                }
             }
             await guildUser.RemoveRolesAsync(userOwnedRolesMatchingWorlds);
         }
