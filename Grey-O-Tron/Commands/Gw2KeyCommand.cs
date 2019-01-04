@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Discord;
 using Discord.WebSocket;
 using GreyOTron.ApiClients;
@@ -12,17 +11,17 @@ namespace GreyOTron.Commands
     [Command("gw2-key")]
     public class Gw2KeyCommand : ICommand
     {
-        private readonly Gw2Api _gw2Api;
-        private readonly KeyRepository _gw2KeyRepository;
-        private readonly IConfigurationRoot _configuration;
-        private readonly VerifyUser _verifyUser;
+        private readonly Gw2Api gw2Api;
+        private readonly KeyRepository gw2KeyRepository;
+        private readonly IConfigurationRoot configuration;
+        private readonly VerifyUser verifyUser;
 
         public Gw2KeyCommand(Gw2Api gw2Api, KeyRepository gw2KeyRepository, IConfigurationRoot configuration, VerifyUser verifyUser)
         {
-            _gw2Api = gw2Api;
-            _gw2KeyRepository = gw2KeyRepository;
-            _configuration = configuration;
-            _verifyUser = verifyUser;
+            this.gw2Api = gw2Api;
+            this.gw2KeyRepository = gw2KeyRepository;
+            this.configuration = configuration;
+            this.verifyUser = verifyUser;
         }
 
         public async Task Execute(SocketMessage message)
@@ -33,20 +32,20 @@ namespace GreyOTron.Commands
             }
 
             var key = Arguments;
-            var acInfo = _gw2Api.GetInformationForUserByKey(key);
+            var acInfo = gw2Api.GetInformationForUserByKey(key);
             if (acInfo.TokenInfo != null && acInfo.TokenInfo.Name == $"{message.Author.Username}#{message.Author.Discriminator}")
             {
-                await _gw2KeyRepository.Set(new DiscordClientWithKey("Gw2", message.Author.Id.ToString(),
+                await gw2KeyRepository.Set(new DiscordClientWithKey("Gw2", message.Author.Id.ToString(),
     $"{message.Author.Username}#{message.Author.Discriminator}",
     key));
 
                 if (message.Author is SocketGuildUser guildUser)
                 {
-                    await _verifyUser.Verify(acInfo, guildUser);
+                    await verifyUser.Verify(acInfo, guildUser);
                 }
                 else
                 {
-                    await message.Author.SendMessageAsync($"Your key has been stored, don't forget to use {_configuration["command-prefix"]}gw2-verify on the server you whish to get verified on.");
+                    await message.Author.SendMessageAsync($"Your key has been stored, don't forget to use {configuration["command-prefix"]}gw2-verify on the server you whish to get verified on.");
                 }
             }
             else

@@ -8,26 +8,26 @@ namespace GreyOTron.TableStorage
 {
     public class KeyRepository
     {
-        private readonly CloudTable _gw2KeysTable;
+        private readonly CloudTable gw2KeysTable;
 
         public KeyRepository(IConfigurationRoot configuration)
         {
             var storageAccount = CloudStorageAccount.Parse(configuration["StorageConnectionString"]);
             var greyotronClient = storageAccount.CreateCloudTableClient();
-            _gw2KeysTable = greyotronClient.GetTableReference("discorduserkeys");
-            _gw2KeysTable.CreateIfNotExistsAsync().Wait();
+            gw2KeysTable = greyotronClient.GetTableReference("discorduserkeys");
+            gw2KeysTable.CreateIfNotExistsAsync().Wait();
         }
 
         public async Task Set(DiscordClientWithKey key)
         {
             var insertOperation = TableOperation.InsertOrReplace(key);
-            await _gw2KeysTable.ExecuteAsync(insertOperation);
+            await gw2KeysTable.ExecuteAsync(insertOperation);
         }
 
         public async Task<DiscordClientWithKey> Get(string game, string userId)
         {
             var retrieveOperation = TableOperation.Retrieve<DiscordClientWithKey>(game, userId);
-            var result = await _gw2KeysTable.ExecuteAsync(retrieveOperation);
+            var result = await gw2KeysTable.ExecuteAsync(retrieveOperation);
             return (DiscordClientWithKey)result.Result;
         }
 
@@ -38,7 +38,7 @@ namespace GreyOTron.TableStorage
             var clients = new List<DiscordClientWithKey>();
             do
             {
-                var result = await _gw2KeysTable.ExecuteQuerySegmentedAsync(query, continuationToken);
+                var result = await gw2KeysTable.ExecuteQuerySegmentedAsync(query, continuationToken);
                 clients.AddRange(result.Results);
                 continuationToken = result.ContinuationToken;
 

@@ -1,29 +1,25 @@
-﻿using System;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Discord;
 using Discord.WebSocket;
 using GreyOTron.TableStorage;
 
 namespace GreyOTron.Commands
 {
-    [Command("gw2-set-worlds")]
-    public class SetWorldsCommand : ICommand
+    [Command("gw2-set-main-world")]
+    public class SetMainWorldCommand : ICommand
     {
         private readonly DiscordGuildSettingsRepository discordGuildSettingsRepository;
-
-        public SetWorldsCommand(DiscordGuildSettingsRepository discordGuildSettingsRepository)
+        public SetMainWorldCommand(DiscordGuildSettingsRepository discordGuildSettingsRepository)
         {
             this.discordGuildSettingsRepository = discordGuildSettingsRepository;
         }
 
+
         public async Task Execute(SocketMessage message)
         {
-            var worlds = Arguments.TrimEnd(';', ',').Split(new[] { ',', ';' }, StringSplitOptions.RemoveEmptyEntries);
-            if (!worlds.Any())
+            if (string.IsNullOrEmpty(Arguments))
             {
-                await message.Author.SendMessageAsync(
-                    "You must give at least one world name separated by ; for the set-worlds command to work.");
+                await message.Author.SendMessageAsync("World cannot be empty.");
             }
             else
             {
@@ -31,13 +27,10 @@ namespace GreyOTron.Commands
                 {
                     if (guildUser.GuildPermissions.Administrator || guildUser.Id == 188365172757233664)
                     {
-                        await discordGuildSettingsRepository.Clear(DiscordGuildSetting.World, guildUser.Guild.Id.ToString());
-                        foreach (var world in worlds)
-                        {
-                            await discordGuildSettingsRepository.Set(new DiscordGuildSetting(guildUser.Guild.Id.ToString(),guildUser.Guild.Name,DiscordGuildSetting.World,
-                                world.ToLowerInvariant()));
-                            await guildUser.SendMessageAsync($"{world} set for {guildUser.Guild.Name}");
-                        }
+                        await discordGuildSettingsRepository.Clear(DiscordGuildSetting.MainWorld, guildUser.Guild.Id.ToString());
+                        await discordGuildSettingsRepository.Set(new DiscordGuildSetting(guildUser.Guild.Id.ToString(), guildUser.Guild.Name, DiscordGuildSetting.MainWorld,
+                            Arguments.ToLowerInvariant()));
+                        await guildUser.SendMessageAsync($"{Arguments} set for {guildUser.Guild.Name} as main world.");
                     }
                     else
                     {
@@ -51,7 +44,6 @@ namespace GreyOTron.Commands
                         "The set-worlds command must be used from within the server to which you want to apply it.");
                 }
             }
-
             if (!(message.Channel is SocketDMChannel))
             {
                 await message.DeleteAsync();
