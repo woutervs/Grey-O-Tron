@@ -1,9 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
-using GreyOTron.ApiClients;
 using Microsoft.Extensions.Configuration;
 using Microsoft.WindowsAzure.Storage;
-using Microsoft.WindowsAzure.Storage.Shared.Protocol;
 using Microsoft.WindowsAzure.Storage.Table;
 
 namespace GreyOTron.TableStorage
@@ -61,12 +60,14 @@ namespace GreyOTron.TableStorage
     {
         public const string World = "world";
         public const string Guild = "guild";
+        public const string MainWorld = "main-world";
         public DiscordGuildSetting(string guildId,string guildName, string type, string setting)
         {
             PartitionKey = guildId;
-            RowKey = setting;
+            RowKey = Guid.NewGuid().ToString("N");
             GuildName = guildName;
             Type = type;
+            Value = setting;
         }
 
         public DiscordGuildSetting()
@@ -76,5 +77,6 @@ namespace GreyOTron.TableStorage
 
         public string Type { get; set; }
         public string GuildName { get; set; }
+        public string Value { get; set; }
     }
 }

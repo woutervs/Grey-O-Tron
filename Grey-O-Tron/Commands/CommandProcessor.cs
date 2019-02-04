@@ -8,24 +8,24 @@ namespace GreyOTron.Commands
 {
     public class CommandProcessor
     {
-        private readonly string _prefix;
-        private readonly ILifetimeScope _container;
+        private readonly string prefix;
+        private readonly ILifetimeScope container;
 
         public CommandProcessor(string prefix, ILifetimeScope container)
         {
-            _prefix = prefix;
-            _container = container;
+            this.prefix = prefix;
+            this.container = container;
         }
 
         public ICommand Parse(string message)
         {
             message = message.Trim();
-            if (!message.StartsWith(_prefix))
+            if (!message.StartsWith(prefix))
             {
                 return new NullCommand();
             }
 
-            var commandName = message.Substring(_prefix.Length, message.Length - _prefix.Length);
+            var commandName = message.Substring(prefix.Length, message.Length - prefix.Length);
             var i = commandName.IndexOf(' ');
             if (i >= 0)
             {
@@ -38,7 +38,7 @@ namespace GreyOTron.Commands
                 commandName = commandName.Trim().ToLowerInvariant();
                 message = string.Empty;
             }
-            var command = _container.Resolve<IEnumerable<Meta<ICommand>>>()
+            var command = container.Resolve<IEnumerable<Meta<ICommand>>>()
                 .FirstOrDefault(a => a.Metadata.ContainsKey("CommandName") && a.Metadata["CommandName"].Equals(commandName))?.Value;
             if (command != null)
             {

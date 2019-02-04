@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Discord;
 using Discord.WebSocket;
 using GreyOTron.ApiClients;
@@ -11,22 +10,22 @@ namespace GreyOTron.Commands
     [Command("gw2-verify")]
     public class VerifyCommand : ICommand
     {
-        private readonly KeyRepository _keyRepository;
-        private readonly Gw2Api _gw2Api;
-        private readonly VerifyUser _verifyUser;
+        private readonly KeyRepository keyRepository;
+        private readonly Gw2Api gw2Api;
+        private readonly VerifyUser verifyUser;
 
         public VerifyCommand(KeyRepository keyRepository, Gw2Api gw2Api, VerifyUser verifyUser)
         {
-            _keyRepository = keyRepository;
-            _gw2Api = gw2Api;
-            _verifyUser = verifyUser;
+            this.keyRepository = keyRepository;
+            this.gw2Api = gw2Api;
+            this.verifyUser = verifyUser;
         }
 
         public async Task Execute(SocketMessage message)
         {
             if (message.Author is SocketGuildUser guildUser)
             {
-                var discordClientWithKey = await _keyRepository.Get("Gw2", message.Author.Id.ToString());
+                var discordClientWithKey = await keyRepository.Get("Gw2", message.Author.Id.ToString());
                 if (discordClientWithKey == null)
                 {
                     await message.Author.SendMessageAsync(
@@ -34,11 +33,11 @@ namespace GreyOTron.Commands
                 }
                 else
                 {
-                    var acInfo = _gw2Api.GetInformationForUserByKey(discordClientWithKey.Key);
+                    var acInfo = gw2Api.GetInformationForUserByKey(discordClientWithKey.Key);
                     if (acInfo.TokenInfo != null && acInfo.TokenInfo.Name ==
                         $"{message.Author.Username}#{message.Author.Discriminator}")
                     {
-                        await _verifyUser.Verify(acInfo, guildUser);
+                        await verifyUser.Verify(acInfo, guildUser);
                     }
                     else
                     {
