@@ -6,7 +6,7 @@ namespace GreyOTron.Library.Helpers
     {
         public static string Get()
         {
-            var v = Assembly.GetEntryAssembly().GetName().Version;
+            var v = Assembly.GetExecutingAssembly().GetName().Version;
             return $"{v.Major}.{v.Minor}.{v.Build}";
         }
     }
