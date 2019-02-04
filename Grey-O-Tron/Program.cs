@@ -32,7 +32,7 @@ namespace GreyOTron
             client = new DiscordSocketClient();
             await client.LoginAsync(TokenType.Bot, configuration["GreyOTron-Token"]);
             await client.StartAsync();
-            await client.SetGameAsync($"{configuration["command-prefix"]}help | greyotron.eu | v{VersionResolver.Get()}");
+            await client.SetGameAsync($"help on https://greyotron.eu | v{VersionResolver.Get()}");
 
             var isLoggedIn = false;
             client.LoggedIn += async () =>

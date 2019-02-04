@@ -11,12 +11,12 @@ namespace GreyOTron.Api.Controllers
 {
     [Route("[controller]")]
     [ApiController]
-    public class CommandsController : ControllerBase
+    public class CommandController : ControllerBase
     {
         private readonly ILifetimeScope container;
         private readonly IConfiguration configuration;
 
-        public CommandsController(ILifetimeScope container, IConfiguration configuration)
+        public CommandController(ILifetimeScope container, IConfiguration configuration)
         {
             this.container = container;
             this.configuration = configuration;

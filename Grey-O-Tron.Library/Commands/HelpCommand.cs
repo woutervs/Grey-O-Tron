@@ -6,7 +6,7 @@ using Microsoft.Extensions.Configuration;
 
 namespace GreyOTron.Library.Commands
 {
-    [Command("help")]
+    //[Command("help")]
     public class HelpCommand : ICommand
     {
         private readonly IConfiguration configuration;
