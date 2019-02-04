@@ -11,7 +11,7 @@ namespace GreyOTron.Library.TableStorage
     {
         private readonly CloudTable discordGuildSettings;
 
-        public DiscordGuildSettingsRepository(IConfigurationRoot configuration)
+        public DiscordGuildSettingsRepository(IConfiguration configuration)
         {
             var storageAccount = CloudStorageAccount.Parse(configuration["StorageConnectionString"]);
             var greyotronClient = storageAccount.CreateCloudTableClient();

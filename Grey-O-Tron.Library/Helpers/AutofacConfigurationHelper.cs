@@ -1,5 +1,6 @@
 ﻿using System.Reflection;
 using Autofac;
+using Autofac.Extras.AttributeMetadata;
 using GreyOTron.Library.Commands;
 
 namespace GreyOTron.Library.Helpers
@@ -8,6 +9,8 @@ namespace GreyOTron.Library.Helpers
     {
         public static void BuildLibrary(ref ContainerBuilder builder)
         {
+            builder.RegisterModule<AttributedMetadataModule>();
+
             builder.RegisterAssemblyTypes(Assembly.GetExecutingAssembly()).Where(c => c.IsAssignableFrom(typeof(ICommand)))
                 .AsImplementedInterfaces().InstancePerDependency();
 

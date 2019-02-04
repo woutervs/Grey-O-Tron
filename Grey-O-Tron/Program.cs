@@ -28,7 +28,7 @@ namespace GreyOTron
         private static async Task Setup()
         {
             Log.TrackTrace("Bot started.");
-            var configuration = container.Resolve<IConfigurationRoot>();
+            var configuration = container.Resolve<IConfiguration>();
             client = new DiscordSocketClient();
             await client.LoginAsync(TokenType.Bot, configuration["GreyOTron-Token"]);
             await client.StartAsync();

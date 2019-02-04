@@ -8,9 +8,9 @@ namespace GreyOTron.Library.Commands
     [Command("help")]
     public class HelpCommand : ICommand
     {
-        private readonly IConfigurationRoot configuration;
+        private readonly IConfiguration configuration;
 
-        public HelpCommand(IConfigurationRoot configuration)
+        public HelpCommand(IConfiguration configuration)
         {
             this.configuration = configuration;
         }

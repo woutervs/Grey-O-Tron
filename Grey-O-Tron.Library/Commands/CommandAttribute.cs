@@ -7,6 +7,7 @@ namespace GreyOTron.Library.Commands
     public class CommandAttribute : Attribute
     {
         public string CommandName { get; set; }
+        public string CommandDescription { get; set; }
 
         public CommandAttribute(string commandName)
         {

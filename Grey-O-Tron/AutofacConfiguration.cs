@@ -15,21 +15,20 @@ namespace GreyOTron
         public static IContainer Build()
         {
             var builder = new ContainerBuilder();
-            builder.RegisterModule<AttributedMetadataModule>();
 
-            builder.RegisterInstance(BootstrapConfiguration()).As<IConfigurationRoot>().SingleInstance();
+            builder.RegisterInstance(BootstrapConfiguration()).As<IConfiguration>().SingleInstance();
 
             AutofacConfigurationHelper.BuildLibrary(ref builder);
 
             builder.RegisterType<CommandProcessor>().AsSelf().WithParameter(
                 new ResolvedParameter((info, context) => info.ParameterType == typeof(string) && info.Name == "prefix",
-                    (info, context) => context.Resolve<IConfigurationRoot>()["command-prefix"]
+                    (info, context) => context.Resolve<IConfiguration>()["command-prefix"]
              ));
 
             return builder.Build();
         }
 
-        private static IConfigurationRoot BootstrapConfiguration()
+        private static IConfiguration BootstrapConfiguration()
         {
             Trace.WriteLine("Setting up configuration");
             var builder = new ConfigurationBuilder();

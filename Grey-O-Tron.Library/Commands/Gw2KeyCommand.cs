@@ -13,10 +13,10 @@ namespace GreyOTron.Library.Commands
     {
         private readonly Gw2Api gw2Api;
         private readonly KeyRepository gw2KeyRepository;
-        private readonly IConfigurationRoot configuration;
+        private readonly IConfiguration configuration;
         private readonly VerifyUser verifyUser;
 
-        public Gw2KeyCommand(Gw2Api gw2Api, KeyRepository gw2KeyRepository, IConfigurationRoot configuration, VerifyUser verifyUser)
+        public Gw2KeyCommand(Gw2Api gw2Api, KeyRepository gw2KeyRepository, IConfiguration configuration, VerifyUser verifyUser)
         {
             this.gw2Api = gw2Api;
             this.gw2KeyRepository = gw2KeyRepository;
