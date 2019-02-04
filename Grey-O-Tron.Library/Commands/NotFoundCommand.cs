@@ -2,7 +2,7 @@
 using Discord;
 using Discord.WebSocket;
 
-namespace GreyOTron.Commands
+namespace GreyOTron.Library.Commands
 {
     public class NotFoundCommand : ICommand
     {

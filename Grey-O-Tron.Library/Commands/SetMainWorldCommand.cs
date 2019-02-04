@@ -1,9 +1,9 @@
 ﻿using System.Threading.Tasks;
 using Discord;
 using Discord.WebSocket;
-using GreyOTron.TableStorage;
+using GreyOTron.Library.TableStorage;
 
-namespace GreyOTron.Commands
+namespace GreyOTron.Library.Commands
 {
     [Command("gw2-set-main-world")]
     public class SetMainWorldCommand : ICommand

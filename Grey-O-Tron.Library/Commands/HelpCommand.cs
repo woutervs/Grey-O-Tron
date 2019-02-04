@@ -3,7 +3,7 @@ using Discord;
 using Discord.WebSocket;
 using Microsoft.Extensions.Configuration;
 
-namespace GreyOTron.Commands
+namespace GreyOTron.Library.Commands
 {
     [Command("help")]
     public class HelpCommand : ICommand

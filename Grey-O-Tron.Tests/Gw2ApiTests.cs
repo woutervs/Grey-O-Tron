@@ -1,5 +1,5 @@
-﻿using GreyOTron.ApiClients;
-using GreyOTron.Helpers;
+﻿using GreyOTron.Library.ApiClients;
+using GreyOTron.Library.Helpers;
 using Xunit;
 
 namespace Grey_O_Tron.Tests

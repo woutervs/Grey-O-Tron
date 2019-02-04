@@ -4,7 +4,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Table;
 
-namespace GreyOTron.TableStorage
+namespace GreyOTron.Library.TableStorage
 {
     public class KeyRepository
     {

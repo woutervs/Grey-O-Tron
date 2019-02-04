@@ -1,6 +1,6 @@
 ﻿using System.Reflection;
 
-namespace GreyOTron.Helpers
+namespace GreyOTron.Library.Helpers
 {
     public static class VersionResolver
     {

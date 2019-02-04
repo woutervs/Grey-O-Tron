@@ -4,10 +4,11 @@ using System.Reflection;
 using Autofac;
 using Autofac.Core;
 using Autofac.Extras.AttributeMetadata;
-using GreyOTron.Commands;
+using GreyOTron.Library.Commands;
+using GreyOTron.Library.Helpers;
 using Microsoft.Extensions.Configuration;
 
-namespace GreyOTron.Helpers
+namespace GreyOTron
 {
     public static class AutofacConfiguration
     {
@@ -18,13 +19,7 @@ namespace GreyOTron.Helpers
 
             builder.RegisterInstance(BootstrapConfiguration()).As<IConfigurationRoot>().SingleInstance();
 
-
-            builder.RegisterAssemblyTypes(Assembly.GetExecutingAssembly()).Where(c => c.IsAssignableFrom(typeof(ICommand)))
-                .AsImplementedInterfaces().InstancePerDependency();
-
-            builder.RegisterAssemblyTypes(Assembly.GetExecutingAssembly()).AsSelf().AsImplementedInterfaces().SingleInstance()
-                .Except<IConfigurationRoot>()
-                .Except<ICommand>();
+            AutofacConfigurationHelper.BuildLibrary(ref builder);
 
             builder.RegisterType<CommandProcessor>().AsSelf().WithParameter(
                 new ResolvedParameter((info, context) => info.ParameterType == typeof(string) && info.Name == "prefix",

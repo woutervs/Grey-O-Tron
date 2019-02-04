@@ -1,9 +1,9 @@
 ﻿using System.Threading.Tasks;
 using Discord;
 using Discord.WebSocket;
-using GreyOTron.Helpers;
+using GreyOTron.Library.Helpers;
 
-namespace GreyOTron.Commands
+namespace GreyOTron.Library.Commands
 {
     [Command("version")]
     public class VersionCommand : ICommand

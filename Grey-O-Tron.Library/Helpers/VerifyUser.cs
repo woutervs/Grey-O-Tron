@@ -4,10 +4,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using Discord;
 using Discord.WebSocket;
-using GreyOTron.ApiClients;
-using GreyOTron.TableStorage;
+using GreyOTron.Library.ApiClients;
+using GreyOTron.Library.TableStorage;
 
-namespace GreyOTron.Helpers
+namespace GreyOTron.Library.Helpers
 {
     public class VerifyUser
     {

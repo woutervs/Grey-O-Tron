@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.Caching;
 
-namespace GreyOTron.Helpers
+namespace GreyOTron.Library.Helpers
 {
     public class Cache
     {

@@ -1,10 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using Autofac;
 using Autofac.Features.Metadata;
+using GreyOTron.Library.Commands;
 
-namespace GreyOTron.Commands
+namespace GreyOTron
 {
     public class CommandProcessor
     {

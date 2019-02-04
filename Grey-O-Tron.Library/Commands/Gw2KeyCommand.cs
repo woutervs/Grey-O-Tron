@@ -1,12 +1,12 @@
 ﻿using System.Threading.Tasks;
 using Discord;
 using Discord.WebSocket;
-using GreyOTron.ApiClients;
-using GreyOTron.Helpers;
-using GreyOTron.TableStorage;
+using GreyOTron.Library.ApiClients;
+using GreyOTron.Library.Helpers;
+using GreyOTron.Library.TableStorage;
 using Microsoft.Extensions.Configuration;
 
-namespace GreyOTron.Commands
+namespace GreyOTron.Library.Commands
 {
     [Command("gw2-key")]
     public class Gw2KeyCommand : ICommand
@@ -36,8 +36,7 @@ namespace GreyOTron.Commands
             if (acInfo.TokenInfo != null && acInfo.TokenInfo.Name == $"{message.Author.Username}#{message.Author.Discriminator}")
             {
                 await gw2KeyRepository.Set(new DiscordClientWithKey("Gw2", message.Author.Id.ToString(),
-    $"{message.Author.Username}#{message.Author.Discriminator}",
-    key));
+    $"{message.Author.Username}#{message.Author.Discriminator}", key));
 
                 if (message.Author is SocketGuildUser guildUser)
                 {

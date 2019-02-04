@@ -7,6 +7,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Grey-O-Tron", "Grey-O-Tron\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Grey-O-Tron.Tests", "Grey-O-Tron.Tests\Grey-O-Tron.Tests.csproj", "{C34C7A5F-7069-420B-ACE4-D422D701392B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Grey-O-Tron.Library", "Grey-O-Tron.Library\Grey-O-Tron.Library.csproj", "{41CCB055-DB4B-45D7-9AB5-595E551A73C7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{C34C7A5F-7069-420B-ACE4-D422D701392B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C34C7A5F-7069-420B-ACE4-D422D701392B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C34C7A5F-7069-420B-ACE4-D422D701392B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{41CCB055-DB4B-45D7-9AB5-595E551A73C7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{41CCB055-DB4B-45D7-9AB5-595E551A73C7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{41CCB055-DB4B-45D7-9AB5-595E551A73C7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{41CCB055-DB4B-45D7-9AB5-595E551A73C7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

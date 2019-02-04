@@ -1,11 +1,11 @@
 ﻿using System.Threading.Tasks;
 using Discord;
 using Discord.WebSocket;
-using GreyOTron.ApiClients;
-using GreyOTron.Helpers;
-using GreyOTron.TableStorage;
+using GreyOTron.Library.ApiClients;
+using GreyOTron.Library.Helpers;
+using GreyOTron.Library.TableStorage;
 
-namespace GreyOTron.Commands
+namespace GreyOTron.Library.Commands
 {
     [Command("gw2-verify")]
     public class VerifyCommand : ICommand

@@ -1,8 +1,8 @@
 ﻿using System.Threading.Tasks;
 using Discord.WebSocket;
-using GreyOTron.ApiClients;
+using GreyOTron.Library.ApiClients;
 
-namespace GreyOTron.Commands
+namespace GreyOTron.Library.Commands
 {
     [Command("joke")]
     public class JokeCommand : ICommand

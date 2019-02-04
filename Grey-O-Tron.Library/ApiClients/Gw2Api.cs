@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using GreyOTron.Helpers;
+using GreyOTron.Library.Helpers;
 using Newtonsoft.Json.Linq;
 using RestSharp;
 
-namespace GreyOTron.ApiClients
+namespace GreyOTron.Library.ApiClients
 {
     public class Gw2Api
     {

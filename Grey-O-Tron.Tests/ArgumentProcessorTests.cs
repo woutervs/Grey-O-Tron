@@ -1,4 +1,4 @@
-using GreyOTron.Commands;
+using GreyOTron;
 using Xunit;
 
 namespace Grey_O_Tron.Tests
