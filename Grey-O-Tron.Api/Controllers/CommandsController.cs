@@ -2,33 +2,34 @@
 using System.Linq;
 using Autofac;
 using Autofac.Features.Metadata;
+using GreyOTron.Api.Models;
 using GreyOTron.Library.Commands;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 
 namespace GreyOTron.Api.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     [ApiController]
     public class CommandsController : ControllerBase
     {
         private readonly ILifetimeScope container;
+        private readonly IConfiguration configuration;
 
-        public CommandsController(ILifetimeScope container)
+        public CommandsController(ILifetimeScope container, IConfiguration configuration)
         {
             this.container = container;
+            this.configuration = configuration;
         }
 
         [HttpGet]
-        public IEnumerable<string> Get()
+        public ActionResult<IEnumerable<Command>> Get()
         {
-            var commands = container.Resolve<IEnumerable<Meta<ICommand>>>().ToList();
-            foreach (var command in commands)
+            return container.Resolve<IEnumerable<Meta<ICommand>>>().Where(command => command.Metadata.ContainsKey("CommandName")).Select(c => new Command
             {
-                if (command.Metadata.ContainsKey("CommandName"))
-                {
-                    yield return command.Metadata["CommandName"].ToString();
-                }
-            }
+                Name = configuration["command-prefix"] + c.Metadata["CommandName"]?.ToString(),
+                Description = c.Metadata.ContainsKey("CommandDescription") ? c.Metadata["CommandDescription"]?.ToString() : null
+            }).ToList();
         }
     }
 }
