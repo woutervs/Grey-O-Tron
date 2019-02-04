@@ -32,7 +32,6 @@ namespace GreyOTron
             client = new DiscordSocketClient();
             await client.LoginAsync(TokenType.Bot, configuration["GreyOTron-Token"]);
             await client.StartAsync();
-            await client.SetGameAsync($"help on https://greyotron.eu | v{VersionResolver.Get()}");
 
             var isLoggedIn = false;
             client.LoggedIn += async () =>
@@ -44,8 +43,8 @@ namespace GreyOTron
             client.MessageReceived += ClientOnMessageReceived;
             var interval = TimeSpan.FromSeconds(10);
             while (isLoggedIn == false || client.ConnectionState == ConnectionState.Connecting || client.ConnectionState == ConnectionState.Connected)
-            {               
-                await client.SetGameAsync($"{configuration["command-prefix"]}help | greyotron.eu | v{VersionResolver.Get()}");
+            {
+                await client.SetGameAsync($"help on https://greyotron.eu | v{VersionResolver.Get()}");
                 SocketGuildUser currentUser = null;
                 try
                 {
