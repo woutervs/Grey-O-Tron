@@ -3,6 +3,7 @@ using System.Linq;
 using Autofac;
 using Autofac.Features.Metadata;
 using GreyOTron.Library.Commands;
+using GreyOTron.Library.Helpers;
 
 namespace GreyOTron
 {

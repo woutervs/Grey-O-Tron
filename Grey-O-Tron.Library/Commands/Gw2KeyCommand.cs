@@ -8,7 +8,7 @@ using Microsoft.Extensions.Configuration;
 
 namespace GreyOTron.Library.Commands
 {
-    [Command("gw2-key")]
+    [Command("gw2-key", CommandDescription = "Stores Guild Wars 2 key in the database.", CommandArguments = "{key}", CommandOptions = CommandOptions.DirectMessage | CommandOptions.DiscordServer)]
     public class Gw2KeyCommand : ICommand
     {
         private readonly Gw2Api gw2Api;

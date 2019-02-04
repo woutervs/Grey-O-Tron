@@ -1,11 +1,12 @@
 ﻿using System.Threading.Tasks;
 using Discord;
 using Discord.WebSocket;
+using GreyOTron.Library.Helpers;
 using GreyOTron.Library.TableStorage;
 
 namespace GreyOTron.Library.Commands
 {
-    [Command("gw2-set-main-world")]
+    [Command("gw2-set-main-world", CommandDescription = "Stores the discord server's main world to the database.", CommandArguments = "{world name}", CommandOptions = CommandOptions.DiscordServer | CommandOptions.RequiresAdmin)]
     public class SetMainWorldCommand : ICommand
     {
         private readonly DiscordGuildSettingsRepository discordGuildSettingsRepository;

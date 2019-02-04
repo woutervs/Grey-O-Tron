@@ -3,7 +3,7 @@ using System.Linq;
 using Autofac;
 using Autofac.Features.Metadata;
 using GreyOTron.Api.Models;
-using GreyOTron.Library.Commands;
+using GreyOTron.Library.Helpers;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 
@@ -28,8 +28,10 @@ namespace GreyOTron.Api.Controllers
             return container.Resolve<IEnumerable<Meta<ICommand>>>().Where(command => command.Metadata.ContainsKey("CommandName")).Select(c => new Command
             {
                 Name = configuration["command-prefix"] + c.Metadata["CommandName"]?.ToString(),
-                Description = c.Metadata.ContainsKey("CommandDescription") ? c.Metadata["CommandDescription"]?.ToString() : null
-            }).ToList();
+                Description = c.Metadata.ContainsKey("CommandDescription") ? c.Metadata["CommandDescription"]?.ToString() : null,
+                Arguments = c.Metadata.ContainsKey("CommandArguments") ? c.Metadata["CommandArguments"]?.ToString() : null,
+                Options = c.Metadata.ContainsKey("CommandOptions") ? (CommandOptions)c.Metadata["CommandOptions"] : CommandOptions.None
+            }).OrderBy(x => x.Name).ToList();
         }
     }
 }

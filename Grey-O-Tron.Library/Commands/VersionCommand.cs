@@ -5,7 +5,7 @@ using GreyOTron.Library.Helpers;
 
 namespace GreyOTron.Library.Commands
 {
-    [Command("version")]
+    [Command("version", CommandDescription = "Get the current bot version.", CommandOptions = CommandOptions.DirectMessage | CommandOptions.DiscordServer)]
     public class VersionCommand : ICommand
     {
         public async Task Execute(SocketMessage message)

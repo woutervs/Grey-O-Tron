@@ -7,7 +7,7 @@ using GreyOTron.Library.TableStorage;
 
 namespace GreyOTron.Library.Commands
 {
-    [Command("gw2-verify")]
+    [Command("gw2-verify", CommandDescription = "Use the stored Guild Wars 2 key to verify if a user belongs to worlds set by the discord server.", CommandOptions = CommandOptions.DiscordServer)]
     public class VerifyCommand : ICommand
     {
         private readonly KeyRepository keyRepository;

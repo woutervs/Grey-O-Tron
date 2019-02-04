@@ -1,10 +1,11 @@
 ﻿using System.Threading.Tasks;
 using Discord.WebSocket;
 using GreyOTron.Library.ApiClients;
+using GreyOTron.Library.Helpers;
 
 namespace GreyOTron.Library.Commands
 {
-    [Command("joke")]
+    [Command("joke", CommandDescription = "Will tell a joke.", CommandOptions = CommandOptions.DirectMessage | CommandOptions.DiscordServer)]
     public class JokeCommand : ICommand
     {
         private readonly DadJokes dadJokes;
