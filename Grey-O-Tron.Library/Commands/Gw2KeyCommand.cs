@@ -26,11 +26,6 @@ namespace GreyOTron.Library.Commands
 
         public async Task Execute(SocketMessage message)
         {
-            if (message.Author.Id == 291207609791283212)
-            {
-                await message.Author.SendMessageAsync("Go back to your own corner pleb!");
-            }
-
             var key = Arguments;
             var acInfo = gw2Api.GetInformationForUserByKey(key);
             if (acInfo.TokenInfo != null && acInfo.TokenInfo.Name == $"{message.Author.Username}#{message.Author.Discriminator}")

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using GreyOTron.Library.Helpers;
 using Newtonsoft.Json.Linq;
@@ -40,6 +41,13 @@ namespace GreyOTron.Library.ApiClients
             });
         }
 
+        public World ParseWorld(string identifier)
+        {
+            return int.TryParse(identifier.Trim(' ', ';', ','), NumberStyles.Any, CultureInfo.InvariantCulture, out var worldId) ?
+                GetWorlds().FirstOrDefault(x => x.Id == worldId) :
+                GetWorlds().FirstOrDefault(x => x.Name.Equals(identifier.Trim(' ', ';', ','), StringComparison.InvariantCultureIgnoreCase));
+        }
+
         private World SetLinkedWorlds(World world)
         {
             world.LinkedWorlds = cache.GetFromCache($"linked-worlds-for-{world.Id}", TimeSpan.FromDays(1), () =>
@@ -48,7 +56,7 @@ namespace GreyOTron.Library.ApiClients
                 var request = new RestRequest($"/v2/wvw/matches/overview?world={world.Id}");
                 var restResponse = client.Execute(request).Content;
                 var matchInfo = JObject.Parse(restResponse)["all_worlds"].ToObject<MatchInfo>();
-                return matchInfo.FindLinksFor(world.Id).Select(x=>GetWorlds().FirstOrDefault(y=>y.Id == x)).ToList();
+                return matchInfo.FindLinksFor(world.Id).Select(x => GetWorlds().FirstOrDefault(y => y.Id == x)).ToList();
             });
             return world;
         }
