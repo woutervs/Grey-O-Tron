@@ -34,7 +34,7 @@ namespace GreyOTron.Library.Commands
                 else
                 {
                     var acInfo = gw2Api.GetInformationForUserByKey(discordClientWithKey.Key);
-                    if (acInfo.TokenInfo != null && acInfo.TokenInfo.Name ==
+                    if (!string.IsNullOrWhiteSpace(discordClientWithKey.Key) && acInfo.TokenInfo != null && acInfo.TokenInfo.Name ==
                         $"{message.Author.Username}#{message.Author.Discriminator}")
                     {
                         await verifyUser.Verify(acInfo, guildUser);

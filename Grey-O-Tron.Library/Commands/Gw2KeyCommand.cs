@@ -27,26 +27,34 @@ namespace GreyOTron.Library.Commands
         public async Task Execute(SocketMessage message)
         {
             var key = Arguments;
-            var acInfo = gw2Api.GetInformationForUserByKey(key);
-            if (acInfo.TokenInfo != null && acInfo.TokenInfo.Name == $"{message.Author.Username}#{message.Author.Discriminator}")
+            if (string.IsNullOrWhiteSpace(key))
             {
-                await gw2KeyRepository.Set(new DiscordClientWithKey("Gw2", message.Author.Id.ToString(),
-    $"{message.Author.Username}#{message.Author.Discriminator}", key));
-
-                if (message.Author is SocketGuildUser guildUser)
-                {
-                    await verifyUser.Verify(acInfo, guildUser);
-                }
-                else
-                {
-                    await message.Author.SendMessageAsync($"Your key has been stored, don't forget to use {configuration["command-prefix"]}gw2-verify on the server you whish to get verified on.");
-                }
+                await message.Author.SendMessageAsync("This key seems empty to me, please try again.");
             }
             else
             {
-                await message.Author.SendMessageAsync($"Please make sure your GW2 application key's name is the same as your discord username: {message.Author.Username}#{message.Author.Discriminator}");
-                await message.Author.SendMessageAsync("You can view, create and edit your GW2 application key's on https://account.arena.net/applications");
+                var acInfo = gw2Api.GetInformationForUserByKey(key);
+                if (acInfo.TokenInfo != null && acInfo.TokenInfo.Name == $"{message.Author.Username}#{message.Author.Discriminator}")
+                {
+                    await gw2KeyRepository.Set(new DiscordClientWithKey("Gw2", message.Author.Id.ToString(),
+                        $"{message.Author.Username}#{message.Author.Discriminator}", key));
+
+                    if (message.Author is SocketGuildUser guildUser)
+                    {
+                        await verifyUser.Verify(acInfo, guildUser);
+                    }
+                    else
+                    {
+                        await message.Author.SendMessageAsync($"Your key has been stored, don't forget to use {configuration["command-prefix"]}gw2-verify on the server you whish to get verified on.");
+                    }
+                }
+                else
+                {
+                    await message.Author.SendMessageAsync($"Please make sure your GW2 application key's name is the same as your discord username: {message.Author.Username}#{message.Author.Discriminator}");
+                    await message.Author.SendMessageAsync("You can view, create and edit your GW2 application key's on https://account.arena.net/applications");
+                }
             }
+
             if (!(message.Channel is SocketDMChannel))
             {
                 await message.DeleteAsync();
