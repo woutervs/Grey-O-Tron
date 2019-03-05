@@ -10,7 +10,7 @@ namespace GreyOTron.Library.Commands
     {
         public async Task Execute(SocketMessage message)
         {
-            await message.Author.SendMessageAsync("My commands can be found on: greyotron.eu/commands");
+            await message.Author.SendMessageAsync("My commands can be found on: https://greyotron.eu/commands");
             if (!(message.Channel is SocketDMChannel))
             {
                 await message.DeleteAsync();
