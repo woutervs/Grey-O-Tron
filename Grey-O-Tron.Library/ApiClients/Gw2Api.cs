@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using GreyOTron.Library.Helpers;
+using Microsoft.ApplicationInsights;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using RestSharp;
 
@@ -12,6 +14,7 @@ namespace GreyOTron.Library.ApiClients
     {
         private const string BaseUrl = "https://api.guildwars2.com";
         private readonly Cache cache;
+        private static readonly TelemetryClient Log = new TelemetryClient();
 
         public Gw2Api(Cache cache)
         {
@@ -27,7 +30,13 @@ namespace GreyOTron.Library.ApiClients
             request = new RestRequest("v2/account");
             var account = client.Execute<AccountInfo>(request, Method.GET).Data;
             account.TokenInfo = tokenInfo;
-            account.WorldInfo = SetLinkedWorlds(GetWorlds().FirstOrDefault(x => x.Id == account.World));
+            var accountWorld = GetWorlds().FirstOrDefault(x => x.Id == account.World);
+            if (accountWorld == null)
+            {
+                Log.TrackTrace("No world found for user", new Dictionary<string, string> { { "account", JsonConvert.SerializeObject(account) } });
+                return account;
+            }
+            account.WorldInfo = SetLinkedWorlds(accountWorld);
             return account;
         }
 
