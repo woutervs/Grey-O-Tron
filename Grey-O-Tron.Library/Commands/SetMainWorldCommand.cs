@@ -10,7 +10,7 @@ using GreyOTron.Library.TableStorage;
 
 namespace GreyOTron.Library.Commands
 {
-    [Command("gw2-set-main-world", CommandDescription = "Stores the discord server's main world to the database.", CommandArguments = "{world name}", CommandOptions = CommandOptions.DiscordServer | CommandOptions.RequiresAdmin)]
+    [Command("gw2-set-main-world", CommandDescription = "Stores the discord server's main world to the database.", CommandArguments = "{world (name|id)}", CommandOptions = CommandOptions.DiscordServer | CommandOptions.RequiresAdmin)]
     public class SetMainWorldCommand : ICommand
     {
         private readonly DiscordGuildSettingsRepository discordGuildSettingsRepository;
