@@ -1,3 +1,4 @@
 {
-  "command-prefix": "got#" 
+  "CommandPrefix": "got#",
+  "DiscordBotId": 518387999537496069
 }

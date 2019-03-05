@@ -22,7 +22,7 @@ namespace GreyOTron
 
             builder.RegisterType<CommandProcessor>().AsSelf().WithParameter(
                 new ResolvedParameter((info, context) => info.ParameterType == typeof(string) && info.Name == "prefix",
-                    (info, context) => context.Resolve<IConfiguration>()["command-prefix"]
+                    (info, context) => context.Resolve<IConfiguration>()["CommandPrefix"]
              ));
 
             return builder.Build();

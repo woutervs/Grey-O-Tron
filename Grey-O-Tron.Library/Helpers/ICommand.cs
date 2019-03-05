@@ -7,5 +7,7 @@ namespace GreyOTron.Library.Helpers
     {
         Task Execute(SocketMessage message);
         string Arguments { get; set; }
+
+        DiscordSocketClient Client { get; set; }
     }
 }

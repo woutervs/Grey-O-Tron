@@ -45,7 +45,7 @@ namespace GreyOTron.Library.Commands
                     }
                     else
                     {
-                        await message.Author.SendMessageAsync($"Your key has been stored, don't forget to use {configuration["command-prefix"]}gw2-verify on the server you whish to get verified on.");
+                        await message.Author.SendMessageAsync($"Your key has been stored, don't forget to use {configuration["CommandPrefix"]}gw2-verify on the server you wish to get verified on.");
                     }
                 }
                 else
@@ -62,5 +62,6 @@ namespace GreyOTron.Library.Commands
         }
 
         public string Arguments { get; set; }
+        public DiscordSocketClient Client { get; set; }
     }
 }

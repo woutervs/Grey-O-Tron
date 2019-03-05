@@ -23,6 +23,7 @@ namespace GreyOTron.Library.Helpers
         None = 0,
         DiscordServer = 1,
         DirectMessage = 2,
-        RequiresAdmin = 4
+        RequiresAdmin = 4,
+        RequiresOwner = 8,
     }
 }

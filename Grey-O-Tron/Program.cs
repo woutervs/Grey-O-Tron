@@ -29,20 +29,27 @@ namespace GreyOTron
         {
             Log.TrackTrace("Bot started.");
             var configuration = container.Resolve<IConfiguration>();
+            var discordBotsApi = container.Resolve<DiscordBotsApi>();
             client = new DiscordSocketClient();
             await client.LoginAsync(TokenType.Bot, configuration["GreyOTron-Token"]);
             await client.StartAsync();
 
-            var isLoggedIn = false;
-            client.LoggedIn += async () =>
+            client.Ready += async () =>
             {
-                isLoggedIn = true;
+                try
+                {
+                    discordBotsApi.UpdateStatistics(new Statistics { ServerCount = client.Guilds.Count });
+                }
+                catch (Exception e)
+                {
+                    Log.TrackException(e);
+                }
                 await Task.CompletedTask;
             };
 
             client.MessageReceived += ClientOnMessageReceived;
             var interval = TimeSpan.FromSeconds(10);
-            while (isLoggedIn == false || client.ConnectionState == ConnectionState.Connecting || client.ConnectionState == ConnectionState.Connected)
+            while (true)
             {
                 await client.SetGameAsync($"help on https://greyotron.eu | v{VersionResolver.Get()}");
                 if (Math.Abs(DateTime.Now.TimeOfDay.Subtract(new TimeSpan(0, 23, 0, 0)).TotalMilliseconds) <= interval.TotalMilliseconds / 2)
@@ -81,6 +88,7 @@ namespace GreyOTron
             {
                 var processor = container.Resolve<CommandProcessor>();
                 var command = processor.Parse(socketMessage.Content);
+                command.Client = client;
                 await command.Execute(socketMessage);
             }
             catch (Exception e)
