@@ -45,10 +45,10 @@ namespace GreyOTron
             while (isLoggedIn == false || client.ConnectionState == ConnectionState.Connecting || client.ConnectionState == ConnectionState.Connected)
             {
                 await client.SetGameAsync($"help on https://greyotron.eu | v{VersionResolver.Get()}");
-                SocketGuildUser currentUser = null;
-                try
+                if (Math.Abs(DateTime.Now.TimeOfDay.Subtract(new TimeSpan(0, 23, 0, 0)).TotalMilliseconds) <= interval.TotalMilliseconds / 2)
                 {
-                    if (Math.Abs(DateTime.Now.TimeOfDay.Subtract(new TimeSpan(0, 23, 0, 0)).TotalMilliseconds) <= interval.TotalMilliseconds / 2)
+                    SocketGuildUser currentUser = null;
+                    try
                     {
                         foreach (var guildUser in client.Guilds.SelectMany(x => x.Users))
                         {
@@ -62,17 +62,15 @@ namespace GreyOTron
                             await verifyUser.Verify(acInfo, guildUser, true);
                         }
                     }
-                }
-                catch (Exception e)
-                {
-                    if (currentUser != null)
+                    catch (Exception e)
                     {
-                        Log.TrackTrace(JsonConvert.SerializeObject(currentUser, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }));
+                        if (currentUser != null)
+                        {
+                            Log.TrackTrace(JsonConvert.SerializeObject(currentUser, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }));
+                        }
+                        Log.TrackException(e);
                     }
-                    Log.TrackException(e);
                 }
-
-                
                 await Task.Delay(interval);
             }
         }
