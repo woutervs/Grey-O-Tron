@@ -35,13 +35,31 @@ namespace GreyOTron
             await client.LoginAsync(TokenType.Bot, configuration["GreyOTron-Token"]);
             await client.StartAsync();
 
-            client.Ready += async () =>
-            {
-                UpdateStatistics();
-                await Task.CompletedTask;
-            };
-
+            client.Ready += Ready;
             client.MessageReceived += ClientOnMessageReceived;
+
+            //Bot should never stop.
+            await Task.Delay(-1);
+        }
+
+        private static void UpdateStatistics()
+        {
+            try
+            {
+                if (client.CurrentUser != null)
+                {
+                    discordBotsApi.UpdateStatistics(client.CurrentUser.Id.ToString(), new Statistics { ServerCount = client.Guilds.Count });
+                }
+            }
+            catch (Exception e)
+            {
+                Log.TrackException(e);
+            }
+        }
+
+        private static async Task Ready()
+        {
+            UpdateStatistics();
             var interval = TimeSpan.FromSeconds(10);
             while (true)
             {
@@ -76,21 +94,7 @@ namespace GreyOTron
                 }
                 await Task.Delay(interval);
             }
-        }
-
-        private static void UpdateStatistics()
-        {
-            try
-            {
-                if (client.CurrentUser != null)
-                {
-                    discordBotsApi.UpdateStatistics(client.CurrentUser.Id.ToString(), new Statistics { ServerCount = client.Guilds.Count });
-                }
-            }
-            catch (Exception e)
-            {
-                Log.TrackException(e);
-            }
+            //Don't have to return since bot never stops anyway.
         }
 
         private static async Task ClientOnMessageReceived(SocketMessage socketMessage)
