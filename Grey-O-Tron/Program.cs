@@ -17,6 +17,7 @@ namespace GreyOTron
     {
         private static IContainer container;
         private static DiscordSocketClient client;
+        private static DiscordBotsApi discordBotsApi;
         private static readonly TelemetryClient Log = new TelemetryClient();
         public static async Task Main()
         {
@@ -29,21 +30,14 @@ namespace GreyOTron
         {
             Log.TrackTrace("Bot started.");
             var configuration = container.Resolve<IConfiguration>();
-            var discordBotsApi = container.Resolve<DiscordBotsApi>();
+            discordBotsApi = container.Resolve<DiscordBotsApi>();
             client = new DiscordSocketClient();
             await client.LoginAsync(TokenType.Bot, configuration["GreyOTron-Token"]);
             await client.StartAsync();
 
             client.Ready += async () =>
             {
-                try
-                {
-                    discordBotsApi.UpdateStatistics(new Statistics { ServerCount = client.Guilds.Count });
-                }
-                catch (Exception e)
-                {
-                    Log.TrackException(e);
-                }
+                UpdateStatistics();
                 await Task.CompletedTask;
             };
 
@@ -54,6 +48,8 @@ namespace GreyOTron
                 await client.SetGameAsync($"help on https://greyotron.eu | v{VersionResolver.Get()}");
                 if (Math.Abs(DateTime.Now.TimeOfDay.Subtract(new TimeSpan(0, 23, 0, 0)).TotalMilliseconds) <= interval.TotalMilliseconds / 2)
                 {
+                    UpdateStatistics();
+
                     SocketGuildUser currentUser = null;
                     try
                     {
@@ -79,6 +75,21 @@ namespace GreyOTron
                     }
                 }
                 await Task.Delay(interval);
+            }
+        }
+
+        private static void UpdateStatistics()
+        {
+            try
+            {
+                if (client.CurrentUser != null)
+                {
+                    discordBotsApi.UpdateStatistics(client.CurrentUser.Id.ToString(), new Statistics { ServerCount = client.Guilds.Count });
+                }
+            }
+            catch (Exception e)
+            {
+                Log.TrackException(e);
             }
         }
 

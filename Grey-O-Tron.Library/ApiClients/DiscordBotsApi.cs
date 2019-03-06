@@ -16,14 +16,14 @@ namespace GreyOTron.Library.ApiClients
             this.configuration = configuration;
         }
 
-        public void UpdateStatistics(Statistics statistics)
+        public void UpdateStatistics(string botId, Statistics statistics)
         {
             var env = Environment.GetEnvironmentVariable("Environment");
             if (env == "Development") return;
 
             var client = new RestClient(BaseUrl);
             client.AddDefaultHeader("Authorization", configuration["DiscordBotsToken"]);
-            var request = new RestRequest($"bots/{configuration["DiscordBotId"]}/stats") { JsonSerializer = new JsonConvertRestSharpSerializer() };
+            var request = new RestRequest($"bots/{botId}/stats") { JsonSerializer = new JsonConvertRestSharpSerializer() };
             request.AddJsonBody(statistics);
             client.Execute(request, Method.POST);
         }
