@@ -35,7 +35,6 @@ namespace GreyOTron
             await client.LoginAsync(TokenType.Bot, configuration["GreyOTron-Token"]);
             await client.StartAsync();
 
-            var ready = false;
             client.Ready += async () =>
             {
                 UpdateStatistics();
@@ -54,28 +53,16 @@ namespace GreyOTron
                     SocketGuildUser currentUser = null;
                     try
                     {
-                        SocketGuildUser currentUser = null;
-                        try
+                        foreach (var guildUser in client.Guilds.SelectMany(x => x.Users))
                         {
-                            foreach (var guildUser in client.Guilds.SelectMany(x => x.Users))
-                            {
-                                currentUser = guildUser;
-                                var keyRepository = container.Resolve<KeyRepository>();
-                                var gw2Api = container.Resolve<Gw2Api>();
-                                var verifyUser = container.Resolve<VerifyUser>();
-                                var discordClientWithKey = await keyRepository.Get("Gw2", guildUser.Id.ToString());
-                                if (discordClientWithKey == null) continue;
-                                var acInfo = gw2Api.GetInformationForUserByKey(discordClientWithKey.Key);
-                                await verifyUser.Verify(acInfo, guildUser, true);
-                            }
-                        }
-                        catch (Exception e)
-                        {
-                            if (currentUser != null)
-                            {
-                                Log.TrackTrace(JsonConvert.SerializeObject(currentUser, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }));
-                            }
-                            Log.TrackException(e);
+                            currentUser = guildUser;
+                            var keyRepository = container.Resolve<KeyRepository>();
+                            var gw2Api = container.Resolve<Gw2Api>();
+                            var verifyUser = container.Resolve<VerifyUser>();
+                            var discordClientWithKey = await keyRepository.Get("Gw2", guildUser.Id.ToString());
+                            if (discordClientWithKey == null) continue;
+                            var acInfo = gw2Api.GetInformationForUserByKey(discordClientWithKey.Key);
+                            await verifyUser.Verify(acInfo, guildUser, true);
                         }
                     }
                     catch (Exception e)

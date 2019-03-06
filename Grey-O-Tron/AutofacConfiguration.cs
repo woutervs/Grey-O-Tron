@@ -37,7 +37,7 @@ namespace GreyOTron
                 builder.AddUserSecrets<Program>();
             }
             builder.AddJsonFile("app.json");
-            //builder.AddEnvironmentVariables();
+            builder.AddEnvironmentVariables();
             return builder.Build();
         }
     }
