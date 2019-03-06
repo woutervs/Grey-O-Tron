@@ -33,46 +33,47 @@ namespace GreyOTron
             await client.LoginAsync(TokenType.Bot, configuration["GreyOTron-Token"]);
             await client.StartAsync();
 
-            var isLoggedIn = false;
-            client.LoggedIn += async () =>
+            var ready = false;
+            client.Ready += async () =>
             {
-                isLoggedIn = true;
+                ready = true;
                 await Task.CompletedTask;
             };
 
             client.MessageReceived += ClientOnMessageReceived;
             var interval = TimeSpan.FromSeconds(10);
-            while (isLoggedIn == false || client.ConnectionState == ConnectionState.Connecting || client.ConnectionState == ConnectionState.Connected)
+            while (true)
             {
-                await client.SetGameAsync($"help on https://greyotron.eu | v{VersionResolver.Get()}");
-                SocketGuildUser currentUser = null;
-                try
+                if (ready)
                 {
+                    await client.SetGameAsync($"help on https://greyotron.eu | v{VersionResolver.Get()}");
                     if (Math.Abs(DateTime.Now.TimeOfDay.Subtract(new TimeSpan(0, 23, 0, 0)).TotalMilliseconds) <= interval.TotalMilliseconds / 2)
                     {
-                        foreach (var guildUser in client.Guilds.SelectMany(x => x.Users))
+                        SocketGuildUser currentUser = null;
+                        try
                         {
-                            currentUser = guildUser;
-                            var keyRepository = container.Resolve<KeyRepository>();
-                            var gw2Api = container.Resolve<Gw2Api>();
-                            var verifyUser = container.Resolve<VerifyUser>();
-                            var discordClientWithKey = await keyRepository.Get("Gw2", guildUser.Id.ToString());
-                            if (discordClientWithKey == null) continue;
-                            var acInfo = gw2Api.GetInformationForUserByKey(discordClientWithKey.Key);
-                            await verifyUser.Verify(acInfo, guildUser, true);
+                            foreach (var guildUser in client.Guilds.SelectMany(x => x.Users))
+                            {
+                                currentUser = guildUser;
+                                var keyRepository = container.Resolve<KeyRepository>();
+                                var gw2Api = container.Resolve<Gw2Api>();
+                                var verifyUser = container.Resolve<VerifyUser>();
+                                var discordClientWithKey = await keyRepository.Get("Gw2", guildUser.Id.ToString());
+                                if (discordClientWithKey == null) continue;
+                                var acInfo = gw2Api.GetInformationForUserByKey(discordClientWithKey.Key);
+                                await verifyUser.Verify(acInfo, guildUser, true);
+                            }
+                        }
+                        catch (Exception e)
+                        {
+                            if (currentUser != null)
+                            {
+                                Log.TrackTrace(JsonConvert.SerializeObject(currentUser, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }));
+                            }
+                            Log.TrackException(e);
                         }
                     }
                 }
-                catch (Exception e)
-                {
-                    if (currentUser != null)
-                    {
-                        Log.TrackTrace(JsonConvert.SerializeObject(currentUser, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }));
-                    }
-                    Log.TrackException(e);
-                }
-
-                
                 await Task.Delay(interval);
             }
         }
@@ -83,6 +84,7 @@ namespace GreyOTron
             {
                 var processor = container.Resolve<CommandProcessor>();
                 var command = processor.Parse(socketMessage.Content);
+                command.Client = client;
                 await command.Execute(socketMessage);
             }
             catch (Exception e)

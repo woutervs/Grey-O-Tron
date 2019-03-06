@@ -14,5 +14,6 @@ namespace GreyOTron.Library.Commands
         }
 
         public string Arguments { get; set; }
+        public DiscordSocketClient Client { get; set; }
     }
 }

@@ -12,5 +12,6 @@ namespace GreyOTron.Library.Commands
             await message.Author.SendMessageAsync($"You tried using '{Arguments}', unfortunately I haven't been taught that command.");
         }
         public string Arguments { get; set; }
+        public DiscordSocketClient Client { get; set; }
     }
 }
