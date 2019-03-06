@@ -17,6 +17,7 @@ namespace GreyOTron
     {
         private static IContainer container;
         private static DiscordSocketClient client;
+        private static DiscordBotsApi discordBotsApi;
         private static readonly TelemetryClient Log = new TelemetryClient();
         public static async Task Main()
         {
@@ -29,6 +30,7 @@ namespace GreyOTron
         {
             Log.TrackTrace("Bot started.");
             var configuration = container.Resolve<IConfiguration>();
+            discordBotsApi = container.Resolve<DiscordBotsApi>();
             client = new DiscordSocketClient();
             await client.LoginAsync(TokenType.Bot, configuration["GreyOTron-Token"]);
             await client.StartAsync();
@@ -36,7 +38,7 @@ namespace GreyOTron
             var ready = false;
             client.Ready += async () =>
             {
-                ready = true;
+                UpdateStatistics();
                 await Task.CompletedTask;
             };
 
@@ -44,10 +46,13 @@ namespace GreyOTron
             var interval = TimeSpan.FromSeconds(10);
             while (true)
             {
-                if (ready)
+                await client.SetGameAsync($"help on https://greyotron.eu | v{VersionResolver.Get()}");
+                if (Math.Abs(DateTime.Now.TimeOfDay.Subtract(new TimeSpan(0, 23, 0, 0)).TotalMilliseconds) <= interval.TotalMilliseconds / 2)
                 {
-                    await client.SetGameAsync($"help on https://greyotron.eu | v{VersionResolver.Get()}");
-                    if (Math.Abs(DateTime.Now.TimeOfDay.Subtract(new TimeSpan(0, 23, 0, 0)).TotalMilliseconds) <= interval.TotalMilliseconds / 2)
+                    UpdateStatistics();
+
+                    SocketGuildUser currentUser = null;
+                    try
                     {
                         SocketGuildUser currentUser = null;
                         try
@@ -73,8 +78,31 @@ namespace GreyOTron
                             Log.TrackException(e);
                         }
                     }
+                    catch (Exception e)
+                    {
+                        if (currentUser != null)
+                        {
+                            Log.TrackTrace(JsonConvert.SerializeObject(currentUser, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }));
+                        }
+                        Log.TrackException(e);
+                    }
                 }
                 await Task.Delay(interval);
+            }
+        }
+
+        private static void UpdateStatistics()
+        {
+            try
+            {
+                if (client.CurrentUser != null)
+                {
+                    discordBotsApi.UpdateStatistics(client.CurrentUser.Id.ToString(), new Statistics { ServerCount = client.Guilds.Count });
+                }
+            }
+            catch (Exception e)
+            {
+                Log.TrackException(e);
             }
         }
 
