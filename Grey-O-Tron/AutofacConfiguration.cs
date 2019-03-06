@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
-using System.Reflection;
 using Autofac;
 using Autofac.Core;
-using Autofac.Extras.AttributeMetadata;
-using GreyOTron.Library.Commands;
 using GreyOTron.Library.Helpers;
 using Microsoft.Extensions.Configuration;
 
@@ -40,7 +37,7 @@ namespace GreyOTron
                 builder.AddUserSecrets<Program>();
             }
             builder.AddJsonFile("app.json");
-            builder.AddEnvironmentVariables();
+            //builder.AddEnvironmentVariables();
             return builder.Build();
         }
     }

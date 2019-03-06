@@ -1,4 +1,5 @@
-﻿using GreyOTron.Library.Helpers;
+﻿using System;
+using GreyOTron.Library.Helpers;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using RestSharp;
@@ -17,9 +18,12 @@ namespace GreyOTron.Library.ApiClients
 
         public void UpdateStatistics(Statistics statistics)
         {
+            var env = Environment.GetEnvironmentVariable("Environment");
+            if (env == "Development") return;
+
             var client = new RestClient(BaseUrl);
             client.AddDefaultHeader("Authorization", configuration["DiscordBotsToken"]);
-            var request = new RestRequest($"bots/{configuration["DiscordBotId"]}/stats") {JsonSerializer = new JsonConvertRestSharpSerializer()};
+            var request = new RestRequest($"bots/{configuration["DiscordBotId"]}/stats") { JsonSerializer = new JsonConvertRestSharpSerializer() };
             request.AddJsonBody(statistics);
             client.Execute(request, Method.POST);
         }
