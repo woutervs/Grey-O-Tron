@@ -1,6 +1,7 @@
 ﻿using System.Reflection;
 using Autofac;
 using Autofac.Extras.AttributeMetadata;
+using Microsoft.ApplicationInsights;
 
 namespace GreyOTron.Library.Helpers
 {
@@ -15,6 +16,8 @@ namespace GreyOTron.Library.Helpers
 
             builder.RegisterAssemblyTypes(Assembly.GetExecutingAssembly()).AsSelf().AsImplementedInterfaces().SingleInstance()
                 .Except<ICommand>();
+
+            builder.RegisterType<TelemetryClient>().AsSelf();
         }
     }
 }
