@@ -23,9 +23,13 @@ namespace GreyOTron.Library.Helpers
         {
             var worlds =
                 (await discordGuildSettingsRepository.Get(DiscordGuildSetting.World, guildUser.Guild.Id.ToString())).Select(x =>
-                    x.Value);
+                    x.Value).ToList();
             var mainWorld = (await discordGuildSettingsRepository.Get(DiscordGuildSetting.MainWorld, guildUser.Guild.Id.ToString())).Select(x =>
                 x.Value).FirstOrDefault();
+            if (!worlds.Contains(mainWorld))
+            {
+                worlds.Add(mainWorld);
+            }
 
             var userOwnedRolesMatchingWorlds = guildUser.Roles.Where(x => worlds.Contains(x.Name.ToLowerInvariant()) || x.Name.Equals(LinkedServerRole, StringComparison.InvariantCultureIgnoreCase)).ToList();
 
