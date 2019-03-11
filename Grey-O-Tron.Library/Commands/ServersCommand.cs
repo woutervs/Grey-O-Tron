@@ -11,17 +11,14 @@ namespace GreyOTron.Library.Commands
     {
         public async Task Execute(SocketMessage message)
         {
-            if (message.Author is SocketGuildUser guildUser)
+            if (message.Author.Id == 188365172757233664)
             {
-                if (guildUser.Id == 188365172757233664)
-                {
-                    var guilds = Client.Guilds.Aggregate("", (s, guild) => s += guild.Name + "\n");
-                    await guildUser.SendMessageAsync($"Total: {Client.Guilds.Count}\n{guilds}");
-                }
-                else
-                {
-                    await guildUser.SendMessageAsync($"I'm sorry you're not authorized to receive this kind of information.");
-                }
+                var guilds = Client.Guilds.Aggregate("", (s, guild) => s += guild.Name + "\n");
+                await message.Author.SendMessageAsync($"Total: {Client.Guilds.Count}\n{guilds}");
+            }
+            else
+            {
+                await message.Author.SendMessageAsync("I'm sorry you're not authorized to receive this kind of information.");
             }
             if (!(message.Channel is SocketDMChannel))
             {
