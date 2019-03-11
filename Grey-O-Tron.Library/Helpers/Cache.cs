@@ -23,5 +23,11 @@ namespace GreyOTron.Library.Helpers
 
             return obj;
         }
+
+        public void RemoveFromCache(string name)
+        {
+            var cache = MemoryCache.Default;
+            cache.Remove(name, CacheEntryRemovedReason.Removed);
+        }
     }
 }

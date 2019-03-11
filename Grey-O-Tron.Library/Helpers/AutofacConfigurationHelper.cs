@@ -1,7 +1,6 @@
 ﻿using System.Reflection;
 using Autofac;
 using Autofac.Extras.AttributeMetadata;
-using GreyOTron.Library.Commands;
 
 namespace GreyOTron.Library.Helpers
 {

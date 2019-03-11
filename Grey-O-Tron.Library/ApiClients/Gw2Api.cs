@@ -14,11 +14,12 @@ namespace GreyOTron.Library.ApiClients
     {
         private const string BaseUrl = "https://api.guildwars2.com";
         private readonly Cache cache;
-        private static readonly TelemetryClient Log = new TelemetryClient();
+        private readonly TelemetryClient log;
 
-        public Gw2Api(Cache cache)
+        public Gw2Api(TelemetryClient log, Cache cache)
         {
             this.cache = cache;
+            this.log = log;
         }
         public AccountInfo GetInformationForUserByKey(string key)
         {
@@ -33,14 +34,14 @@ namespace GreyOTron.Library.ApiClients
             var accountWorld = GetWorlds().FirstOrDefault(x => x.Id == account.World);
             if (accountWorld == null)
             {
-                Log.TrackTrace("No world found for user", new Dictionary<string, string> { { "account", JsonConvert.SerializeObject(account) } });
+                log.TrackTrace("No world found for user", new Dictionary<string, string> { { "account", JsonConvert.SerializeObject(account) } });
                 return account;
             }
             account.WorldInfo = SetLinkedWorlds(accountWorld);
             return account;
         }
 
-        private IEnumerable<World> GetWorlds()
+        public IEnumerable<World> GetWorlds()
         {
             return cache.GetFromCache("worlds", TimeSpan.FromDays(1), () =>
             {

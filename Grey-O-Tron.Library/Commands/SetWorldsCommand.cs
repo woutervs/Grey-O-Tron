@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Discord;
@@ -6,33 +7,46 @@ using Discord.WebSocket;
 using GreyOTron.Library.ApiClients;
 using GreyOTron.Library.Helpers;
 using GreyOTron.Library.TableStorage;
+using Microsoft.Extensions.Configuration;
 
 namespace GreyOTron.Library.Commands
 {
-    [Command("gw2-set-worlds", CommandDescription = "Stores worlds where roles will be assigned for to the database.", CommandArguments = "{world (name|id);world (name|id);...}", CommandOptions = CommandOptions.DiscordServer | CommandOptions.RequiresAdmin)]
+    [Command("gw2-set-worlds", CommandDescription = "Stores worlds where roles will be assigned for to the database.", CommandArguments = "{world (name|id);world (name|id);...}|{all}", CommandOptions = CommandOptions.DiscordServer | CommandOptions.RequiresAdmin)]
     public class SetWorldsCommand : ICommand
     {
         private readonly DiscordGuildSettingsRepository discordGuildSettingsRepository;
         private readonly Gw2Api gw2Api;
+        private readonly IConfiguration configuration;
 
-        public SetWorldsCommand(DiscordGuildSettingsRepository discordGuildSettingsRepository, Gw2Api gw2Api)
+        public SetWorldsCommand(DiscordGuildSettingsRepository discordGuildSettingsRepository, Gw2Api gw2Api, IConfiguration configuration)
         {
             this.discordGuildSettingsRepository = discordGuildSettingsRepository;
             this.gw2Api = gw2Api;
+            this.configuration = configuration;
         }
 
         public async Task Execute(SocketMessage message)
         {
             if (message.Author is SocketGuildUser guildUser)
             {
-                var worlds = Arguments.TrimEnd(';', ',').Split(new[] { ',', ';' }, StringSplitOptions.RemoveEmptyEntries)
-                    .Select(gw2Api.ParseWorld).Where(x => x != null).Distinct().ToList();
+                List<World> worlds;
+                if (Arguments.Equals("all", StringComparison.InvariantCultureIgnoreCase))
+                {
+                    worlds = gw2Api.GetWorlds().ToList();
+                }
+                else
+                {
+
+                    worlds = Arguments.TrimEnd(';', ',').Split(new[] { ',', ';' }, StringSplitOptions.RemoveEmptyEntries)
+                        .Select(gw2Api.ParseWorld).Where(x => x != null).Distinct().ToList();
+                }
+
                 if (!worlds.Any())
                 {
                     await message.Author.SendMessageAsync(
                         "You must give at least one world name separated by ; for the set-worlds command to work.");
                 }
-                else if (guildUser.GuildPermissions.Administrator || guildUser.Id == 188365172757233664)
+                else if (guildUser.GuildPermissions.Administrator || guildUser.Id == ulong.Parse(configuration["OwnerId"]))
                 {
                     await discordGuildSettingsRepository.Clear(DiscordGuildSetting.World, guildUser.Guild.Id.ToString());
                     foreach (var world in worlds)

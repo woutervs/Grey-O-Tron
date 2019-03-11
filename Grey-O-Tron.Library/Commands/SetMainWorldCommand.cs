@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using Discord;
@@ -7,6 +6,7 @@ using Discord.WebSocket;
 using GreyOTron.Library.ApiClients;
 using GreyOTron.Library.Helpers;
 using GreyOTron.Library.TableStorage;
+using Microsoft.Extensions.Configuration;
 
 namespace GreyOTron.Library.Commands
 {
@@ -15,11 +15,13 @@ namespace GreyOTron.Library.Commands
     {
         private readonly DiscordGuildSettingsRepository discordGuildSettingsRepository;
         private readonly Gw2Api gw2Api;
+        private readonly IConfiguration configuration;
 
-        public SetMainWorldCommand(DiscordGuildSettingsRepository discordGuildSettingsRepository, Gw2Api gw2Api)
+        public SetMainWorldCommand(DiscordGuildSettingsRepository discordGuildSettingsRepository, Gw2Api gw2Api, IConfiguration configuration)
         {
             this.discordGuildSettingsRepository = discordGuildSettingsRepository;
             this.gw2Api = gw2Api;
+            this.configuration = configuration;
         }
 
 
@@ -33,7 +35,7 @@ namespace GreyOTron.Library.Commands
                 {
                     await message.Author.SendMessageAsync($"Could not resolve your world from '{Arguments}'");
                 }
-                else if (guildUser.GuildPermissions.Administrator || guildUser.Id == 188365172757233664)
+                else if (guildUser.GuildPermissions.Administrator || guildUser.Id == ulong.Parse(configuration["OwnerId"]))
                 {
                     await discordGuildSettingsRepository.Clear(DiscordGuildSetting.MainWorld, guildUser.Guild.Id.ToString());
                     await discordGuildSettingsRepository.Set(new DiscordGuildSetting(guildUser.Guild.Id.ToString(), guildUser.Guild.Name, DiscordGuildSetting.MainWorld,

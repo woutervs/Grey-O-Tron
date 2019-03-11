@@ -18,17 +18,18 @@ namespace GreyOTron
         private static IContainer container;
         private static DiscordSocketClient client;
         private static DiscordBotsApi discordBotsApi;
-        private static readonly TelemetryClient Log = new TelemetryClient();
+        private static TelemetryClient log;
         public static async Task Main()
         {
             container = AutofacConfiguration.Build();
+            log = container.Resolve<TelemetryClient>();
             await Setup();
             Environment.Exit(-1);
         }
 
         private static async Task Setup()
         {
-            Log.TrackTrace("Bot started.");
+            log.TrackTrace("Bot started.");
             var configuration = container.Resolve<IConfiguration>();
             discordBotsApi = container.Resolve<DiscordBotsApi>();
             client = new DiscordSocketClient();
@@ -53,7 +54,7 @@ namespace GreyOTron
             }
             catch (Exception e)
             {
-                Log.TrackException(e);
+                log.TrackException(e);
             }
         }
 
@@ -87,9 +88,9 @@ namespace GreyOTron
                     {
                         if (currentUser != null)
                         {
-                            Log.TrackTrace(JsonConvert.SerializeObject(currentUser, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }));
+                            log.TrackTrace(JsonConvert.SerializeObject(currentUser, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }));
                         }
-                        Log.TrackException(e);
+                        log.TrackException(e);
                     }
                 }
                 await Task.Delay(interval);
@@ -108,9 +109,9 @@ namespace GreyOTron
             }
             catch (Exception e)
             {
-                Log.TrackTrace($"{socketMessage.Author.Username}#{socketMessage.Author.Discriminator}");
-                Log.TrackTrace(socketMessage.Content);
-                Log.TrackException(e);
+                log.TrackTrace($"{socketMessage.Author.Username}#{socketMessage.Author.Discriminator}");
+                log.TrackTrace(socketMessage.Content);
+                log.TrackException(e);
             }
 
         }

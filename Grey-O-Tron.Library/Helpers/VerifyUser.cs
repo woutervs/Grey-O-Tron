@@ -12,11 +12,13 @@ namespace GreyOTron.Library.Helpers
     public class VerifyUser
     {
         private readonly DiscordGuildSettingsRepository discordGuildSettingsRepository;
+        private readonly Cache cache;
         private const string LinkedServerRole = "Linked Server";
 
-        public VerifyUser(DiscordGuildSettingsRepository discordGuildSettingsRepository)
+        public VerifyUser(DiscordGuildSettingsRepository discordGuildSettingsRepository, Cache cache)
         {
             this.discordGuildSettingsRepository = discordGuildSettingsRepository;
+            this.cache = cache;
         }
 
         public async Task Verify(AccountInfo gw2AccountInfo, SocketGuildUser guildUser, bool bypassNotBelongingMessage = false)
@@ -69,20 +71,20 @@ namespace GreyOTron.Library.Helpers
                 string.Equals(x.Name, roleName, StringComparison.InvariantCultureIgnoreCase));
             if (roleExistsAlready == null)
             {
-                var role = guildUser.Guild.Roles.FirstOrDefault(x => x.Name == roleName);
-
-
-                if (role == null)
+                var cachedName = $"roles::{guildUser.Guild.Id}::{roleName}";
+                var role = cache.GetFromCache(cachedName, TimeSpan.FromDays(1), () =>
                 {
-                    var restRole =
-                        await guildUser.Guild.CreateRoleAsync(roleName, GuildPermissions.None);
-                    await guildUser.AddRoleAsync(restRole);
-                }
-                else
+                    return guildUser.Guild.Roles.FirstOrDefault(x => x.Name == roleName) ?? (IRole)guildUser.Guild.CreateRoleAsync(roleName, GuildPermissions.None).Result;
+                });
+                try
                 {
                     await guildUser.AddRoleAsync(role);
                 }
-
+                catch (Exception)
+                {
+                    cache.RemoveFromCache(cachedName);
+                    await CreateRoleIfNotExistsAndAssignIfNeeded(guildUser, userOwnedRolesMatchingWorlds, roleName);
+                }
                 await guildUser.SendMessageAsync($"You have been assigned role: {roleName} on {guildUser.Guild.Name}");
             }
             userOwnedRolesMatchingWorlds.Remove(roleExistsAlready);

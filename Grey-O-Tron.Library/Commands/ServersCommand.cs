@@ -3,17 +3,24 @@ using System.Threading.Tasks;
 using Discord;
 using Discord.WebSocket;
 using GreyOTron.Library.Helpers;
+using Microsoft.Extensions.Configuration;
 
 namespace GreyOTron.Library.Commands
 {
     [Command("servers", CommandDescription = "Returns all the severs where this bot is invited on.", CommandOptions = CommandOptions.RequiresOwner)]
     public class ServersCommand : ICommand
     {
+        private readonly IConfiguration configuration;
+
+        public ServersCommand(IConfiguration configuration)
+        {
+            this.configuration = configuration;
+        }
         public async Task Execute(SocketMessage message)
         {
-            if (message.Author.Id == 188365172757233664)
+            if (message.Author.Id == ulong.Parse(configuration["OwnerId"]))
             {
-                var guilds = Client.Guilds.Aggregate("", (s, guild) => s += guild.Name + "\n");
+                var guilds = Client.Guilds.Aggregate("", (s, guild) => $"{s}{guild.Name}\n");
                 await message.Author.SendMessageAsync($"Total: {Client.Guilds.Count}\n{guilds}");
             }
             else
