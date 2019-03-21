@@ -35,6 +35,7 @@ namespace GreyOTron.Library.ApiClients
                 {
                     var account = accountResponse.Data;
                     account.TokenInfo = tokenInfoResponse.Data;
+                    account.ValidKey = true;
                     var accountWorld = GetWorlds().FirstOrDefault(x => x.Id == account.World);
                     if (accountWorld != null)
                     {
