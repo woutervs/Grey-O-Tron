@@ -1,12 +1,12 @@
-﻿using System;
+﻿using GreyOTron.Library.Helpers;
+using Microsoft.ApplicationInsights;
+using Newtonsoft.Json.Linq;
+using RestSharp;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using GreyOTron.Library.Helpers;
-using Microsoft.ApplicationInsights;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using RestSharp;
+using System.Net;
 
 namespace GreyOTron.Library.ApiClients
 {
@@ -38,15 +38,44 @@ namespace GreyOTron.Library.ApiClients
                     var accountWorld = GetWorlds().FirstOrDefault(x => x.Id == account.World);
                     if (accountWorld != null)
                     {
-                        account.WorldInfo = SetLinkedWorlds(accountWorld);                       
+                        account.WorldInfo = SetLinkedWorlds(accountWorld);
                         return account;
                     }
                 }
-                log.TrackException(accountResponse.ErrorException);
+                if (tokenInfoResponse.StatusCode == HttpStatusCode.BadRequest && !string.IsNullOrWhiteSpace(tokenInfoResponse.Content))
+                {
+                    var json = JObject.Parse(tokenInfoResponse.Content);
+                    if ((json?["text"]?.Value<string>() ?? "").Equals("invalid key"))
+                    {
+                        return new AccountInfo { ValidKey = false };
+                    }
+                }
+                else
+                {
+                    log.TrackException(accountResponse.ErrorException,
+                        new Dictionary<string, string>
+                        {
+                            {"ErrorMessage", accountResponse.ErrorMessage}, {"Content", accountResponse.Content},
+                            {"Section", "accountResponse"}
+                        });
+                }
             }
             else
             {
-                log.TrackException(tokenInfoResponse.ErrorException);
+                if (tokenInfoResponse.StatusCode == HttpStatusCode.BadRequest && !string.IsNullOrWhiteSpace(tokenInfoResponse.Content))
+                {
+                    var json = JObject.Parse(tokenInfoResponse.Content);
+                    if ((json?["text"]?.Value<string>() ?? "").Equals("invalid key"))
+                    {
+                        return new AccountInfo { ValidKey = false };
+                    }
+                }
+                else
+                {
+                    log.TrackException(tokenInfoResponse.ErrorException,
+                        new Dictionary<string, string>
+                            {{"ErrorMessage", tokenInfoResponse.ErrorMessage}, {"Content", tokenInfoResponse.Content}, {"Section","tokenInfoResponse"}});
+                }
             }
             return null;
         }
@@ -119,6 +148,7 @@ namespace GreyOTron.Library.ApiClients
         public int World { get; set; }
         public World WorldInfo { get; set; }
         public TokenInfo TokenInfo { get; set; }
+        public bool ValidKey { get; set; }
     }
 
 

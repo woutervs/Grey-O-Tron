@@ -46,6 +46,10 @@ namespace GreyOTron.Library.Helpers
                     LinkedServerRole, bypassMessages);
 
             }
+            else if(!gw2AccountInfo.ValidKey)
+            {
+                await guildUser.SendMessageAsync("Your api-key is invalid, please set a new one and re-verify.");
+            }
             else
             {
                 if (!bypassMessages)
