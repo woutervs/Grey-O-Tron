@@ -21,7 +21,7 @@ namespace GreyOTron.Library.Helpers
             this.cache = cache;
         }
 
-        public async Task Verify(AccountInfo gw2AccountInfo, SocketGuildUser guildUser, bool bypassNotBelongingMessage = false)
+        public async Task Verify(AccountInfo gw2AccountInfo, SocketGuildUser guildUser, bool bypassMessages = false)
         {
             var worlds =
                 (await discordGuildSettingsRepository.Get(DiscordGuildSetting.World, guildUser.Guild.Id.ToString())).Select(x =>
@@ -37,18 +37,18 @@ namespace GreyOTron.Library.Helpers
 
             if (gw2AccountInfo.WorldInfo != null && worlds.Contains(gw2AccountInfo.WorldInfo.Name.ToLowerInvariant()))
             {
-                await CreateRoleIfNotExistsAndAssignIfNeeded(guildUser, userOwnedRolesMatchingWorlds, gw2AccountInfo.WorldInfo.Name);
+                await CreateRoleIfNotExistsAndAssignIfNeeded(guildUser, userOwnedRolesMatchingWorlds, gw2AccountInfo.WorldInfo.Name, bypassMessages);
 
             }
             else if (gw2AccountInfo.WorldInfo != null && gw2AccountInfo.WorldInfo.LinkedWorlds.Any(x => string.Equals(x.Name, mainWorld, StringComparison.InvariantCultureIgnoreCase)))
             {
                 await CreateRoleIfNotExistsAndAssignIfNeeded(guildUser, userOwnedRolesMatchingWorlds,
-                    LinkedServerRole);
+                    LinkedServerRole, bypassMessages);
 
             }
             else
             {
-                if (!bypassNotBelongingMessage)
+                if (!bypassMessages)
                 {
                     if (gw2AccountInfo.WorldInfo == null)
                     {
@@ -65,7 +65,7 @@ namespace GreyOTron.Library.Helpers
             await guildUser.RemoveRolesAsync(userOwnedRolesMatchingWorlds);
         }
 
-        private async Task CreateRoleIfNotExistsAndAssignIfNeeded(SocketGuildUser guildUser, List<SocketRole> userOwnedRolesMatchingWorlds, string roleName)
+        private async Task CreateRoleIfNotExistsAndAssignIfNeeded(SocketGuildUser guildUser, List<SocketRole> userOwnedRolesMatchingWorlds, string roleName, bool bypassMessages)
         {
             var roleExistsAlready = userOwnedRolesMatchingWorlds.FirstOrDefault(x =>
                 string.Equals(x.Name, roleName, StringComparison.InvariantCultureIgnoreCase));
@@ -83,9 +83,12 @@ namespace GreyOTron.Library.Helpers
                 catch (Exception)
                 {
                     cache.RemoveFromCache(cachedName);
-                    await CreateRoleIfNotExistsAndAssignIfNeeded(guildUser, userOwnedRolesMatchingWorlds, roleName);
+                    await CreateRoleIfNotExistsAndAssignIfNeeded(guildUser, userOwnedRolesMatchingWorlds, roleName, bypassMessages);
                 }
-                await guildUser.SendMessageAsync($"You have been assigned role: {roleName} on {guildUser.Guild.Name}");
+                if (!bypassMessages)
+                {
+                    await guildUser.SendMessageAsync($"You have been assigned role: {roleName} on {guildUser.Guild.Name}");
+                }
             }
             userOwnedRolesMatchingWorlds.Remove(roleExistsAlready);
         }

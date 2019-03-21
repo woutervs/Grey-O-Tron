@@ -26,19 +26,29 @@ namespace GreyOTron.Library.ApiClients
             var client = new RestClient(BaseUrl);
             client.AddDefaultHeader("Authorization", $"Bearer {key}");
             var request = new RestRequest("v2/tokeninfo");
-            var tokenInfo = client.Execute<TokenInfo>(request, Method.GET).Data;
-
-            request = new RestRequest("v2/account");
-            var account = client.Execute<AccountInfo>(request, Method.GET).Data;
-            account.TokenInfo = tokenInfo;
-            var accountWorld = GetWorlds().FirstOrDefault(x => x.Id == account.World);
-            if (accountWorld == null)
+            var tokenInfoResponse = client.Execute<TokenInfo>(request, Method.GET);
+            if (tokenInfoResponse.IsSuccessful)
             {
-                log.TrackTrace("No world found for user", new Dictionary<string, string> { { "account", JsonConvert.SerializeObject(account) } });
-                return account;
+                request = new RestRequest("v2/account");
+                var accountResponse = client.Execute<AccountInfo>(request, Method.GET);
+                if (accountResponse.IsSuccessful)
+                {
+                    var account = accountResponse.Data;
+                    account.TokenInfo = tokenInfoResponse.Data;
+                    var accountWorld = GetWorlds().FirstOrDefault(x => x.Id == account.World);
+                    if (accountWorld != null)
+                    {
+                        account.WorldInfo = SetLinkedWorlds(accountWorld);                       
+                        return account;
+                    }
+                }
+                log.TrackException(accountResponse.ErrorException);
             }
-            account.WorldInfo = SetLinkedWorlds(accountWorld);
-            return account;
+            else
+            {
+                log.TrackException(tokenInfoResponse.ErrorException);
+            }
+            return null;
         }
 
         public IEnumerable<World> GetWorlds()

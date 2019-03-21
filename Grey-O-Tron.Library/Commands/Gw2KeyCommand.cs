@@ -34,7 +34,11 @@ namespace GreyOTron.Library.Commands
             else
             {
                 var acInfo = gw2Api.GetInformationForUserByKey(key);
-                if (acInfo.TokenInfo != null && acInfo.TokenInfo.Name == $"{message.Author.Username}#{message.Author.Discriminator}")
+                if (acInfo == null)
+                {
+                    await message.Author.SendMessageAsync("The GW2Api is unavailable at this time, please try again later.");
+                }
+                else if (acInfo.TokenInfo != null && acInfo.TokenInfo.Name == $"{message.Author.Username}#{message.Author.Discriminator}")
                 {
                     await gw2KeyRepository.Set(new DiscordClientWithKey("Gw2", message.Author.Id.ToString(),
                         $"{message.Author.Username}#{message.Author.Discriminator}", key));

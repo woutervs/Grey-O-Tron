@@ -61,36 +61,36 @@ namespace GreyOTron
         private static async Task Ready()
         {
             UpdateStatistics();
-            var interval = TimeSpan.FromSeconds(10);
+            var interval = TimeSpan.FromSeconds(30);
             while (true)
             {
                 await client.SetGameAsync($"help on https://greyotron.eu | v{VersionResolver.Get()}");
-                if (Math.Abs(DateTime.Now.TimeOfDay.Subtract(new TimeSpan(0, 23, 0, 0)).TotalMilliseconds) <= interval.TotalMilliseconds / 2)
+                if (Math.Abs(DateTime.Now.TimeOfDay.Subtract(new TimeSpan(0, 21, 0, 0)).TotalMilliseconds) <= interval.TotalMilliseconds / 2)
                 {
                     UpdateStatistics();
-
-                    SocketGuildUser currentUser = null;
-                    try
+                    foreach (var guildUser in client.Guilds.SelectMany(x => x.Users))
                     {
-                        foreach (var guildUser in client.Guilds.SelectMany(x => x.Users))
+                        try
                         {
-                            currentUser = guildUser;
                             var keyRepository = container.Resolve<KeyRepository>();
                             var gw2Api = container.Resolve<Gw2Api>();
                             var verifyUser = container.Resolve<VerifyUser>();
                             var discordClientWithKey = await keyRepository.Get("Gw2", guildUser.Id.ToString());
                             if (discordClientWithKey == null) continue;
                             var acInfo = gw2Api.GetInformationForUserByKey(discordClientWithKey.Key);
-                            await verifyUser.Verify(acInfo, guildUser, true);
+                            if (acInfo != null)
+                            {
+                                await verifyUser.Verify(acInfo, guildUser, true);
+                            }
                         }
-                    }
-                    catch (Exception e)
-                    {
-                        if (currentUser != null)
+                        catch (Exception e)
                         {
-                            log.TrackTrace(JsonConvert.SerializeObject(currentUser, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }));
+                            if (guildUser != null)
+                            {
+                                log.TrackTrace(JsonConvert.SerializeObject(guildUser, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }));
+                            }
+                            log.TrackException(e);
                         }
-                        log.TrackException(e);
                     }
                 }
                 await Task.Delay(interval);
