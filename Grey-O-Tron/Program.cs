@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Autofac;
@@ -9,7 +10,6 @@ using GreyOTron.Library.Helpers;
 using GreyOTron.Library.TableStorage;
 using Microsoft.ApplicationInsights;
 using Microsoft.Extensions.Configuration;
-using Newtonsoft.Json;
 
 namespace GreyOTron
 {
@@ -87,9 +87,14 @@ namespace GreyOTron
                         {
                             if (guildUser != null)
                             {
-                                log.TrackTrace(JsonConvert.SerializeObject(guildUser, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }));
+                                log.TrackException(e, new Dictionary<string, string> { { "DiscordUser", $"{guildUser.Username}#{guildUser.Discriminator}" } });
                             }
-                            log.TrackException(e);
+                            else
+                            {
+                                log.TrackException(e);
+                            }
+
+
                         }
                     }
                 }
@@ -109,9 +114,12 @@ namespace GreyOTron
             }
             catch (Exception e)
             {
-                log.TrackTrace($"{socketMessage.Author.Username}#{socketMessage.Author.Discriminator}");
-                log.TrackTrace(socketMessage.Content);
-                log.TrackException(e);
+                log.TrackException(e, new Dictionary<string, string>
+                {
+                    {"DiscordUser", $"{socketMessage.Author.Username}#{socketMessage.Author.Discriminator}" },
+                    {"Command", socketMessage.Content }
+
+                });
             }
 
         }
