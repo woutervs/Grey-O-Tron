@@ -33,16 +33,6 @@ namespace GreyOTron.Library.Helpers
                 return;
             }
 
-            if(!gw2AccountInfo.ValidKey)
-            {
-                await guildUser.SendMessageAsync("Your api-key is invalid, please set a new one and re-verify.");
-            }
-            else if(gw2AccountInfo.TokenInfo.Name == $"{guildUser.Username}#{guildUser.Discriminator}")
-            {
-                await guildUser.SendMessageAsync($"Please make sure your GW2 application key's name is the same as your discord username: {guildUser.Username}#{guildUser.Discriminator}");
-                await guildUser.SendMessageAsync("You can view, create and edit your GW2 application key's on https://account.arena.net/applications");
-            }
-
             var worlds =
                 (await discordGuildSettingsRepository.Get(DiscordGuildSetting.World, guildUser.Guild.Id.ToString())).Select(x =>
                     x.Value).ToList();
@@ -55,32 +45,45 @@ namespace GreyOTron.Library.Helpers
 
             var userOwnedRolesMatchingWorlds = guildUser.Roles.Where(x => worlds.Contains(x.Name.ToLowerInvariant()) || x.Name.Equals(LinkedServerRole, StringComparison.InvariantCultureIgnoreCase)).ToList();
 
-            if (gw2AccountInfo.WorldInfo != null && worlds.Contains(gw2AccountInfo.WorldInfo.Name.ToLowerInvariant()))
+            if (!gw2AccountInfo.ValidKey)
             {
-                await CreateRoleIfNotExistsAndAssignIfNeeded(guildUser, userOwnedRolesMatchingWorlds, gw2AccountInfo.WorldInfo.Name, bypassMessages);
-
+                await guildUser.SendMessageAsync("Your api-key is invalid, please set a new one and re-verify.");
             }
-            else if (gw2AccountInfo.WorldInfo != null && gw2AccountInfo.WorldInfo.LinkedWorlds.Any(x => string.Equals(x.Name, mainWorld, StringComparison.InvariantCultureIgnoreCase)))
+            else if (gw2AccountInfo.TokenInfo.Name != $"{guildUser.Username}#{guildUser.Discriminator}")
             {
-                await CreateRoleIfNotExistsAndAssignIfNeeded(guildUser, userOwnedRolesMatchingWorlds,
-                    LinkedServerRole, bypassMessages);
-
+                await guildUser.SendMessageAsync($"Please make sure your GW2 application key's name is the same as your discord username: {guildUser.Username}#{guildUser.Discriminator}");
+                await guildUser.SendMessageAsync("You can view, create and edit your GW2 application key's on https://account.arena.net/applications");
             }
             else
             {
-                if (!bypassMessages)
+                if (gw2AccountInfo.WorldInfo != null && worlds.Contains(gw2AccountInfo.WorldInfo.Name.ToLowerInvariant()))
                 {
-                    if (gw2AccountInfo.WorldInfo == null)
+                    await CreateRoleIfNotExistsAndAssignIfNeeded(guildUser, userOwnedRolesMatchingWorlds, gw2AccountInfo.WorldInfo.Name, bypassMessages);
+
+                }
+                else if (gw2AccountInfo.WorldInfo != null && gw2AccountInfo.WorldInfo.LinkedWorlds.Any(x => string.Equals(x.Name, mainWorld, StringComparison.InvariantCultureIgnoreCase)))
+                {
+                    await CreateRoleIfNotExistsAndAssignIfNeeded(guildUser, userOwnedRolesMatchingWorlds,
+                        LinkedServerRole, bypassMessages);
+
+                }
+                else
+                {
+                    if (!bypassMessages)
                     {
-                        await guildUser.SendMessageAsync($"Could not assign world roles on '{guildUser.Guild.Name}'");
-                    }
-                    else
-                    {
-                        await guildUser.SendMessageAsync(
-                            $"Your gw2 world does not belong to the verified worlds of '{guildUser.Guild.Name}' discord server, I can't assign your world role sorry!");
+                        if (gw2AccountInfo.WorldInfo == null)
+                        {
+                            await guildUser.SendMessageAsync($"Could not assign world roles on '{guildUser.Guild.Name}'");
+                        }
+                        else
+                        {
+                            await guildUser.SendMessageAsync(
+                                $"Your gw2 world does not belong to the verified worlds of '{guildUser.Guild.Name}' discord server, I can't assign your world role sorry!");
+                        }
                     }
                 }
             }
+
             await guildUser.RemoveRolesAsync(userOwnedRolesMatchingWorlds);
         }
 
