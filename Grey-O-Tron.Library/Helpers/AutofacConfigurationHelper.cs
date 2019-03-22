@@ -2,6 +2,7 @@
 using Autofac;
 using Autofac.Extras.AttributeMetadata;
 using Microsoft.ApplicationInsights;
+using Microsoft.ApplicationInsights.Extensibility;
 
 namespace GreyOTron.Library.Helpers
 {
@@ -18,6 +19,7 @@ namespace GreyOTron.Library.Helpers
                 .Except<ICommand>();
 
             builder.RegisterType<TelemetryClient>().AsSelf();
+            builder.RegisterType<TelemetryConfiguration>().AsSelf().SingleInstance();
         }
     }
 }

@@ -22,6 +22,7 @@ namespace GreyOTron
         public static async Task Main()
         {
             container = AutofacConfiguration.Build();
+            //var telemetryConfiguration = container.Resolve<TelemetryConfiguration>();
             log = container.Resolve<TelemetryClient>();
             await Setup();
             Environment.Exit(-1);
