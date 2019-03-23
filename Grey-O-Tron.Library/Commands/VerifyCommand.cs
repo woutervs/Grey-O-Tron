@@ -5,6 +5,7 @@ using Discord.WebSocket;
 using GreyOTron.Library.ApiClients;
 using GreyOTron.Library.Helpers;
 using GreyOTron.Library.TableStorage;
+using Microsoft.Extensions.Configuration;
 
 namespace GreyOTron.Library.Commands
 {
@@ -14,12 +15,14 @@ namespace GreyOTron.Library.Commands
         private readonly KeyRepository keyRepository;
         private readonly Gw2Api gw2Api;
         private readonly VerifyUser verifyUser;
+        private readonly IConfiguration configuration;
 
-        public VerifyCommand(KeyRepository keyRepository, Gw2Api gw2Api, VerifyUser verifyUser)
+        public VerifyCommand(KeyRepository keyRepository, Gw2Api gw2Api, VerifyUser verifyUser, IConfiguration configuration)
         {
             this.keyRepository = keyRepository;
             this.gw2Api = gw2Api;
             this.verifyUser = verifyUser;
+            this.configuration = configuration;
         }
 
         public async Task Execute(SocketMessage message, CancellationToken cancellationToken)
@@ -29,7 +32,7 @@ namespace GreyOTron.Library.Commands
             {
                 var userId = message.Author.Id.ToString();
                 string context = null;
-                if (!string.IsNullOrWhiteSpace(Arguments) && guildUser.GuildPermissions.Administrator)
+                if (!string.IsNullOrWhiteSpace(Arguments) && (guildUser.GuildPermissions.Administrator || message.Author.Id == ulong.Parse(configuration["OwnerId"])))
                 {
                     userId = Arguments.Trim();
                     context = userId;
