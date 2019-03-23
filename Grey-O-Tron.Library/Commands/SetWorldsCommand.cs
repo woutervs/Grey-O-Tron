@@ -9,6 +9,7 @@ using GreyOTron.Library.ApiClients;
 using GreyOTron.Library.Helpers;
 using GreyOTron.Library.TableStorage;
 using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json;
 
 namespace GreyOTron.Library.Commands
 {
@@ -50,13 +51,11 @@ namespace GreyOTron.Library.Commands
                 }
                 else if (guildUser.GuildPermissions.Administrator || guildUser.Id == ulong.Parse(configuration["OwnerId"]))
                 {
-                    await discordGuildSettingsRepository.Clear(DiscordGuildSetting.World, guildUser.Guild.Id.ToString());
-                    foreach (var world in worlds)
-                    {
-                        await discordGuildSettingsRepository.Set(new DiscordGuildSetting(guildUser.Guild.Id.ToString(), guildUser.Guild.Name, DiscordGuildSetting.World,
-                            world.Name.ToLowerInvariant()));
-                        await guildUser.SendMessageAsync($"{world.Name} set for {guildUser.Guild.Name}");
-                    }
+                    await discordGuildSettingsRepository.Set(new DiscordGuildSetting(guildUser.Guild.Id.ToString(),
+                        guildUser.Guild.Name, DiscordGuildSetting.Worlds,
+                        JsonConvert.SerializeObject(worlds.Select(x => x.Name.ToLowerInvariant()))));
+                    await guildUser.SendMessageAsync(
+                        $"{worlds.Aggregate("", (a, b) => $"{a}{b.Name}, ").TrimEnd(',', ' ')} set for {guildUser.Guild.Name}");
                 }
                 else
                 {
