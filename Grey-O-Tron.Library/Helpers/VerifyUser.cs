@@ -6,6 +6,7 @@ using Discord;
 using Discord.WebSocket;
 using GreyOTron.Library.ApiClients;
 using GreyOTron.Library.TableStorage;
+using Microsoft.Win32.SafeHandles;
 using Newtonsoft.Json;
 
 namespace GreyOTron.Library.Helpers
@@ -51,8 +52,10 @@ namespace GreyOTron.Library.Helpers
             }
             else if (gw2AccountInfo.TokenInfo.Name != (context ?? $"{guildUser.Username}#{guildUser.Discriminator}"))
             {
-                await guildUser.SendMessageAsync($"Please make sure {context ?? "your"} GW2 application key's name is the same as {context ?? "your"} discord username: {context ?? $"{guildUser.Username}#{guildUser.Discriminator}"}");
-                await guildUser.SendMessageAsync("You can view, create and edit your GW2 application key's on https://account.arena.net/applications");
+                await guildUser.SendMessageAsync(
+                    $"{context ?? "You've"} most likely changed {(context != null ? "his/her" : "your")} discord username from {gw2AccountInfo.TokenInfo.Name} to {context ?? $"{guildUser.Username}#{guildUser.Discriminator}"}." +
+                    $"\n{(context != null ? $"Please ask {context} to update his/her key." : "Please update your key.")}" +
+                    "\nYou can view, create and edit your GW2 application key's on https://account.arena.net/applications");
             }
             else
             {
