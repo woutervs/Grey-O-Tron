@@ -3,6 +3,7 @@ using Autofac;
 using Autofac.Extras.AttributeMetadata;
 using Microsoft.ApplicationInsights;
 using Microsoft.ApplicationInsights.Extensibility;
+using Microsoft.Extensions.Configuration;
 
 namespace GreyOTron.Library.Helpers
 {
@@ -19,7 +20,18 @@ namespace GreyOTron.Library.Helpers
                 .Except<ICommand>();
 
             builder.RegisterType<TelemetryClient>().AsSelf();
-            builder.RegisterType<TelemetryConfiguration>().AsSelf().SingleInstance();
+            builder.Register(context =>
+            {
+                var configuration = context.Resolve<IConfiguration>();
+                var telemetryConfiguration = new TelemetryConfiguration();
+                var instrumentationKey = configuration["APPINSIGHTS_INSTRUMENTATIONKEY"];
+                if (!string.IsNullOrWhiteSpace(instrumentationKey))
+                {
+                    telemetryConfiguration.InstrumentationKey = instrumentationKey;
+                }
+                //Could add processors/sinks here...
+                return telemetryConfiguration;
+            }).SingleInstance();
         }
     }
 }

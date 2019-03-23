@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Discord;
 using Discord.WebSocket;
@@ -29,8 +30,9 @@ namespace GreyOTron.Library.Commands
             this.log = log;
         }
 
-        public async Task Execute(SocketMessage message)
+        public async Task Execute(SocketMessage message, CancellationToken cancellationToken)
         {
+            if (cancellationToken.IsCancellationRequested) return;
             var key = Arguments;
             if (string.IsNullOrWhiteSpace(key))
             {

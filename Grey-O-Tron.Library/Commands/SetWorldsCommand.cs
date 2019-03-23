@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Discord;
 using Discord.WebSocket;
@@ -25,8 +26,9 @@ namespace GreyOTron.Library.Commands
             this.configuration = configuration;
         }
 
-        public async Task Execute(SocketMessage message)
+        public async Task Execute(SocketMessage message, CancellationToken cancellationToken)
         {
+            if (cancellationToken.IsCancellationRequested) return;
             if (message.Author is SocketGuildUser guildUser)
             {
                 List<World> worlds;

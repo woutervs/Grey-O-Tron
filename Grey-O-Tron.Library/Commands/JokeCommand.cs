@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Threading;
+using System.Threading.Tasks;
 using Discord.WebSocket;
 using GreyOTron.Library.ApiClients;
 using GreyOTron.Library.Helpers;
@@ -14,8 +15,10 @@ namespace GreyOTron.Library.Commands
         {
             this.dadJokes = dadJokes;
         }
-        public async Task Execute(SocketMessage message)
+
+        public async Task Execute(SocketMessage message, CancellationToken cancellationToken)
         {
+            if (cancellationToken.IsCancellationRequested) return;
             await message.Channel.SendMessageAsync(await dadJokes.GetJoke());
             if (!(message.Channel is SocketDMChannel))
             {

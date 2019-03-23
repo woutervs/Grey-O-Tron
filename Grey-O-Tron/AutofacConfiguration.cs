@@ -3,7 +3,6 @@ using System.Diagnostics;
 using Autofac;
 using Autofac.Core;
 using GreyOTron.Library.Helpers;
-using Microsoft.ApplicationInsights;
 using Microsoft.Extensions.Configuration;
 
 namespace GreyOTron
@@ -22,6 +21,9 @@ namespace GreyOTron
                 new ResolvedParameter((info, context) => info.ParameterType == typeof(string) && info.Name == "prefix",
                     (info, context) => context.Resolve<IConfiguration>()["CommandPrefix"]
              ));
+
+            builder.RegisterType<Bot>().AsSelf().SingleInstance();
+
             return builder.Build();
         }
 

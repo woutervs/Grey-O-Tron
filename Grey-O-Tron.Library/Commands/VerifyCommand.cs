@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Threading;
+using System.Threading.Tasks;
 using Discord;
 using Discord.WebSocket;
 using GreyOTron.Library.ApiClients;
@@ -21,8 +22,9 @@ namespace GreyOTron.Library.Commands
             this.verifyUser = verifyUser;
         }
 
-        public async Task Execute(SocketMessage message)
+        public async Task Execute(SocketMessage message, CancellationToken cancellationToken)
         {
+            if (cancellationToken.IsCancellationRequested) return;
             if (message.Author is SocketGuildUser guildUser)
             {
                 var discordClientWithKey = await keyRepository.Get("Gw2", message.Author.Id.ToString());

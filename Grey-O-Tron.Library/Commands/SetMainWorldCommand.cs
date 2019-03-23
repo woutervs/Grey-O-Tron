@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Discord;
 using Discord.WebSocket;
@@ -25,8 +26,9 @@ namespace GreyOTron.Library.Commands
         }
 
 
-        public async Task Execute(SocketMessage message)
+        public async Task Execute(SocketMessage message, CancellationToken cancellationToken)
         {
+            if (cancellationToken.IsCancellationRequested) return;
             if (message.Author is SocketGuildUser guildUser)
             {
                 var world = gw2Api.ParseWorld(Arguments);
