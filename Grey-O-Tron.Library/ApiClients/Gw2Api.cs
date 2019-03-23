@@ -46,7 +46,8 @@ namespace GreyOTron.Library.ApiClients
                 if (tokenInfoResponse.StatusCode == HttpStatusCode.BadRequest && !string.IsNullOrWhiteSpace(tokenInfoResponse.Content))
                 {
                     var json = JObject.Parse(tokenInfoResponse.Content);
-                    if ((json?["text"]?.Value<string>() ?? "").Equals("invalid key"))
+                    var responseText = json?["text"]?.Value<string>() ?? "";
+                    if (responseText.Equals("invalid key", StringComparison.InvariantCultureIgnoreCase) || responseText.Equals("endpoint requires authentication"))
                     {
                         return new AccountInfo { ValidKey = false };
                     }
@@ -66,7 +67,8 @@ namespace GreyOTron.Library.ApiClients
                 if (tokenInfoResponse.StatusCode == HttpStatusCode.BadRequest && !string.IsNullOrWhiteSpace(tokenInfoResponse.Content))
                 {
                     var json = JObject.Parse(tokenInfoResponse.Content);
-                    if ((json?["text"]?.Value<string>() ?? "").Equals("invalid key"))
+                    var responseText = json?["text"]?.Value<string>() ?? "";
+                    if (responseText.Equals("invalid key", StringComparison.InvariantCultureIgnoreCase) || responseText.Equals("endpoint requires authentication"))
                     {
                         return new AccountInfo { ValidKey = false };
                     }
