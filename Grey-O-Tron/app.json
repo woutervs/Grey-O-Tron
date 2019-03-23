@@ -1,4 +1,5 @@
 {
   "CommandPrefix": "got#",
-  "OwnerId": 188365172757233664
+  "OwnerId": 188365172757233664,
+  "LinkedServerRole": "Linked Server"
 }

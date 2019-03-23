@@ -6,7 +6,7 @@ using Discord;
 using Discord.WebSocket;
 using GreyOTron.Library.ApiClients;
 using GreyOTron.Library.TableStorage;
-using Microsoft.Win32.SafeHandles;
+using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 
 namespace GreyOTron.Library.Helpers
@@ -15,12 +15,13 @@ namespace GreyOTron.Library.Helpers
     {
         private readonly DiscordGuildSettingsRepository discordGuildSettingsRepository;
         private readonly Cache cache;
-        private const string LinkedServerRole = "Linked Server";
+        private readonly IConfiguration configuration;
 
-        public VerifyUser(DiscordGuildSettingsRepository discordGuildSettingsRepository, Cache cache)
+        public VerifyUser(DiscordGuildSettingsRepository discordGuildSettingsRepository, Cache cache, IConfiguration configuration)
         {
             this.discordGuildSettingsRepository = discordGuildSettingsRepository;
             this.cache = cache;
+            this.configuration = configuration;
         }
 
         public async Task Verify(AccountInfo gw2AccountInfo, SocketGuildUser guildUser, bool bypassMessages = false, string context = null)
@@ -44,7 +45,7 @@ namespace GreyOTron.Library.Helpers
                 worlds.Add(mainWorld);
             }
 
-            var userOwnedRolesMatchingWorlds = guildUser.Roles.Where(x => worlds.Contains(x.Name.ToLowerInvariant()) || x.Name.Equals(LinkedServerRole, StringComparison.InvariantCultureIgnoreCase)).ToList();
+            var userOwnedRolesMatchingWorlds = guildUser.Roles.Where(x => worlds.Contains(x.Name.ToLowerInvariant()) || x.Name.Equals(configuration["LinkedServerRole"], StringComparison.InvariantCultureIgnoreCase)).ToList();
 
             if (!gw2AccountInfo.ValidKey)
             {
@@ -67,7 +68,7 @@ namespace GreyOTron.Library.Helpers
                 else if (gw2AccountInfo.WorldInfo != null && gw2AccountInfo.WorldInfo.LinkedWorlds.Any(x => string.Equals(x.Name, mainWorld, StringComparison.InvariantCultureIgnoreCase)))
                 {
                     await CreateRoleIfNotExistsAndAssignIfNeeded(guildUser, userOwnedRolesMatchingWorlds,
-                        LinkedServerRole, bypassMessages, context);
+                        configuration["LinkedServerRole"], bypassMessages, context);
 
                 }
                 else

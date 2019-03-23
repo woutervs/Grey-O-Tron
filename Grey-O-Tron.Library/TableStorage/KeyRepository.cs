@@ -31,20 +31,13 @@ namespace GreyOTron.Library.TableStorage
             return (DiscordClientWithKey)result.Result;
         }
 
-        public async Task<List<DiscordClientWithKey>> Get(string game)
+        public async Task Delete(string game, string userId)
         {
-            var query = new TableQuery<DiscordClientWithKey>().Where(TableQuery.GenerateFilterCondition("PartitionKey", QueryComparisons.Equal, game));
-            TableContinuationToken continuationToken = null;
-            var clients = new List<DiscordClientWithKey>();
-            do
+            var entity = await gw2KeysTable.ExecuteAsync(TableOperation.Retrieve<DiscordClientWithKey>(game, userId));
+            if (entity?.Result is DiscordClientWithKey clientWithKey)
             {
-                var result = await gw2KeysTable.ExecuteQuerySegmentedAsync(query, continuationToken);
-                clients.AddRange(result.Results);
-                continuationToken = result.ContinuationToken;
-
-            } while (continuationToken != null);
-
-            return clients;
+                await gw2KeysTable.ExecuteAsync(TableOperation.Delete(clientWithKey));
+            }
         }
 
     }
