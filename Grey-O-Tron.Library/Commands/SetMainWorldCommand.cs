@@ -39,13 +39,8 @@ namespace GreyOTron.Library.Commands
                 }
                 else if (guildUser.GuildPermissions.Administrator || guildUser.Id == ulong.Parse(configuration["OwnerId"]))
                 {
-                    await discordGuildSettingsRepository.Clear(DiscordGuildSetting.MainWorld, guildUser.Guild.Id.ToString());
                     await discordGuildSettingsRepository.Set(new DiscordGuildSetting(guildUser.Guild.Id.ToString(), guildUser.Guild.Name, DiscordGuildSetting.MainWorld,
                         world.Name.ToLowerInvariant()));
-                    if (!(await discordGuildSettingsRepository.Get(DiscordGuildSetting.World, guildUser.Guild.Id.ToString())).Any(x => x.Value.Equals(world.Name, StringComparison.InvariantCultureIgnoreCase)))
-                    {
-                        await discordGuildSettingsRepository.Set(new DiscordGuildSetting(guildUser.Guild.Id.ToString(), guildUser.Guild.Name, DiscordGuildSetting.World, world.Name.ToLowerInvariant()));
-                    }
 
                     await guildUser.SendMessageAsync($"{world.Name} set for {guildUser.Guild.Name} as main world.");
                 }

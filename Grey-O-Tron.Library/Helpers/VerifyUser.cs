@@ -6,6 +6,7 @@ using Discord;
 using Discord.WebSocket;
 using GreyOTron.Library.ApiClients;
 using GreyOTron.Library.TableStorage;
+using Newtonsoft.Json;
 
 namespace GreyOTron.Library.Helpers
 {
@@ -33,12 +34,11 @@ namespace GreyOTron.Library.Helpers
                 return;
             }
 
-            var worlds =
-                (await discordGuildSettingsRepository.Get(DiscordGuildSetting.World, guildUser.Guild.Id.ToString())).Select(x =>
-                    x.Value).ToList();
-            var mainWorld = (await discordGuildSettingsRepository.Get(DiscordGuildSetting.MainWorld, guildUser.Guild.Id.ToString())).Select(x =>
-                x.Value).FirstOrDefault();
-            if (!worlds.Contains(mainWorld))
+            var worlds = JsonConvert.DeserializeObject<List<string>>((await discordGuildSettingsRepository.Get(DiscordGuildSetting.Worlds, guildUser.Guild.Id.ToString()))?.Value ?? "[]");
+            var mainWorld =
+                (await discordGuildSettingsRepository.Get(DiscordGuildSetting.MainWorld, guildUser.Guild.Id.ToString()))?.Value;
+
+            if (mainWorld != null && !worlds.Contains(mainWorld))
             {
                 worlds.Add(mainWorld);
             }
