@@ -51,7 +51,7 @@ namespace GreyOTron.Library.Helpers
             }
             else if (gw2AccountInfo.TokenInfo.Name != (context ?? $"{guildUser.Username}#{guildUser.Discriminator}"))
             {
-                await guildUser.SendMessageAsync($"Please make sure {context ?? "your"} GW2 application key's name is the same as {context ?? "your"} discord username: {guildUser.Username}#{guildUser.Discriminator}");
+                await guildUser.SendMessageAsync($"Please make sure {context ?? "your"} GW2 application key's name is the same as {context ?? "your"} discord username: {context ?? $"{guildUser.Username}#{guildUser.Discriminator}"}");
                 await guildUser.SendMessageAsync("You can view, create and edit your GW2 application key's on https://account.arena.net/applications");
             }
             else

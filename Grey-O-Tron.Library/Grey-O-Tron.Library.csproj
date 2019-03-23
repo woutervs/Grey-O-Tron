@@ -4,7 +4,7 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <RootNamespace>GreyOTron.Library</RootNamespace>
     <AssemblyName>GreyOTron.Library</AssemblyName>
-    <AssemblyVersion>6.1.1.0</AssemblyVersion>
+    <AssemblyVersion>6.1.2.0</AssemblyVersion>
   </PropertyGroup>
 
   <ItemGroup>
