@@ -22,7 +22,7 @@ namespace GreyOTron.Library.Helpers
             this.cache = cache;
         }
 
-        public async Task Verify(AccountInfo gw2AccountInfo, SocketGuildUser guildUser, bool bypassMessages = false)
+        public async Task Verify(AccountInfo gw2AccountInfo, SocketGuildUser guildUser, bool bypassMessages = false, string context = null)
         {
             if (gw2AccountInfo == null)
             {
@@ -47,24 +47,24 @@ namespace GreyOTron.Library.Helpers
 
             if (!gw2AccountInfo.ValidKey)
             {
-                await guildUser.SendMessageAsync("Your api-key is invalid, please set a new one and re-verify.");
+                await guildUser.SendMessageAsync($"{context ?? "Your"} api-key is invalid, please set a new one and re-verify.");
             }
-            else if (gw2AccountInfo.TokenInfo.Name != $"{guildUser.Username}#{guildUser.Discriminator}")
+            else if (gw2AccountInfo.TokenInfo.Name != (context ?? $"{guildUser.Username}#{guildUser.Discriminator}"))
             {
-                await guildUser.SendMessageAsync($"Please make sure your GW2 application key's name is the same as your discord username: {guildUser.Username}#{guildUser.Discriminator}");
+                await guildUser.SendMessageAsync($"Please make sure {context ?? "your"} GW2 application key's name is the same as {context ?? "your"} discord username: {guildUser.Username}#{guildUser.Discriminator}");
                 await guildUser.SendMessageAsync("You can view, create and edit your GW2 application key's on https://account.arena.net/applications");
             }
             else
             {
                 if (gw2AccountInfo.WorldInfo != null && worlds.Contains(gw2AccountInfo.WorldInfo.Name.ToLowerInvariant()))
                 {
-                    await CreateRoleIfNotExistsAndAssignIfNeeded(guildUser, userOwnedRolesMatchingWorlds, gw2AccountInfo.WorldInfo.Name, bypassMessages);
+                    await CreateRoleIfNotExistsAndAssignIfNeeded(guildUser, userOwnedRolesMatchingWorlds, gw2AccountInfo.WorldInfo.Name, bypassMessages, context);
 
                 }
                 else if (gw2AccountInfo.WorldInfo != null && gw2AccountInfo.WorldInfo.LinkedWorlds.Any(x => string.Equals(x.Name, mainWorld, StringComparison.InvariantCultureIgnoreCase)))
                 {
                     await CreateRoleIfNotExistsAndAssignIfNeeded(guildUser, userOwnedRolesMatchingWorlds,
-                        LinkedServerRole, bypassMessages);
+                        LinkedServerRole, bypassMessages, context);
 
                 }
                 else
@@ -73,12 +73,12 @@ namespace GreyOTron.Library.Helpers
                     {
                         if (gw2AccountInfo.WorldInfo == null)
                         {
-                            await guildUser.SendMessageAsync($"Could not assign world roles on '{guildUser.Guild.Name}'");
+                            await guildUser.SendMessageAsync($"Could not assign world roles on '{guildUser.Guild.Name}' for {context ?? "you"}.");
                         }
                         else
                         {
                             await guildUser.SendMessageAsync(
-                                $"Your gw2 world does not belong to the verified worlds of '{guildUser.Guild.Name}' discord server, I can't assign your world role sorry!");
+                                $"Your gw2 world does not belong to the verified worlds of '{guildUser.Guild.Name}' discord server, I can't assign {context ?? "your"} world role sorry!");
                         }
                     }
                 }
@@ -87,7 +87,7 @@ namespace GreyOTron.Library.Helpers
             await guildUser.RemoveRolesAsync(userOwnedRolesMatchingWorlds);
         }
 
-        private async Task CreateRoleIfNotExistsAndAssignIfNeeded(SocketGuildUser guildUser, List<SocketRole> userOwnedRolesMatchingWorlds, string roleName, bool bypassMessages)
+        private async Task CreateRoleIfNotExistsAndAssignIfNeeded(SocketGuildUser guildUser, List<SocketRole> userOwnedRolesMatchingWorlds, string roleName, bool bypassMessages, string context = null)
         {
             var roleExistsAlready = userOwnedRolesMatchingWorlds.FirstOrDefault(x =>
                 string.Equals(x.Name, roleName, StringComparison.InvariantCultureIgnoreCase));
@@ -105,11 +105,11 @@ namespace GreyOTron.Library.Helpers
                 catch (Exception)
                 {
                     cache.RemoveFromCache(cachedName);
-                    await CreateRoleIfNotExistsAndAssignIfNeeded(guildUser, userOwnedRolesMatchingWorlds, roleName, bypassMessages);
+                    await CreateRoleIfNotExistsAndAssignIfNeeded(guildUser, userOwnedRolesMatchingWorlds, roleName, bypassMessages, context);
                 }
                 if (!bypassMessages)
                 {
-                    await guildUser.SendMessageAsync($"You have been assigned role: {roleName} on {guildUser.Guild.Name}");
+                    await guildUser.SendMessageAsync($"{context ?? "You"} {(context != null ? "has" : "have")} been assigned role: {roleName} on {guildUser.Guild.Name}");
                 }
             }
             userOwnedRolesMatchingWorlds.Remove(roleExistsAlready);

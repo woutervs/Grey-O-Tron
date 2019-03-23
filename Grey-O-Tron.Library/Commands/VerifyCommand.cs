@@ -27,16 +27,34 @@ namespace GreyOTron.Library.Commands
             if (cancellationToken.IsCancellationRequested) return;
             if (message.Author is SocketGuildUser guildUser)
             {
-                var discordClientWithKey = await keyRepository.Get("Gw2", message.Author.Id.ToString());
+                var userId = message.Author.Id.ToString();
+                string context = null;
+                if (!string.IsNullOrWhiteSpace(Arguments) && guildUser.GuildPermissions.Administrator)
+                {
+                    userId = Arguments.Trim();
+                    context = userId;
+                }
+                var discordClientWithKey = await keyRepository.Get("Gw2", userId);
                 if (discordClientWithKey == null)
                 {
-                    await message.Author.SendMessageAsync(
-                        "You haven't yet registered a key with me, use the gw2-key command to do so.");
+                    if (context != null)
+                    {
+                        await message.Author.SendMessageAsync($"No key found for {context}");
+                    }
+                    else
+                    {
+                        await message.Author.SendMessageAsync(
+                            "You haven't yet registered a key with me, use the gw2-key command to do so.");
+                    }
                 }
                 else
                 {
+                    if (context != null)
+                    {
+                        context = discordClientWithKey.Username;
+                    }
                     var acInfo = gw2Api.GetInformationForUserByKey(discordClientWithKey.Key);
-                    await verifyUser.Verify(acInfo, guildUser);
+                    await verifyUser.Verify(acInfo, guildUser, false, context);
                 }
             }
             else
