@@ -1,10 +1,13 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using Discord;
 using Discord.WebSocket;
 using GreyOTron.Library.ApiClients;
 using GreyOTron.Library.Helpers;
 using GreyOTron.Library.TableStorage;
+using Microsoft.ApplicationInsights;
 using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json;
 
 namespace GreyOTron.Library.Commands
 {
@@ -15,13 +18,15 @@ namespace GreyOTron.Library.Commands
         private readonly KeyRepository gw2KeyRepository;
         private readonly IConfiguration configuration;
         private readonly VerifyUser verifyUser;
+        private readonly TelemetryClient log;
 
-        public Gw2KeyCommand(Gw2Api gw2Api, KeyRepository gw2KeyRepository, IConfiguration configuration, VerifyUser verifyUser)
+        public Gw2KeyCommand(Gw2Api gw2Api, KeyRepository gw2KeyRepository, IConfiguration configuration, VerifyUser verifyUser, TelemetryClient log)
         {
             this.gw2Api = gw2Api;
             this.gw2KeyRepository = gw2KeyRepository;
             this.configuration = configuration;
             this.verifyUser = verifyUser;
+            this.log = log;
         }
 
         public async Task Execute(SocketMessage message)
@@ -34,6 +39,7 @@ namespace GreyOTron.Library.Commands
             else
             {
                 var acInfo = gw2Api.GetInformationForUserByKey(key);
+                log.TrackTrace(message.Content, new Dictionary<string, string> { { "DiscordUser", $"{message.Author.Username}#{message.Author.Discriminator}" }, { "AccountInfo", JsonConvert.SerializeObject(acInfo, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }) } });
                 if (acInfo?.TokenInfo?.Name == $"{message.Author.Username}#{message.Author.Discriminator}")
                 {
                     await gw2KeyRepository.Set(new DiscordClientWithKey("Gw2", message.Author.Id.ToString(),
