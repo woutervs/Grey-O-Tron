@@ -11,7 +11,7 @@ using System.Threading;
 
 namespace GreyOTron.Library.ApiClients
 {
-    public class Gw2Api
+    public class Gw2Api : IDisposable
     {
         private const string BaseUrl = "https://api.guildwars2.com";
         private readonly Cache cache;
@@ -25,6 +25,12 @@ namespace GreyOTron.Library.ApiClients
             //Gw2API rate limits 600 reqs per minute.
             semaphore = new TimeSpanSemaphore(600, TimeSpan.FromMinutes(1));
         }
+
+        public void Dispose()
+        {
+            semaphore.Dispose();
+        }
+
         public AccountInfo GetInformationForUserByKey(string key)
         {
             var client = new RestClient(BaseUrl);
