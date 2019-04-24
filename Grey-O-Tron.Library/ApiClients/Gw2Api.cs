@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Net;
+using System.Threading;
 
 namespace GreyOTron.Library.ApiClients
 {
@@ -15,22 +16,27 @@ namespace GreyOTron.Library.ApiClients
         private const string BaseUrl = "https://api.guildwars2.com";
         private readonly Cache cache;
         private readonly TelemetryClient log;
+        private readonly TimeSpanSemaphore semaphore;
 
         public Gw2Api(TelemetryClient log, Cache cache)
         {
             this.cache = cache;
             this.log = log;
+            //Gw2API rate limits 600 reqs per minute.
+            semaphore = new TimeSpanSemaphore(600, TimeSpan.FromMinutes(1));
         }
         public AccountInfo GetInformationForUserByKey(string key)
         {
             var client = new RestClient(BaseUrl);
             client.AddDefaultHeader("Authorization", $"Bearer {key}");
-            var request = new RestRequest("v2/tokeninfo");
-            var tokenInfoResponse = client.Execute<TokenInfo>(request, Method.GET);
+            IRestResponse<TokenInfo> tokenInfoResponse = null;
+            var tokenInfoRequest = new RestRequest("v2/tokeninfo");
+            semaphore.Run(() => tokenInfoResponse = client.Execute<TokenInfo>(tokenInfoRequest, Method.GET), CancellationToken.None);
             if (tokenInfoResponse.IsSuccessful)
             {
-                request = new RestRequest("v2/account");
-                var accountResponse = client.Execute<AccountInfo>(request, Method.GET);
+                var accountRequest = new RestRequest("v2/account");
+                IRestResponse<AccountInfo> accountResponse = null;
+                semaphore.Run(() => accountResponse = client.Execute<AccountInfo>(accountRequest, Method.GET), CancellationToken.None);
                 if (accountResponse.IsSuccessful)
                 {
                     var account = accountResponse.Data;
@@ -88,8 +94,10 @@ namespace GreyOTron.Library.ApiClients
             return cache.GetFromCache("worlds", TimeSpan.FromDays(1), () =>
             {
                 var client = new RestClient(BaseUrl);
-                var request = new RestRequest("v2/worlds?ids=all");
-                return client.Execute<List<World>>(request, Method.GET).Data;
+                var worldsRequest = new RestRequest("v2/worlds?ids=all");
+                var worlds = new List<World>();
+                semaphore.Run(() => worlds = client.Execute<List<World>>(worldsRequest, Method.GET).Data, CancellationToken.None);
+                return worlds;
             });
         }
 
@@ -105,9 +113,10 @@ namespace GreyOTron.Library.ApiClients
             world.LinkedWorlds = cache.GetFromCache($"linked-worlds-for-{world.Id}", TimeSpan.FromDays(1), () =>
             {
                 var client = new RestClient(BaseUrl);
-                var request = new RestRequest($"/v2/wvw/matches/overview?world={world.Id}");
-                var restResponse = client.Execute(request).Content;
-                var matchInfo = JObject.Parse(restResponse)["all_worlds"].ToObject<MatchInfo>();
+                var linkedWorldsRequest = new RestRequest($"/v2/wvw/matches/overview?world={world.Id}");
+                string jsonResponse = null;
+                semaphore.Run(() => jsonResponse = client.Execute(linkedWorldsRequest).Content, CancellationToken.None);
+                var matchInfo = JObject.Parse(jsonResponse)["all_worlds"].ToObject<MatchInfo>();
                 return matchInfo.FindLinksFor(world.Id).Select(x => GetWorlds().FirstOrDefault(y => y.Id == x)).ToList();
             });
             return world;
