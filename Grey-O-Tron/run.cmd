@@ -1,1 +1,1 @@
-﻿dotnet GreyOTron.dll %*
+dotnet GreyOTron.dll %*
