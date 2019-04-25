@@ -93,7 +93,7 @@ namespace GreyOTron
             while (true)
             {
                 await client.SetGameAsync($"help on https://greyotron.eu | v{VersionResolver.Get()}");
-                if (Math.Abs(DateTime.Now.TimeOfDay.Subtract(new TimeSpan(0, 21, 0, 0)).TotalMilliseconds) <= interval.TotalMilliseconds / 2)
+                if (Math.Abs(DateTime.UtcNow.TimeOfDay.Subtract(new TimeSpan(0, 20, 0, 0)).TotalMilliseconds) <= interval.TotalMilliseconds / 2)
                 {
                     UpdateStatistics();
                     foreach (var guildUser in client.Guilds.SelectMany(x => x.Users))
