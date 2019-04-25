@@ -52,12 +52,24 @@ namespace GreyOTron.Library.Commands
                 }
                 else
                 {
+                    var userToUpdate = guildUser;
+                    var contextUser = guildUser;
                     if (context != null)
                     {
-                        context = discordClientWithKey.Username;
+                        var couldParse = ulong.TryParse(context, out var contextId);
+                        userToUpdate = userToUpdate.Guild.GetUser(contextId);
+                        if (userToUpdate == null || !couldParse)
+                        {
+                            await contextUser.SendMessageAsync($"User you are trying to verify was not found on this Discord server.");
+                            if (!(message.Channel is SocketDMChannel))
+                            {
+                                await message.DeleteAsync();
+                            }
+                            return;
+                        }
                     }
                     var acInfo = gw2Api.GetInformationForUserByKey(discordClientWithKey.Key);
-                    await verifyUser.Verify(acInfo, guildUser, false, context);
+                    await verifyUser.Verify(acInfo, userToUpdate, contextUser,false);
                 }
             }
             else

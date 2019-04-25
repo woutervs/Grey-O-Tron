@@ -49,7 +49,7 @@ namespace GreyOTron.Library.Commands
                             var acInfo = gw2Api.GetInformationForUserByKey(discordClientWithKey.Key);
                             if (acInfo != null)
                             {
-                                await verifyUser.Verify(acInfo, currentUser, true);
+                                await verifyUser.Verify(acInfo, currentUser,currentUser, true);
                             }
                             else
                             {

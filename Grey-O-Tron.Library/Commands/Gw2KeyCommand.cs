@@ -49,7 +49,7 @@ namespace GreyOTron.Library.Commands
 
                     if (message.Author is SocketGuildUser guildUser)
                     {
-                        await verifyUser.Verify(acInfo, guildUser);
+                        await verifyUser.Verify(acInfo, guildUser, guildUser);
                     }
                     else
                     {

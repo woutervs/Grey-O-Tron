@@ -105,7 +105,7 @@ namespace GreyOTron
                             var acInfo = gw2Api.GetInformationForUserByKey(discordClientWithKey.Key);
                             if (acInfo != null)
                             {
-                                await verifyUser.Verify(acInfo, guildUser, true);
+                                await verifyUser.Verify(acInfo, guildUser, guildUser, true);
                             }
                         }
                         catch (Exception e)
