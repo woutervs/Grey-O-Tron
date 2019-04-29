@@ -100,7 +100,7 @@ namespace GreyOTron.Library.Helpers
             if (roleExistsAlready == null)
             {
                 var cachedName = $"roles::{guildUser.Guild.Id}::{roleName}";
-                var role = cache.GetFromCache(cachedName, TimeSpan.FromDays(1), () =>
+                var role = cache.GetFromCacheSliding(cachedName, TimeSpan.FromDays(1), () =>
                 {
                     return guildUser.Guild.Roles.FirstOrDefault(x => x.Name == roleName) ?? (IRole)guildUser.Guild.CreateRoleAsync(roleName, GuildPermissions.None).Result;
                 });

@@ -97,7 +97,7 @@ namespace GreyOTron.Library.ApiClients
 
         public IEnumerable<World> GetWorlds()
         {
-            return cache.GetFromCache("worlds", TimeSpan.FromDays(1), () =>
+            return cache.GetFromCacheAbsolute("worlds", CalculateNextReset(), () =>
             {
                 var client = new RestClient(BaseUrl);
                 var worldsRequest = new RestRequest("v2/worlds?ids=all");
@@ -105,6 +105,14 @@ namespace GreyOTron.Library.ApiClients
                 semaphore.Run(() => worlds = client.Execute<List<World>>(worldsRequest, Method.GET).Data, CancellationToken.None);
                 return worlds;
             });
+        }
+
+        private DateTimeOffset CalculateNextReset()
+        {
+            var now = DateTimeOffset.UtcNow;
+            var daysUntilNextFriday = (DayOfWeek.Friday - now.DayOfWeek + 7) % 7;
+            var nextCacheClear = new DateTimeOffset(now.Year, now.Month, now.Day, 18, 30, 0, TimeSpan.FromHours(0)).AddDays(daysUntilNextFriday);
+            return nextCacheClear;
         }
 
         public World ParseWorld(string identifier)
@@ -116,7 +124,7 @@ namespace GreyOTron.Library.ApiClients
 
         private World SetLinkedWorlds(World world)
         {
-            world.LinkedWorlds = cache.GetFromCache($"linked-worlds-for-{world.Id}", TimeSpan.FromDays(1), () =>
+            world.LinkedWorlds = cache.GetFromCacheAbsolute($"linked-worlds-for-{world.Id}", CalculateNextReset(), () =>
             {
                 var client = new RestClient(BaseUrl);
                 var linkedWorldsRequest = new RestRequest($"/v2/wvw/matches/overview?world={world.Id}");
