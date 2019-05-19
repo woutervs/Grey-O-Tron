@@ -23,7 +23,7 @@ namespace GreyOTron.Library.ApiClients
             this.cache = cache;
             this.log = log;
             //Gw2API rate limits 600 reqs per minute.
-            semaphore = new TimeSpanSemaphore(600, TimeSpan.FromMinutes(1));
+            semaphore = new TimeSpanSemaphore(500, TimeSpan.FromMinutes(1));
         }
 
         public void Dispose()
