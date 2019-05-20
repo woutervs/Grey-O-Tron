@@ -34,44 +34,47 @@ namespace GreyOTron.Library.Commands
         public async Task Execute(SocketMessage message, CancellationToken cancellationToken)
         {
             if (cancellationToken.IsCancellationRequested) return;
+
             if (message.Author is SocketGuildUser guildUser)
             {
-                if (guildUser.GuildPermissions.Administrator || guildUser.Id == ulong.Parse(configuration["OwnerId"]))
-                {
-                    SocketGuildUser currentUser = null;
-                    try
-                    {
-                        foreach (var socketGuildUser in guildUser.Guild.Users)
-                        {
-                            currentUser = socketGuildUser;
-                            var discordClientWithKey = await keyRepository.Get("Gw2", currentUser.Id.ToString());
-                            if (discordClientWithKey == null) continue;
-                            var acInfo = gw2Api.GetInformationForUserByKey(discordClientWithKey.Key);
-                            if (acInfo != null)
-                            {
-                                await verifyUser.Verify(acInfo, currentUser,currentUser, true);
-                            }
-                            else
-                            {
-                                await message.Author.SendMessageAsync("The GW2Api is unavailable at this time, please try again later.");
-                                break;
-                            }
-                        }
-                    }
-                    catch (Exception e)
-                    {
-                        if (currentUser != null)
-                        {
-                            log.TrackTrace(JsonConvert.SerializeObject(currentUser, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }));
-                        }
-                        log.TrackException(e);
-                    }
-                }
-                else
-                {
-                    await guildUser.SendMessageAsync(
-                        "You must have administrative permissions to perform the verify-all command.");
-                }
+                await guildUser.SendMessageAsync(
+                    "Command is temporarily disabled.");
+                //if (guildUser.GuildPermissions.Administrator || guildUser.Id == ulong.Parse(configuration["OwnerId"]))
+                //{
+                //    SocketGuildUser currentUser = null;
+                //    try
+                //    {
+                //        foreach (var socketGuildUser in guildUser.Guild.Users)
+                //        {
+                //            currentUser = socketGuildUser;
+                //            var discordClientWithKey = await keyRepository.Get("Gw2", currentUser.Id.ToString());
+                //            if (discordClientWithKey == null) continue;
+                //            var acInfo = gw2Api.GetInformationForUserByKey(discordClientWithKey.Key);
+                //            if (acInfo != null)
+                //            {
+                //                await verifyUser.Verify(acInfo, currentUser,currentUser, true);
+                //            }
+                //            else
+                //            {
+                //                await message.Author.SendMessageAsync("The GW2Api is unavailable at this time, please try again later.");
+                //                break;
+                //            }
+                //        }
+                //    }
+                //    catch (Exception e)
+                //    {
+                //        if (currentUser != null)
+                //        {
+                //            log.TrackTrace(JsonConvert.SerializeObject(currentUser, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }));
+                //        }
+                //        log.TrackException(e);
+                //    }
+                //}
+                //else
+                //{
+                //    await guildUser.SendMessageAsync(
+                //        "You must have administrative permissions to perform the verify-all command.");
+                //}
             }
             else
             {
