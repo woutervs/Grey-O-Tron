@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Discord;
@@ -53,7 +54,12 @@ namespace GreyOTron.Library.Commands
                     }
                     else
                     {
-                        await message.Author.SendMessageAsync($"Your key has been stored, don't forget to use {configuration["CommandPrefix"]}gw2-verify on the server you wish to get verified on.");
+                        foreach (var guild in message.Author.MutualGuilds)
+                        {
+                            guildUser = guild.GetUser(message.Author.Id);
+                            await verifyUser.Verify(acInfo, guildUser, guildUser);
+                        }
+                        await message.Author.SendMessageAsync($"Your key has been stored, and we verified you on \n {message.Author.MutualGuilds.Aggregate("", (x, y) => $"{x}{y.Name}\n")}");
                     }
                 }
                 else

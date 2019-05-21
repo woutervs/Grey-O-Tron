@@ -123,9 +123,10 @@ namespace GreyOTron
                         }
                     }
                 }
-                await Task.Delay(interval);
+                await Task.Delay(interval, cancellationToken);
             }
             //Don't have to return since bot never stops anyway.
+            // ReSharper disable once FunctionNeverReturns
         }
 
         private async Task ClientOnMessageReceived(SocketMessage socketMessage)
