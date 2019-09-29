@@ -1,12 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk;Microsoft.NET.Sdk.Publish">
   <PropertyGroup>
-    <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp3.0</TargetFramework>
     <RootNamespace>GreyOTron</RootNamespace>
     <AssemblyName>GreyOTron</AssemblyName>
-    <LangVersion>7.3</LangVersion>
     <UserSecretsId>41972DC2-BCE1-4FF6-A516-B6C362E0845C</UserSecretsId>
-    <AssemblyVersion>1.0.0.0</AssemblyVersion>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Autofac" Version="4.9.4" />
