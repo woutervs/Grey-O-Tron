@@ -23,15 +23,7 @@
     <ProjectReference Include="..\Grey-O-Tron.Library\Grey-O-Tron.Library.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="System.ComponentModel.Composition">
-      <HintPath>C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7\System.ComponentModel.Composition.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-  <ItemGroup>
     <None Update="app.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="run.cmd">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Settings.job">
