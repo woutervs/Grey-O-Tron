@@ -1,31 +1,35 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Autofac.Extensions.DependencyInjection;
-using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Hosting;
 
 namespace GreyOTron.Api
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
-            CreateWebHostBuilder(args).Build().Run();
+            await CreateHostBuilder(args).Build().RunAsync();
         }
 
-        private static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
-            WebHost.CreateDefaultBuilder(args)
-                .ConfigureServices(s => s.AddAutofac())
-                .ConfigureAppConfiguration(builder =>
-                {
-                    string env = Environment.GetEnvironmentVariable("Environment");
-                    if (env == "Development")
+        private static IHostBuilder CreateHostBuilder(string[] args) => Host.CreateDefaultBuilder(args)
+            .UseServiceProviderFactory(new AutofacServiceProviderFactory())
+            .ConfigureWebHostDefaults(webBuilder =>
+            {
+                webBuilder
+                    .ConfigureAppConfiguration(configurationBuilder =>
                     {
-                        builder.AddUserSecrets<Program>();
-                    }
-                    builder.AddJsonFile("app.json");
-                    builder.AddEnvironmentVariables();
-                })
-                .UseStartup<Startup>();
+                        var env = Environment.GetEnvironmentVariable("Environment");
+                        if (env == "Development")
+                        {
+                            configurationBuilder.AddUserSecrets<Program>();
+                        }
+                        configurationBuilder.AddJsonFile("app.json");
+                        configurationBuilder.AddEnvironmentVariables();
+                    })
+                    .UseStartup<Startup>();
+            });
     }
 }
