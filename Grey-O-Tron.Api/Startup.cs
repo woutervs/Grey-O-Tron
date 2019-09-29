@@ -20,7 +20,9 @@ namespace GreyOTron.Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddCors();
+            services.AddCors(options => options.AddDefaultPolicy(builder => builder.SetIsOriginAllowed(s => s.EndsWith("greyotron.eu"))
+                .AllowAnyHeader()
+                .AllowAnyMethod()));
             services.AddControllers();
         }
 
@@ -36,11 +38,8 @@ namespace GreyOTron.Api
 
             app.UseRouting();
 
-            app.UseCors(builder =>
-            {
-                builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod();
-            });
-            
+            app.UseCors();
+
             app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
         }
 
