@@ -4,6 +4,9 @@
     <RootNamespace>GreyOTron</RootNamespace>
     <AssemblyName>GreyOTron</AssemblyName>
     <UserSecretsId>41972DC2-BCE1-4FF6-A516-B6C362E0845C</UserSecretsId>
+    <ApplicationIcon />
+    <OutputType>Exe</OutputType>
+    <StartupObject />
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Autofac" Version="4.9.4" />
