@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -103,7 +104,8 @@ namespace GreyOTron
                 {
                     UpdateStatistics();
                     var guildUsersQueue = new Queue<SocketGuildUser>(client.Guilds.SelectMany(x => x.Users));
-
+                    log.TrackEvent("UserVerification.Started");
+                    var stopWatch = Stopwatch.StartNew();
                     while (guildUsersQueue.TryPeek(out var guildUser))
                     {
                         await Policy.Handle<BrokenCircuitException>()
@@ -142,6 +144,8 @@ namespace GreyOTron
                             });
                         guildUsersQueue.Dequeue();
                     }
+                    stopWatch.Stop();
+                    log.TrackEvent("UserVerification.Ended", metrics: new Dictionary<string, double> {{"run-time", stopWatch.ElapsedMilliseconds}});
                 }
                 await Task.Delay(interval, cancellationToken);
             }
