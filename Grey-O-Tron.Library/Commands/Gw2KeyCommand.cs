@@ -9,7 +9,6 @@ using GreyOTron.Library.ApiClients;
 using GreyOTron.Library.Helpers;
 using GreyOTron.Library.TableStorage;
 using Microsoft.ApplicationInsights;
-using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using Polly.CircuitBreaker;
 
@@ -20,15 +19,13 @@ namespace GreyOTron.Library.Commands
     {
         private readonly Gw2Api gw2Api;
         private readonly KeyRepository gw2KeyRepository;
-        private readonly IConfiguration configuration;
         private readonly VerifyUser verifyUser;
         private readonly TelemetryClient log;
 
-        public Gw2KeyCommand(Gw2Api gw2Api, KeyRepository gw2KeyRepository, IConfiguration configuration, VerifyUser verifyUser, TelemetryClient log)
+        public Gw2KeyCommand(Gw2Api gw2Api, KeyRepository gw2KeyRepository, VerifyUser verifyUser, TelemetryClient log)
         {
             this.gw2Api = gw2Api;
             this.gw2KeyRepository = gw2KeyRepository;
-            this.configuration = configuration;
             this.verifyUser = verifyUser;
             this.log = log;
         }
