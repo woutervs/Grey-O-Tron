@@ -23,7 +23,7 @@ namespace GreyOTron.Library.Helpers
             builder.Register(context =>
             {
                 var configuration = context.Resolve<IConfiguration>();
-                var telemetryConfiguration = new TelemetryConfiguration();
+                var telemetryConfiguration = TelemetryConfiguration.CreateDefault();
                 var instrumentationKey = configuration["APPINSIGHTS_INSTRUMENTATIONKEY"];
                 if (!string.IsNullOrWhiteSpace(instrumentationKey))
                 {

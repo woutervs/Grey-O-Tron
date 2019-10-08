@@ -6,8 +6,10 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using System.Net;
 using System.Threading;
+using Polly;
+using Polly.CircuitBreaker;
+using Polly.Retry;
 
 namespace GreyOTron.Library.ApiClients
 {
@@ -17,13 +19,23 @@ namespace GreyOTron.Library.ApiClients
         private readonly Cache cache;
         private readonly TelemetryClient log;
         private readonly TimeSpanSemaphore semaphore;
-
+        private readonly RetryPolicy retryPolicy;
+        private readonly CircuitBreakerPolicy circuitBreakerPolicy;
         public Gw2Api(TelemetryClient log, Cache cache)
         {
             this.cache = cache;
             this.log = log;
             //Gw2API rate limits 600 reqs per minute.
-            semaphore = new TimeSpanSemaphore(500, TimeSpan.FromMinutes(1));
+            semaphore = new TimeSpanSemaphore(500, TimeSpan.FromMinutes(1)); //So we allow 500 requests every minute
+            circuitBreakerPolicy = Policy.Handle<TooManyRequestsException>() //If somehow the api still says they can't handle our number of requests
+                .AdvancedCircuitBreaker(
+                    0.01, //when 0.01% of all requests in a timespan of 3 minutes fails we take 30s timeout before allowing to continue
+                    TimeSpan.FromSeconds(180),
+                    500, //Technically this could be one but we're expecting more than 500 requests before it fails anyway.
+                    TimeSpan.FromSeconds(30)
+                );
+            retryPolicy = Policy.Handle<TooManyRequestsException>()
+                .WaitAndRetryForever(i => TimeSpan.FromSeconds(Math.Pow(2, i % 6))); //Exp back-off but with cutoff of 60s
         }
 
         public void Dispose()
@@ -33,66 +45,72 @@ namespace GreyOTron.Library.ApiClients
 
         public AccountInfo GetInformationForUserByKey(string key)
         {
-            var client = new RestClient(BaseUrl);
-            client.AddDefaultHeader("Authorization", $"Bearer {key}");
-            IRestResponse<TokenInfo> tokenInfoResponse = null;
-            var tokenInfoRequest = new RestRequest("v2/tokeninfo");
-            semaphore.Run(() => tokenInfoResponse = client.Execute<TokenInfo>(tokenInfoRequest, Method.GET), CancellationToken.None);
-            if (tokenInfoResponse.IsSuccessful)
+            return retryPolicy.Wrap(circuitBreakerPolicy).Execute(() =>
             {
-                var accountRequest = new RestRequest("v2/account");
-                IRestResponse<AccountInfo> accountResponse = null;
-                semaphore.Run(() => accountResponse = client.Execute<AccountInfo>(accountRequest, Method.GET), CancellationToken.None);
-                if (accountResponse.IsSuccessful)
+                var client = new RestClient(BaseUrl);
+                client.AddDefaultHeader("Authorization", $"Bearer {key}");
+                IRestResponse<TokenInfo> tokenInfoResponse = null;
+                var tokenInfoRequest = new RestRequest("v2/tokeninfo");
+                semaphore.Run(() => tokenInfoResponse = client.Execute<TokenInfo>(tokenInfoRequest, Method.GET), CancellationToken.None);
+                if (tokenInfoResponse.IsSuccessful)
                 {
-                    var account = accountResponse.Data;
-                    account.TokenInfo = tokenInfoResponse.Data;
-                    account.ValidKey = true;
-                    var accountWorld = GetWorlds().FirstOrDefault(x => x.Id == account.World);
-                    if (accountWorld != null)
+                    var accountRequest = new RestRequest("v2/account");
+                    IRestResponse<AccountInfo> accountResponse = null;
+                    semaphore.Run(() => accountResponse = client.Execute<AccountInfo>(accountRequest, Method.GET), CancellationToken.None);
+                    if (accountResponse.IsSuccessful)
                     {
-                        account.WorldInfo = SetLinkedWorlds(accountWorld);
-                        return account;
-                    }
-                }
-                if (tokenInfoResponse.StatusCode == HttpStatusCode.BadRequest && !string.IsNullOrWhiteSpace(tokenInfoResponse.Content))
-                {
-                    var json = JObject.Parse(tokenInfoResponse.Content);
-                    var responseText = json?["text"]?.Value<string>() ?? "";
-                    if (responseText.Equals("invalid key", StringComparison.InvariantCultureIgnoreCase) || responseText.Equals("endpoint requires authentication"))
-                    {
-                        return new AccountInfo { ValidKey = false };
-                    }
-                }
-                else
-                {
-                    log.TrackException(accountResponse.ErrorException,
-                        new Dictionary<string, string>
+                        var account = accountResponse.Data;
+                        account.TokenInfo = tokenInfoResponse.Data;
+                        account.ValidKey = true;
+                        var accountWorld = GetWorlds().FirstOrDefault(x => x.Id == account.World);
+                        if (accountWorld != null)
                         {
-                            {"ErrorMessage", accountResponse.ErrorMessage}, {"Content", accountResponse.Content},
-                            {"Section", "accountResponse"}
-                        });
-                }
-            }
-            else
-            {
-                if (tokenInfoResponse.StatusCode == HttpStatusCode.BadRequest && !string.IsNullOrWhiteSpace(tokenInfoResponse.Content))
-                {
-                    var json = JObject.Parse(tokenInfoResponse.Content);
-                    var responseText = json?["text"]?.Value<string>() ?? "";
-                    if (responseText.Equals("invalid key", StringComparison.InvariantCultureIgnoreCase) || responseText.Equals("endpoint requires authentication"))
+                            account.WorldInfo = SetLinkedWorlds(accountWorld);
+                            return account;
+                        }
+                    }
+                    else
                     {
-                        return new AccountInfo { ValidKey = false };
+                        ParseResponse(accountResponse, "accountResponse", out var responseText);
+                        if (responseText == "invalid key" || responseText == "endpoint requires authentication")
+                        {
+                            return new AccountInfo { ValidKey = false };
+                        }
                     }
                 }
                 else
                 {
-                    log.TrackException(tokenInfoResponse.ErrorException,
-                        new Dictionary<string, string>
-                            {{"ErrorMessage", tokenInfoResponse.ErrorMessage}, {"Content", tokenInfoResponse.Content}, {"Section","tokenInfoResponse"}});
+                    ParseResponse(tokenInfoResponse, "tokenInfoResponse", out var responseText);
+                    if (responseText == "invalid key" || responseText == "endpoint requires authentication")
+                    {
+                        return new AccountInfo { ValidKey = false };
+                    }
+                }
+                return null;
+            });
+        }
+
+        private void ParseResponse(IRestResponse response, string section, out string responseText)
+        {
+            responseText = string.Empty;
+            var dict = new Dictionary<string, string>
+            {
+                {"ErrorMessage", response.ErrorMessage}, {"Content", response.Content},
+                {"Section", section}
+            };
+
+            if (!string.IsNullOrWhiteSpace(response.Content))
+            {
+                var json = JObject.Parse(response.Content);
+                responseText = json?["text"]?.Value<string>().ToLowerInvariant() ?? string.Empty;
+
+                if (responseText == "too many requests")
+                {
+                    dict.Add("SemaphoreCount", semaphore.CurrentCount.ToString());
+                    throw new TooManyRequestsException();
                 }
             }
-            return null;
+            log.TrackException(response.ErrorException, dict);
         }
 
         public IEnumerable<World> GetWorlds()

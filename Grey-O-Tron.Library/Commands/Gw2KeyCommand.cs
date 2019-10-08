@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -10,6 +11,7 @@ using GreyOTron.Library.TableStorage;
 using Microsoft.ApplicationInsights;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
+using Polly.CircuitBreaker;
 
 namespace GreyOTron.Library.Commands
 {
@@ -41,7 +43,16 @@ namespace GreyOTron.Library.Commands
             }
             else
             {
-                var acInfo = gw2Api.GetInformationForUserByKey(key);
+                AccountInfo acInfo;
+                try
+                {
+                    acInfo = gw2Api.GetInformationForUserByKey(key);
+                }
+                catch (BrokenCircuitException)
+                {
+                    await message.Author.SendMessageAsync("The GW2 api can't handle this request at the time, please try again a bit later.");
+                    throw;
+                }
                 log.TrackTrace(message.Content, new Dictionary<string, string> { { "DiscordUser", $"{message.Author.Username}#{message.Author.Discriminator}" }, { "AccountInfo", JsonConvert.SerializeObject(acInfo, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }) } });
                 if (acInfo?.TokenInfo?.Name == $"{message.Author.Username}#{message.Author.Discriminator}")
                 {

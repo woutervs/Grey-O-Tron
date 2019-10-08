@@ -8,7 +8,6 @@ using Discord.WebSocket;
 using GreyOTron.Library.ApiClients;
 using GreyOTron.Library.Helpers;
 using GreyOTron.Library.TableStorage;
-using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 
 namespace GreyOTron.Library.Commands
@@ -18,13 +17,11 @@ namespace GreyOTron.Library.Commands
     {
         private readonly DiscordGuildSettingsRepository discordGuildSettingsRepository;
         private readonly Gw2Api gw2Api;
-        private readonly IConfiguration configuration;
 
-        public SetWorldsCommand(DiscordGuildSettingsRepository discordGuildSettingsRepository, Gw2Api gw2Api, IConfiguration configuration)
+        public SetWorldsCommand(DiscordGuildSettingsRepository discordGuildSettingsRepository, Gw2Api gw2Api)
         {
             this.discordGuildSettingsRepository = discordGuildSettingsRepository;
             this.gw2Api = gw2Api;
-            this.configuration = configuration;
         }
 
         public async Task Execute(SocketMessage message, CancellationToken cancellationToken)
@@ -49,7 +46,7 @@ namespace GreyOTron.Library.Commands
                     await message.Author.SendMessageAsync(
                         "You must give at least one world name separated by ; for the set-worlds command to work.");
                 }
-                else if (guildUser.GuildPermissions.Administrator || guildUser.Id == ulong.Parse(configuration["OwnerId"]))
+                else if (guildUser.IsAdminOrOwner())
                 {
                     await discordGuildSettingsRepository.Set(new DiscordGuildSetting(guildUser.Guild.Id.ToString(),
                         guildUser.Guild.Name, DiscordGuildSetting.Worlds,

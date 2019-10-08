@@ -31,7 +31,7 @@ namespace GreyOTron
         {
             Trace.WriteLine("Setting up configuration");
             var builder = new ConfigurationBuilder();
-            string env = Environment.GetEnvironmentVariable("Environment");
+            var env = Environment.GetEnvironmentVariable("Environment");
             Trace.WriteLine(env);
 
             if (env == "Development")

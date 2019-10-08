@@ -10,6 +10,9 @@ using GreyOTron.Library.Helpers;
 using GreyOTron.Library.TableStorage;
 using Microsoft.ApplicationInsights;
 using Microsoft.Extensions.Configuration;
+using Polly;
+using Polly.CircuitBreaker;
+using UserExtensions = GreyOTron.Library.Helpers.UserExtensions;
 
 namespace GreyOTron
 {
@@ -25,7 +28,6 @@ namespace GreyOTron
         private readonly TelemetryClient log;
         private CancellationToken cancellationToken;
 
-
         public Bot(DiscordBotsApi discordBotsApi, KeyRepository keyRepository, Gw2Api gw2Api, VerifyUser verifyUser, CommandProcessor processor, IConfiguration configuration, TelemetryClient log)
         {
             this.discordBotsApi = discordBotsApi;
@@ -35,6 +37,10 @@ namespace GreyOTron
             this.processor = processor;
             this.configuration = configuration;
             this.log = log;
+            if (ulong.TryParse(configuration["OwnerId"], out var ownerId))
+            {
+                UserExtensions.OwnerId = ownerId;
+            }
         }
 
         public async Task Start(CancellationToken token)
@@ -96,31 +102,45 @@ namespace GreyOTron
                 if (Math.Abs(DateTime.UtcNow.TimeOfDay.Subtract(new TimeSpan(0, 20, 0, 0)).TotalMilliseconds) <= interval.TotalMilliseconds / 2)
                 {
                     UpdateStatistics();
-                    foreach (var guildUser in client.Guilds.SelectMany(x => x.Users))
+                    var guildUsersQueue = new Queue<SocketGuildUser>(client.Guilds.SelectMany(x => x.Users));
+
+                    while (guildUsersQueue.TryPeek(out var guildUser))
                     {
-                        try
-                        {
-                            var discordClientWithKey = await keyRepository.Get("Gw2", guildUser.Id.ToString());
-                            if (discordClientWithKey == null) continue;
-                            var acInfo = gw2Api.GetInformationForUserByKey(discordClientWithKey.Key);
-                            if (acInfo != null)
+                        await Policy.Handle<BrokenCircuitException>()
+                            .WaitAndRetry(6, i => TimeSpan.FromMinutes(Math.Pow(2, i % 6)))
+                            .Execute(async
+                                () =>
                             {
-                                await verifyUser.Verify(acInfo, guildUser, guildUser, true);
-                            }
-                        }
-                        catch (Exception e)
-                        {
-                            if (guildUser != null)
-                            {
-                                log.TrackException(e, new Dictionary<string, string> { { "DiscordUser", $"{guildUser.Username}#{guildUser.Discriminator}" } });
-                            }
-                            else
-                            {
-                                log.TrackException(e);
-                            }
+                                try
+                                {
+                                    var discordClientWithKey = await keyRepository.Get("Gw2", guildUser.Id.ToString());
+                                    if (discordClientWithKey == null) return;
+                                    var acInfo = gw2Api.GetInformationForUserByKey(discordClientWithKey.Key);
+                                    if (acInfo != null)
+                                    {
+                                        await verifyUser.Verify(acInfo, guildUser, guildUser, true);
+                                    }
+                                }
+                                catch (BrokenCircuitException)
+                                {
+                                    log.TrackTrace("Gw2 Api not recovering fast enough from repeated messages, pausing execution.");
+                                    await client.SendMessageToBotOwner("Gw2 Api not recovering fast enough from repeated messages, pausing execution.");
+                                    throw;
+                                }
+                                catch (Exception e)
+                                {
+                                    if (guildUser != null)
+                                    {
+                                        log.TrackException(e, new Dictionary<string, string> { { "DiscordUser", $"{guildUser.Username}#{guildUser.Discriminator}" } });
+                                    }
+                                    else
+                                    {
+                                        log.TrackException(e);
+                                    }
+                                }
 
-
-                        }
+                            });
+                        guildUsersQueue.Dequeue();
                     }
                 }
                 await Task.Delay(interval, cancellationToken);

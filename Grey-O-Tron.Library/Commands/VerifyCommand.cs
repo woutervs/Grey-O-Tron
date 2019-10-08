@@ -6,6 +6,7 @@ using GreyOTron.Library.ApiClients;
 using GreyOTron.Library.Helpers;
 using GreyOTron.Library.TableStorage;
 using Microsoft.Extensions.Configuration;
+using Polly.CircuitBreaker;
 
 namespace GreyOTron.Library.Commands
 {
@@ -32,7 +33,7 @@ namespace GreyOTron.Library.Commands
             {
                 var userId = message.Author.Id.ToString();
                 string context = null;
-                if (!string.IsNullOrWhiteSpace(Arguments) && (guildUser.GuildPermissions.Administrator || message.Author.Id == ulong.Parse(configuration["OwnerId"])))
+                if (!string.IsNullOrWhiteSpace(Arguments) && guildUser.IsAdminOrOwner())
                 {
                     userId = Arguments.Trim();
                     context = userId;
@@ -68,8 +69,17 @@ namespace GreyOTron.Library.Commands
                             return;
                         }
                     }
-                    var acInfo = gw2Api.GetInformationForUserByKey(discordClientWithKey.Key);
-                    await verifyUser.Verify(acInfo, userToUpdate, contextUser,false);
+                    AccountInfo acInfo;
+                    try
+                    {
+                        acInfo = gw2Api.GetInformationForUserByKey(discordClientWithKey.Key);
+                    }
+                    catch (BrokenCircuitException)
+                    {
+                        await message.Author.SendMessageAsync("The GW2 api can't handle this request at the time, please try again a bit later.");
+                        throw;
+                    }
+                    await verifyUser.Verify(acInfo, userToUpdate, contextUser, false);
                 }
             }
             else
