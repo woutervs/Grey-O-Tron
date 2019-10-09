@@ -11,7 +11,7 @@ namespace GreyOTron.Library.Exceptions
 
 
 
-        public ApiInformationForUserByKeyException(string section, string key, string content, Exception innerException) : base(innerException.Message, innerException)
+        public ApiInformationForUserByKeyException(string section, string key, string content, Exception innerException) : base(innerException?.Message ?? content, innerException)
         {
             Section = section;
             Key = key;
