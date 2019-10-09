@@ -115,7 +115,7 @@ namespace GreyOTron
                     {
                         UpdateStatistics();
                         var guildUsersQueue = new Queue<SocketGuildUser>(client.Guilds.SelectMany(x => x.Users));
-                        log.TrackEvent("UserVerification.Started");
+                        log.TrackEvent("UserVerification.Started", metrics:new Dictionary<string, double> {{"Count", guildUsersQueue.Count}});
                         var stopWatch = Stopwatch.StartNew();
                         while (guildUsersQueue.TryPeek(out var guildUser))
                         {
