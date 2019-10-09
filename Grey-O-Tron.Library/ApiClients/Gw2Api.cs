@@ -83,19 +83,25 @@ namespace GreyOTron.Library.ApiClients
         {
             if (!string.IsNullOrWhiteSpace(response.Content))
             {
-                var json = JObject.Parse(response.Content);
-                var responseText = json?["text"]?.Value<string>().ToLowerInvariant() ?? string.Empty;
-
-                if (responseText == "too many requests")
+                try
                 {
-                    throw new TooManyRequestsException(semaphore.CurrentCount, section, key, response.Content, response.ErrorException);
-                }
+                    var json = JObject.Parse(response.Content);
+                    var responseText = json?["text"]?.Value<string>().ToLowerInvariant() ?? string.Empty;
+                    if (responseText == "too many requests")
+                    {
+                        throw new TooManyRequestsException(semaphore.CurrentCount, section, key, response.Content, response.ErrorException);
+                    }
 
-                if (responseText == "invalid key" || responseText == "endpoint requires authentication")
-                {
-                    throw new InvalidKeyException(key, section, response.Content, response.ErrorException);
+                    if (responseText == "invalid key" || responseText == "endpoint requires authentication")
+                    {
+                        throw new InvalidKeyException(key, section, response.Content, response.ErrorException);
+                    }
+                    throw new ApiInformationForUserByKeyException(section, key, response.Content, response.ErrorException);
                 }
-                throw new ApiInformationForUserByKeyException(section, key, response.Content, response.ErrorException);
+                catch (Exception e)
+                {
+                    throw new ApiInformationForUserByKeyException(section, key, response.Content, e);
+                }
             }
         }
 
