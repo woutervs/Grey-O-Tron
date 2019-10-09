@@ -18,7 +18,12 @@ namespace GreyOTron.Library.Helpers
 
         public static bool IsAdmin(this IUser user)
         {
-            return user is SocketGuildUser guildUser && guildUser.IsAdmin();
+            return user is SocketGuildUser guildUser && guildUser.GuildPermissions.Administrator;
+        }
+
+        public static string UserId(this IUser user)
+        {
+            return $"{user.Username}#{user.Discriminator}";
         }
 
         public static ulong? OwnerId { get; set; }

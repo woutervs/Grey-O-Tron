@@ -3,9 +3,9 @@ using System.Threading.Tasks;
 using Discord;
 using Discord.WebSocket;
 using GreyOTron.Library.ApiClients;
+using GreyOTron.Library.Exceptions;
 using GreyOTron.Library.Helpers;
 using GreyOTron.Library.TableStorage;
-using Microsoft.Extensions.Configuration;
 using Polly.CircuitBreaker;
 
 namespace GreyOTron.Library.Commands
@@ -16,14 +16,12 @@ namespace GreyOTron.Library.Commands
         private readonly KeyRepository keyRepository;
         private readonly Gw2Api gw2Api;
         private readonly VerifyUser verifyUser;
-        private readonly IConfiguration configuration;
 
-        public VerifyCommand(KeyRepository keyRepository, Gw2Api gw2Api, VerifyUser verifyUser, IConfiguration configuration)
+        public VerifyCommand(KeyRepository keyRepository, Gw2Api gw2Api, VerifyUser verifyUser)
         {
             this.keyRepository = keyRepository;
             this.gw2Api = gw2Api;
             this.verifyUser = verifyUser;
-            this.configuration = configuration;
         }
 
         public async Task Execute(SocketMessage message, CancellationToken cancellationToken)
@@ -79,7 +77,12 @@ namespace GreyOTron.Library.Commands
                         await message.Author.SendMessageAsync("The GW2 api can't handle this request at the time, please try again a bit later.");
                         throw;
                     }
-                    await verifyUser.Verify(acInfo, userToUpdate, contextUser, false);
+                    catch (InvalidKeyException)
+                    {
+                        await contextUser.SendMessageAsync($"{(guildUser.Id != contextUser.Id ? guildUser.Username + "'s" : "Your")} api-key is invalid, please set a new one and re-verify.");
+                        throw;
+                    }
+                    await verifyUser.Verify(acInfo, userToUpdate, contextUser);
                 }
             }
             else

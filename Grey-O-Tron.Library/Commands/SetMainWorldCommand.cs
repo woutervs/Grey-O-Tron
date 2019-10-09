@@ -5,7 +5,6 @@ using Discord.WebSocket;
 using GreyOTron.Library.ApiClients;
 using GreyOTron.Library.Helpers;
 using GreyOTron.Library.TableStorage;
-using Microsoft.Extensions.Configuration;
 
 namespace GreyOTron.Library.Commands
 {

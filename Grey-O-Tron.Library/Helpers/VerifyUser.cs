@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Discord;
 using Discord.WebSocket;
 using GreyOTron.Library.ApiClients;
+using GreyOTron.Library.Exceptions;
 using GreyOTron.Library.TableStorage;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
@@ -48,11 +49,7 @@ namespace GreyOTron.Library.Helpers
 
             var userOwnedRolesMatchingWorlds = guildUser.Roles.Where(x => worlds.Contains(x.Name.ToLowerInvariant()) || x.Name.Equals(configuration["LinkedServerRole"], StringComparison.InvariantCultureIgnoreCase)).ToList();
 
-            if (!gw2AccountInfo.ValidKey)
-            {
-                await contextUser.SendMessageAsync($"{(contextUserIsNotGuildUser ? guildUser.Username + "'s" : "Your")} api-key is invalid, please set a new one and re-verify.");
-            }
-            else if (gw2AccountInfo.TokenInfo.Name != $"{guildUser.Username}#{guildUser.Discriminator}")
+            if (gw2AccountInfo.TokenInfo.Name != $"{guildUser.Username}#{guildUser.Discriminator}")
             {
                 await contextUser.SendMessageAsync(
                     $"{(contextUserIsNotGuildUser ? guildUser.Username : "You've")} most likely changed {(contextUserIsNotGuildUser ? "his/her" : "your")} discord username from {gw2AccountInfo.TokenInfo.Name} to {guildUser.Username}#{guildUser.Discriminator}." +
@@ -89,7 +86,18 @@ namespace GreyOTron.Library.Helpers
                 }
             }
 
-            await guildUser.RemoveRolesAsync(userOwnedRolesMatchingWorlds);
+            foreach (var userOwnedRolesMatchingWorld in userOwnedRolesMatchingWorlds)
+            {
+                try
+                {
+                    await guildUser.RemoveRoleAsync(userOwnedRolesMatchingWorld);
+                }
+                catch (Exception e)
+                {
+                    throw new RemoveRoleException(userOwnedRolesMatchingWorld.Name, e);
+                }
+
+            }
         }
 
         private async Task CreateRoleIfNotExistsAndAssignIfNeeded(SocketGuildUser guildUser, SocketGuildUser contextUser, List<SocketRole> userOwnedRolesMatchingWorlds, string roleName, bool bypassMessages)

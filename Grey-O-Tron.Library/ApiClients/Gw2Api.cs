@@ -1,5 +1,4 @@
 ﻿using GreyOTron.Library.Helpers;
-using Microsoft.ApplicationInsights;
 using Newtonsoft.Json.Linq;
 using RestSharp;
 using System;
@@ -7,6 +6,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Threading;
+using GreyOTron.Library.Exceptions;
 using Polly;
 using Polly.CircuitBreaker;
 using Polly.Retry;
@@ -17,14 +17,12 @@ namespace GreyOTron.Library.ApiClients
     {
         private const string BaseUrl = "https://api.guildwars2.com";
         private readonly Cache cache;
-        private readonly TelemetryClient log;
         private readonly TimeSpanSemaphore semaphore;
         private readonly RetryPolicy retryPolicy;
         private readonly CircuitBreakerPolicy circuitBreakerPolicy;
-        public Gw2Api(TelemetryClient log, Cache cache)
+        public Gw2Api(Cache cache)
         {
             this.cache = cache;
-            this.log = log;
             //Gw2API rate limits 600 reqs per minute.
             semaphore = new TimeSpanSemaphore(500, TimeSpan.FromMinutes(1)); //So we allow 500 requests every minute
             circuitBreakerPolicy = Policy.Handle<TooManyRequestsException>() //If somehow the api still says they can't handle our number of requests
@@ -61,7 +59,6 @@ namespace GreyOTron.Library.ApiClients
                     {
                         var account = accountResponse.Data;
                         account.TokenInfo = tokenInfoResponse.Data;
-                        account.ValidKey = true;
                         var accountWorld = GetWorlds().FirstOrDefault(x => x.Id == account.World);
                         if (accountWorld != null)
                         {
@@ -71,46 +68,35 @@ namespace GreyOTron.Library.ApiClients
                     }
                     else
                     {
-                        ParseResponse(accountResponse, "accountResponse", out var responseText);
-                        if (responseText == "invalid key" || responseText == "endpoint requires authentication")
-                        {
-                            return new AccountInfo { ValidKey = false };
-                        }
+                        ParseResponse(accountResponse, "accountResponse", key);
                     }
                 }
                 else
                 {
-                    ParseResponse(tokenInfoResponse, "tokenInfoResponse", out var responseText);
-                    if (responseText == "invalid key" || responseText == "endpoint requires authentication")
-                    {
-                        return new AccountInfo { ValidKey = false };
-                    }
+                    ParseResponse(tokenInfoResponse, "tokenInfoResponse", key);
                 }
                 return null;
             });
         }
 
-        private void ParseResponse(IRestResponse response, string section, out string responseText)
+        private void ParseResponse(IRestResponse response, string section, string key)
         {
-            responseText = string.Empty;
-            var dict = new Dictionary<string, string>
-            {
-                {"ErrorMessage", response.ErrorMessage}, {"Content", response.Content},
-                {"Section", section}
-            };
-
             if (!string.IsNullOrWhiteSpace(response.Content))
             {
                 var json = JObject.Parse(response.Content);
-                responseText = json?["text"]?.Value<string>().ToLowerInvariant() ?? string.Empty;
+                var responseText = json?["text"]?.Value<string>().ToLowerInvariant() ?? string.Empty;
 
                 if (responseText == "too many requests")
                 {
-                    dict.Add("SemaphoreCount", semaphore.CurrentCount.ToString());
-                    throw new TooManyRequestsException();
+                    throw new TooManyRequestsException(semaphore.CurrentCount, section, key, response.Content, response.ErrorException);
                 }
+
+                if (responseText == "invalid key" || responseText == "endpoint requires authentication")
+                {
+                    throw new InvalidKeyException(key, section, response.Content, response.ErrorException);
+                }
+                throw new ApiInformationForUserByKeyException(section, key, response.Content, response.ErrorException);
             }
-            log.TrackException(response.ErrorException, dict);
         }
 
         public IEnumerable<World> GetWorlds()
@@ -192,7 +178,6 @@ namespace GreyOTron.Library.ApiClients
         public int World { get; set; }
         public World WorldInfo { get; set; }
         public TokenInfo TokenInfo { get; set; }
-        public bool ValidKey { get; set; }
     }
 
 
