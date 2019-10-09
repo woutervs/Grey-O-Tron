@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Discord;
 using Discord.WebSocket;
 using GreyOTron.Library.ApiClients;
+using GreyOTron.Library.Exceptions;
 using GreyOTron.Library.Helpers;
 using GreyOTron.Library.TableStorage;
 using Microsoft.ApplicationInsights;
@@ -95,59 +96,63 @@ namespace GreyOTron
 
         private async Task Ready()
         {
-            UpdateStatistics();
-            var interval = TimeSpan.FromSeconds(30);
-            while (true)
+            try
             {
-                await client.SetGameAsync($"help on https://greyotron.eu | v{VersionResolver.Get()}");
-                if (Math.Abs(DateTime.UtcNow.TimeOfDay.Subtract(new TimeSpan(0, 20, 0, 0)).TotalMilliseconds) <= interval.TotalMilliseconds / 2)
+                UpdateStatistics();
+                var interval = TimeSpan.FromSeconds(30);
+                while (true)
                 {
-                    UpdateStatistics();
-                    var guildUsersQueue = new Queue<SocketGuildUser>(client.Guilds.SelectMany(x => x.Users));
-                    log.TrackEvent("UserVerification.Started");
-                    var stopWatch = Stopwatch.StartNew();
-                    while (guildUsersQueue.TryPeek(out var guildUser))
+                    await client.SetGameAsync($"help on https://greyotron.eu | v{VersionResolver.Get()}");
+                    if (Math.Abs(DateTime.UtcNow.TimeOfDay.Subtract(new TimeSpan(0, 20, 0, 0)).TotalMilliseconds) <= interval.TotalMilliseconds / 2)
                     {
-                        await Policy.Handle<BrokenCircuitException>()
-                            .WaitAndRetry(6, i => TimeSpan.FromMinutes(Math.Pow(2, i % 6)))
-                            .Execute(async
-                                () =>
-                            {
-                                try
+                        UpdateStatistics();
+                        var guildUsersQueue = new Queue<SocketGuildUser>(client.Guilds.SelectMany(x => x.Users));
+                        log.TrackEvent("UserVerification.Started");
+                        var stopWatch = Stopwatch.StartNew();
+                        while (guildUsersQueue.TryPeek(out var guildUser))
+                        {
+                            await Policy.Handle<BrokenCircuitException>()
+                                .WaitAndRetry(6, i => TimeSpan.FromMinutes(Math.Pow(2, i % 6)))
+                                .Execute(async
+                                    () =>
                                 {
-                                    var discordClientWithKey = await keyRepository.Get("Gw2", guildUser.Id.ToString());
-                                    if (discordClientWithKey == null) return;
-                                    var acInfo = gw2Api.GetInformationForUserByKey(discordClientWithKey.Key);
-                                    if (acInfo != null)
+                                    try
                                     {
+                                        var discordClientWithKey = await keyRepository.Get("Gw2", guildUser.Id.ToString());
+                                        if (discordClientWithKey == null) return;
+                                        AccountInfo acInfo;
+                                        try
+                                        {
+                                            acInfo = gw2Api.GetInformationForUserByKey(discordClientWithKey.Key);
+                                        }
+                                        catch (InvalidKeyException)
+                                        {
+                                            await guildUser.SendMessageAsync("Your api-key is invalid, please set a new one and re-verify.");
+                                            throw;
+                                        }
                                         await verifyUser.Verify(acInfo, guildUser, guildUser, true);
                                     }
-                                }
-                                catch (BrokenCircuitException)
-                                {
-                                    log.TrackTrace("Gw2 Api not recovering fast enough from repeated messages, pausing execution.");
-                                    await client.SendMessageToBotOwner("Gw2 Api not recovering fast enough from repeated messages, pausing execution.");
-                                    throw;
-                                }
-                                catch (Exception e)
-                                {
-                                    if (guildUser != null)
+                                    catch (BrokenCircuitException)
                                     {
-                                        log.TrackException(e, new Dictionary<string, string> { { "DiscordUser", $"{guildUser.Username}#{guildUser.Discriminator}" } });
+                                        await client.SendMessageToBotOwner("Gw2 Api not recovering fast enough from repeated messages, pausing execution.");
+                                        throw;
                                     }
-                                    else
+                                    catch (Exception e)
                                     {
-                                        log.TrackException(e);
+                                        ExceptionHandler.HandleException(log, e, guildUser);
                                     }
-                                }
-
-                            });
-                        guildUsersQueue.Dequeue();
+                                });
+                            guildUsersQueue.Dequeue();
+                        }
+                        stopWatch.Stop();
+                        log.TrackEvent("UserVerification.Ended", metrics: new Dictionary<string, double> { { "run-time", stopWatch.ElapsedMilliseconds } });
                     }
-                    stopWatch.Stop();
-                    log.TrackEvent("UserVerification.Ended", metrics: new Dictionary<string, double> {{"run-time", stopWatch.ElapsedMilliseconds}});
+                    await Task.Delay(interval, cancellationToken);
                 }
-                await Task.Delay(interval, cancellationToken);
+            }
+            catch (Exception e)
+            {
+                log.TrackException(e);
             }
             //Don't have to return since bot never stops anyway.
             // ReSharper disable once FunctionNeverReturns
@@ -163,14 +168,8 @@ namespace GreyOTron
             }
             catch (Exception e)
             {
-                log.TrackException(e, new Dictionary<string, string>
-                {
-                    {"DiscordUser", $"{socketMessage.Author.Username}#{socketMessage.Author.Discriminator}" },
-                    {"Command", socketMessage.Content }
-
-                });
+                ExceptionHandler.HandleException(log, e, socketMessage.Author, socketMessage.Content);
             }
-
         }
     }
 }

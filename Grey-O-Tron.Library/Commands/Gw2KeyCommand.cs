@@ -1,15 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Discord;
 using Discord.WebSocket;
 using GreyOTron.Library.ApiClients;
+using GreyOTron.Library.Exceptions;
 using GreyOTron.Library.Helpers;
 using GreyOTron.Library.TableStorage;
 using Microsoft.ApplicationInsights;
-using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using Polly.CircuitBreaker;
 
@@ -20,15 +19,13 @@ namespace GreyOTron.Library.Commands
     {
         private readonly Gw2Api gw2Api;
         private readonly KeyRepository gw2KeyRepository;
-        private readonly IConfiguration configuration;
         private readonly VerifyUser verifyUser;
         private readonly TelemetryClient log;
 
-        public Gw2KeyCommand(Gw2Api gw2Api, KeyRepository gw2KeyRepository, IConfiguration configuration, VerifyUser verifyUser, TelemetryClient log)
+        public Gw2KeyCommand(Gw2Api gw2Api, KeyRepository gw2KeyRepository, VerifyUser verifyUser, TelemetryClient log)
         {
             this.gw2Api = gw2Api;
             this.gw2KeyRepository = gw2KeyRepository;
-            this.configuration = configuration;
             this.verifyUser = verifyUser;
             this.log = log;
         }
@@ -53,7 +50,12 @@ namespace GreyOTron.Library.Commands
                     await message.Author.SendMessageAsync("The GW2 api can't handle this request at the time, please try again a bit later.");
                     throw;
                 }
-                log.TrackTrace(message.Content, new Dictionary<string, string> { { "DiscordUser", $"{message.Author.Username}#{message.Author.Discriminator}" }, { "AccountInfo", JsonConvert.SerializeObject(acInfo, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }) } });
+                catch (InvalidKeyException)
+                {
+                    await message.Author.SendMessageAsync("Your api-key is invalid, please set a new one and re-verify.");
+                    throw;
+                }
+                log.TrackTrace(message.Content, new Dictionary<string, string> { { "DiscordUser", message.Author.UserId() }, { "AccountInfo", JsonConvert.SerializeObject(acInfo, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }) } });
                 if (acInfo?.TokenInfo?.Name == $"{message.Author.Username}#{message.Author.Discriminator}")
                 {
                     await gw2KeyRepository.Set(new DiscordClientWithKey("Gw2", message.Author.Id.ToString(),

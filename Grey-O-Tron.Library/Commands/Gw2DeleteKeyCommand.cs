@@ -5,7 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Discord;
 using Discord.WebSocket;
-using GreyOTron.Library.ApiClients;
+using GreyOTron.Library.Exceptions;
 using GreyOTron.Library.Helpers;
 using GreyOTron.Library.TableStorage;
 using Microsoft.ApplicationInsights;
@@ -35,7 +35,7 @@ namespace GreyOTron.Library.Commands
             if (cancellationToken.IsCancellationRequested) return;
 
             await gw2KeyRepository.Delete("Gw2", message.Author.Id.ToString());
-            List<string> affectedServers = new List<string>();
+            var affectedServers = new List<string>();
             foreach (var guild in Client.Guilds)
             {
                 try
@@ -66,7 +66,7 @@ namespace GreyOTron.Library.Commands
                 }
                 catch (Exception ex)
                 {
-                    log.TrackException(ex, new Dictionary<string, string> { { "DiscordUser", $"{message.Author.Username}#{message.Author.Discriminator}" } });
+                    ExceptionHandler.HandleException(log, ex, message.Author, $"Try delete roles in {guild.Name}.");
                 }
             }
             await message.Author.SendMessageAsync($"Your gw2 world roles have been removed from {(affectedServers.Any() ? affectedServers.Aggregate("", (a, b) => $"{a}, {b} ").TrimEnd(',', ' ') : "no where")}.\nGoodbye!");
