@@ -6,7 +6,7 @@ using GreyOTron.Library.Helpers;
 
 namespace GreyOTron.Library.Commands
 {
-    [Command("exception", CommandDescription = "Throws an exception", CommandOptions = CommandOptions.DirectMessage | CommandOptions.RequiresOwner)]
+    [Command("exception", CommandDescription = "Throws an exception", CommandOptions = CommandOptions.RequiresOwner)]
     public class ExceptionCommand : ICommand
     {
         public async Task Execute(SocketMessage message, CancellationToken cancellationToken)

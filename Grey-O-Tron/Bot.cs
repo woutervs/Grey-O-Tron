@@ -96,13 +96,21 @@ namespace GreyOTron
 
         private async Task Ready()
         {
+            var messages = new Carrousel(
+            new List<string> {
+                $"v{VersionResolver.Get()}",
+                "greyotron.eu",
+                "got#help"
+            });
+
             try
             {
                 UpdateStatistics();
                 var interval = TimeSpan.FromSeconds(30);
+
                 while (true)
                 {
-                    await client.SetGameAsync($"help on https://greyotron.eu | v{VersionResolver.Get()}");
+                    await client.SetGameAsync(messages.Next());
                     if (Math.Abs(DateTime.UtcNow.TimeOfDay.Subtract(new TimeSpan(0, 20, 0, 0)).TotalMilliseconds) <= interval.TotalMilliseconds / 2)
                     {
                         UpdateStatistics();
