@@ -28,15 +28,6 @@ namespace GreyOTron.Library.Helpers
         public async Task Execute(AccountInfo gw2AccountInfo, SocketGuildUser guildUser, SocketGuildUser contextUser, bool bypassMessages = false)
         {
             var contextUserIsNotGuildUser = guildUser.Id != contextUser.Id;
-            if (gw2AccountInfo == null)
-            {
-                if (!bypassMessages)
-                {
-                    await contextUser.InternalSendMessageAsync("The GW2Api is unavailable at this time, please try again later.");
-                }
-
-                return;
-            }
 
             var worlds = JsonConvert.DeserializeObject<List<string>>((await discordGuildSettingsRepository.Get(DiscordGuildSetting.Worlds, guildUser.Guild.Id.ToString()))?.Value ?? "[]");
             var mainWorld =

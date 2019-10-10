@@ -75,7 +75,7 @@ namespace GreyOTron.Library.ApiClients
                 {
                     ParseResponse(tokenInfoResponse, "tokenInfoResponse", key);
                 }
-                return null;
+                throw new ApiInformationForUserByKeyException("Should never get here", key, null, null);
             });
         }
 
