@@ -28,7 +28,7 @@ namespace GreyOTron.Library.Commands
             {
                 resolverCommands = resolverCommands.Where(x => !x.Options.HasFlag(CommandOptions.RequiresAdmin));
             }
-            await message.Author.SendMessageAsync("Help can be found on https://greyotron.eu\n" +
+            await message.Author.InternalSendMessageAsync("Help can be found on https://greyotron.eu\n" +
                                                   $"{resolverCommands.Aggregate("", (s, command) => $"{s} {command}\n")}" +
                                                   "Or find help on https://discord.gg/6uybq5X\n");
 

@@ -2,7 +2,6 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Discord;
 using Discord.WebSocket;
 using GreyOTron.Library.ApiClients;
 using GreyOTron.Library.Exceptions;
@@ -36,7 +35,7 @@ namespace GreyOTron.Library.Commands
             var key = Arguments;
             if (string.IsNullOrWhiteSpace(key))
             {
-                await message.Author.SendMessageAsync("This key seems empty to me, please try again.");
+                await message.Author.InternalSendMessageAsync("This key seems empty to me, please try again.");
             }
             else
             {
@@ -47,12 +46,12 @@ namespace GreyOTron.Library.Commands
                 }
                 catch (BrokenCircuitException)
                 {
-                    await message.Author.SendMessageAsync("The GW2 api can't handle this request at the time, please try again a bit later.");
+                    await message.Author.InternalSendMessageAsync("The GW2 api can't handle this request at the time, please try again a bit later.");
                     throw;
                 }
                 catch (InvalidKeyException)
                 {
-                    await message.Author.SendMessageAsync("Your api-key is invalid, please set a new one and re-verify.");
+                    await message.Author.InternalSendMessageAsync("Your api-key is invalid, please set a new one and re-verify.");
                     throw;
                 }
                 log.TrackTrace(message.Content, new Dictionary<string, string> { { "DiscordUser", message.Author.UserId() }, { "AccountInfo", JsonConvert.SerializeObject(acInfo, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }) } });
@@ -63,22 +62,22 @@ namespace GreyOTron.Library.Commands
 
                     if (message.Author is SocketGuildUser guildUser)
                     {
-                        await verifyUser.Verify(acInfo, guildUser, guildUser);
+                        await verifyUser.Execute(acInfo, guildUser, guildUser);
                     }
                     else
                     {
                         foreach (var guild in message.Author.MutualGuilds)
                         {
                             guildUser = guild.GetUser(message.Author.Id);
-                            await verifyUser.Verify(acInfo, guildUser, guildUser);
+                            await verifyUser.Execute(acInfo, guildUser, guildUser);
                         }
-                        await message.Author.SendMessageAsync($"Your key has been stored, and we verified you on \n {message.Author.MutualGuilds.Aggregate("", (x, y) => $"{x}{y.Name}\n")}");
+                        await message.Author.InternalSendMessageAsync($"Your key has been stored, and we verified you on \n {message.Author.MutualGuilds.Aggregate("", (x, y) => $"{x}{y.Name}\n")}");
                     }
                 }
                 else
                 {
-                    await message.Author.SendMessageAsync($"Please make sure your GW2 application key's name is the same as your discord username: {message.Author.Username}#{message.Author.Discriminator}");
-                    await message.Author.SendMessageAsync("You can view, create and edit your GW2 application key's on https://account.arena.net/applications");
+                    await message.Author.InternalSendMessageAsync($"Please make sure your GW2 application key's name is the same as your discord username: {message.Author.Username}#{message.Author.Discriminator}");
+                    await message.Author.InternalSendMessageAsync("You can view, create and edit your GW2 application key's on https://account.arena.net/applications");
                 }
             }
 

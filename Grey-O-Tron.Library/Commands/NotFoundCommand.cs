@@ -11,7 +11,7 @@ namespace GreyOTron.Library.Commands
         public async Task Execute(SocketMessage message, CancellationToken cancellationToken)
         {
             if (cancellationToken.IsCancellationRequested) return;
-            await message.Author.SendMessageAsync($"You tried using '{Arguments}', unfortunately I haven't been taught that command.");
+            await message.Author.InternalSendMessageAsync($"You tried using '{Arguments}', unfortunately I haven't been taught that command.");
         }
         public string Arguments { get; set; }
         public DiscordSocketClient Client { get; set; }

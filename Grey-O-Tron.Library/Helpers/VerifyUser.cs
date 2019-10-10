@@ -25,14 +25,14 @@ namespace GreyOTron.Library.Helpers
             this.configuration = configuration;
         }
 
-        public async Task Verify(AccountInfo gw2AccountInfo, SocketGuildUser guildUser, SocketGuildUser contextUser, bool bypassMessages = false)
+        public async Task Execute(AccountInfo gw2AccountInfo, SocketGuildUser guildUser, SocketGuildUser contextUser, bool bypassMessages = false)
         {
             var contextUserIsNotGuildUser = guildUser.Id != contextUser.Id;
             if (gw2AccountInfo == null)
             {
                 if (!bypassMessages)
                 {
-                    await contextUser.SendMessageAsync("The GW2Api is unavailable at this time, please try again later.");
+                    await contextUser.InternalSendMessageAsync("The GW2Api is unavailable at this time, please try again later.");
                 }
 
                 return;
@@ -51,7 +51,7 @@ namespace GreyOTron.Library.Helpers
 
             if (gw2AccountInfo.TokenInfo.Name != $"{guildUser.Username}#{guildUser.Discriminator}")
             {
-                await contextUser.SendMessageAsync(
+                await contextUser.InternalSendMessageAsync(
                     $"{(contextUserIsNotGuildUser ? guildUser.Username : "You've")} most likely changed {(contextUserIsNotGuildUser ? "his/her" : "your")} discord username from {gw2AccountInfo.TokenInfo.Name} to {guildUser.Username}#{guildUser.Discriminator}." +
                     $"\n{(contextUserIsNotGuildUser ? $"Please ask {guildUser.Username} to update his/her key." : "Please update your key.")}" +
                     "\nYou can view, create and edit your GW2 application key's on https://account.arena.net/applications");
@@ -75,11 +75,11 @@ namespace GreyOTron.Library.Helpers
                     {
                         if (gw2AccountInfo.WorldInfo == null)
                         {
-                            await contextUser.SendMessageAsync($"Could not assign world roles on '{guildUser.Guild.Name}' for {(contextUserIsNotGuildUser ? guildUser.Username : "you")}.");
+                            await contextUser.InternalSendMessageAsync($"Could not assign world roles on '{guildUser.Guild.Name}' for {(contextUserIsNotGuildUser ? guildUser.Username : "you")}.");
                         }
                         else
                         {
-                            await contextUser.SendMessageAsync(
+                            await contextUser.InternalSendMessageAsync(
                                 $"Your gw2 world does not belong to the verified worlds of '{guildUser.Guild.Name}' discord server, I can't assign {(contextUserIsNotGuildUser ? guildUser.Username : "your")} world role sorry!");
                         }
                     }
@@ -123,7 +123,7 @@ namespace GreyOTron.Library.Helpers
                 }
                 if (!bypassMessages)
                 {
-                    await contextUser.SendMessageAsync($"{(contextUserIsNotGuildUser ? guildUser.Username : "You")} {(contextUserIsNotGuildUser ? "has" : "have")} been assigned role: {roleName} on {guildUser.Guild.Name}");
+                    await contextUser.InternalSendMessageAsync($"{(contextUserIsNotGuildUser ? guildUser.Username : "You")} {(contextUserIsNotGuildUser ? "has" : "have")} been assigned role: {roleName} on {guildUser.Guild.Name}");
                 }
             }
             userOwnedRolesMatchingWorlds.Remove(roleExistsAlready);

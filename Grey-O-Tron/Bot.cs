@@ -25,17 +25,19 @@ namespace GreyOTron
         private readonly KeyRepository keyRepository;
         private readonly Gw2Api gw2Api;
         private readonly VerifyUser verifyUser;
+        private readonly RemoveUser removeUser;
         private readonly CommandProcessor processor;
         private readonly IConfiguration configuration;
         private readonly TelemetryClient log;
         private CancellationToken cancellationToken;
 
-        public Bot(DiscordBotsApi discordBotsApi, KeyRepository keyRepository, Gw2Api gw2Api, VerifyUser verifyUser, CommandProcessor processor, IConfiguration configuration, TelemetryClient log)
+        public Bot(DiscordBotsApi discordBotsApi, KeyRepository keyRepository, Gw2Api gw2Api, VerifyUser verifyUser, RemoveUser removeUser, CommandProcessor processor, IConfiguration configuration, TelemetryClient log)
         {
             this.discordBotsApi = discordBotsApi;
             this.keyRepository = keyRepository;
             this.gw2Api = gw2Api;
             this.verifyUser = verifyUser;
+            this.removeUser = removeUser;
             this.processor = processor;
             this.configuration = configuration;
             this.log = log;
@@ -43,6 +45,8 @@ namespace GreyOTron
             {
                 UserExtensions.OwnerId = ownerId;
             }
+
+            UserExtensions.Log = log;
         }
 
         public async Task Start(CancellationToken token)
@@ -115,7 +119,7 @@ namespace GreyOTron
                     {
                         UpdateStatistics();
                         var guildUsersQueue = new Queue<SocketGuildUser>(client.Guilds.SelectMany(x => x.Users));
-                        log.TrackEvent("UserVerification.Started", metrics:new Dictionary<string, double> {{"Count", guildUsersQueue.Count}});
+                        log.TrackEvent("UserVerification.Started", metrics: new Dictionary<string, double> { { "Count", guildUsersQueue.Count } });
                         var stopWatch = Stopwatch.StartNew();
                         while (guildUsersQueue.TryPeek(out var guildUser))
                         {
@@ -135,10 +139,11 @@ namespace GreyOTron
                                         }
                                         catch (InvalidKeyException)
                                         {
-                                            await guildUser.SendMessageAsync("Your api-key is invalid, please set a new one and re-verify.");
+                                            await guildUser.InternalSendMessageAsync("Your api-key is invalid, please set a new one and re-verify.");
+                                            await removeUser.Execute(guildUser, client.Guilds, cancellationToken);
                                             throw;
                                         }
-                                        await verifyUser.Verify(acInfo, guildUser, guildUser, true);
+                                        await verifyUser.Execute(acInfo, guildUser, guildUser, true);
                                     }
                                     catch (BrokenCircuitException)
                                     {
