@@ -4,6 +4,7 @@
     <TargetFramework>netstandard2.1</TargetFramework>
     <RootNamespace>GreyOTron.Library</RootNamespace>
     <AssemblyName>GreyOTron.Library</AssemblyName>
+    <Configurations>Debug;Release;Maintenance</Configurations>
   </PropertyGroup>
 
   <ItemGroup>

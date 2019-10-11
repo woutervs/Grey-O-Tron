@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using Discord;
+using Discord.Net;
 using Discord.WebSocket;
 using GreyOTron.Library.ApiClients;
+using GreyOTron.Library.Commands;
 using GreyOTron.Library.Exceptions;
 using GreyOTron.Library.TableStorage;
 using Microsoft.Extensions.Configuration;
@@ -103,15 +106,30 @@ namespace GreyOTron.Library.Helpers
                 {
                     return guildUser.Guild.Roles.FirstOrDefault(x => x.Name == roleName) ?? (IRole)guildUser.Guild.CreateRoleAsync(roleName, GuildPermissions.None).Result;
                 });
+
                 try
                 {
                     await guildUser.AddRoleAsync(role);
                 }
-                catch (Exception)
+                catch (HttpException e)
                 {
-                    cache.RemoveFromCache(cachedName);
-                    await CreateRoleIfNotExistsAndAssignIfNeeded(guildUser, contextUser, userOwnedRolesMatchingWorlds, roleName, bypassMessages);
+                    switch (e.HttpCode)
+                    {
+                        case HttpStatusCode.Forbidden:
+                            throw new RoleHierarchyException("Could not add the role to the user.", e);
+                        case HttpStatusCode.NotFound:
+                            cache.RemoveFromCache(cachedName);
+                            cache.GetFromCacheSliding(cachedName, TimeSpan.FromDays(1),
+                                () => (IRole)guildUser.Guild.CreateRoleAsync(roleName, GuildPermissions.None).Result);
+                            await CreateRoleIfNotExistsAndAssignIfNeeded(guildUser, contextUser,
+                                userOwnedRolesMatchingWorlds, roleName, bypassMessages);
+                            break;
+                        default:
+                            throw;
+                    }
                 }
+
+
                 if (!bypassMessages)
                 {
                     await contextUser.InternalSendMessageAsync($"{(contextUserIsNotGuildUser ? guildUser.Username : "You")} {(contextUserIsNotGuildUser ? "has" : "have")} been assigned role: {roleName} on {guildUser.Guild.Name}");

@@ -5,6 +5,7 @@
     <RootNamespace>GreyOTron.Api</RootNamespace>
     <AssemblyName>GreyOTron.Api</AssemblyName>
     <UserSecretsId>41972DC2-BCE1-4FF6-A516-B6C362E0845C</UserSecretsId>
+    <Configurations>Debug;Release;Maintenance</Configurations>
   </PropertyGroup>
 
   <ItemGroup>

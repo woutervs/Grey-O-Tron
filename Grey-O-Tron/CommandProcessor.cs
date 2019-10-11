@@ -25,6 +25,9 @@ namespace GreyOTron
             {
                 return new NullCommand();
             }
+#if MAINTENANCE
+            return new MaintenanceCommand();
+#endif
 
             var commandName = message.Substring(prefix.Length, message.Length - prefix.Length);
             var i = commandName.IndexOf(' ');
