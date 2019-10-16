@@ -33,7 +33,7 @@ namespace GreyOTron.Library.Helpers
         {
             if (token.IsCancellationRequested) return;
 
-            await gw2KeyRepository.Delete("Gw2", user.Id.ToString());
+            //await gw2KeyRepository.Delete("Gw2", user.Id.ToString()); this might be a bad idea sometimes the api glitches out...
             var affectedServers = new List<string>();
             foreach (var guild in guilds)
             {

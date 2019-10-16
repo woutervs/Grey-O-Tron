@@ -54,9 +54,11 @@ namespace GreyOTron
             {
                 client.Ready += Ready;
                 client.MessageReceived += ClientOnMessageReceived;
-                const string configurationTokenName = "GreyOTron-Token";
+                
 #if MAINTENANCE
                 const string configurationTokenName = "GreyOTron-TokenMaintenance";
+#else
+                const string configurationTokenName = "GreyOTron-Token";
 #endif
                 await client.LoginAsync(TokenType.Bot, configuration[configurationTokenName]);
 
