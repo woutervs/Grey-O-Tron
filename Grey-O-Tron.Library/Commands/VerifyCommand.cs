@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using Discord;
 using Discord.WebSocket;
@@ -16,12 +17,14 @@ namespace GreyOTron.Library.Commands
         private readonly KeyRepository keyRepository;
         private readonly Gw2Api gw2Api;
         private readonly VerifyUser verifyUser;
+        private readonly RemoveUser removeUser;
 
-        public VerifyCommand(KeyRepository keyRepository, Gw2Api gw2Api, VerifyUser verifyUser)
+        public VerifyCommand(KeyRepository keyRepository, Gw2Api gw2Api, VerifyUser verifyUser, RemoveUser removeUser)
         {
             this.keyRepository = keyRepository;
             this.gw2Api = gw2Api;
             this.verifyUser = verifyUser;
+            this.removeUser = removeUser;
         }
 
         public async Task Execute(SocketMessage message, CancellationToken cancellationToken)
@@ -41,11 +44,11 @@ namespace GreyOTron.Library.Commands
                 {
                     if (context != null)
                     {
-                        await message.Author.SendMessageAsync($"No key found for {context}");
+                        await message.Author.InternalSendMessageAsync($"No key found for {context}");
                     }
                     else
                     {
-                        await message.Author.SendMessageAsync(
+                        await message.Author.InternalSendMessageAsync(
                             "You haven't yet registered a key with me, use the gw2-key command to do so.");
                     }
                 }
@@ -59,7 +62,7 @@ namespace GreyOTron.Library.Commands
                         userToUpdate = userToUpdate.Guild.GetUser(contextId);
                         if (userToUpdate == null || !couldParse)
                         {
-                            await contextUser.SendMessageAsync($"User you are trying to verify was not found on this Discord server.");
+                            await contextUser.InternalSendMessageAsync($"User you are trying to verify was not found on this Discord server.");
                             if (!(message.Channel is SocketDMChannel))
                             {
                                 await message.DeleteAsync();
@@ -74,20 +77,21 @@ namespace GreyOTron.Library.Commands
                     }
                     catch (BrokenCircuitException)
                     {
-                        await message.Author.SendMessageAsync("The GW2 api can't handle this request at the time, please try again a bit later.");
+                        await message.Author.InternalSendMessageAsync("The GW2 api can't handle this request at the time, please try again a bit later.");
                         throw;
                     }
                     catch (InvalidKeyException)
                     {
-                        await contextUser.SendMessageAsync($"{(guildUser.Id != contextUser.Id ? guildUser.Username + "'s" : "Your")} api-key is invalid, please set a new one and re-verify.");
+                        await contextUser.InternalSendMessageAsync($"{(guildUser.Id != contextUser.Id ? guildUser.Username + "'s" : "Your")} api-key is invalid, please set a new one and re-verify.");
+                        await removeUser.Execute(guildUser, Client.Guilds, cancellationToken);
                         throw;
                     }
-                    await verifyUser.Verify(acInfo, userToUpdate, contextUser);
+                    await verifyUser.Execute(acInfo, userToUpdate, contextUser);
                 }
             }
             else
             {
-                await message.Author.SendMessageAsync("You must use the gw2-verify command from within the discord server you try to get verified on.");
+                await message.Author.InternalSendMessageAsync("You must use the gw2-verify command from within the discord server you try to get verified on.");
             }
 
             if (!(message.Channel is SocketDMChannel))

@@ -16,11 +16,11 @@ namespace GreyOTron.Library.Commands
             if (message.Author.IsOwner())
             {
                 var guilds = Client.Guilds.Aggregate("", (s, guild) => $"{s}{guild.Name}\n");
-                await message.Author.SendMessageAsync($"Total: {Client.Guilds.Count}\n{guilds}");
+                await message.Author.InternalSendMessageAsync($"Total: {Client.Guilds.Count}\n{guilds}");
             }
             else
             {
-                await message.Author.SendMessageAsync("I'm sorry you're not authorized to receive this kind of information.");
+                await message.Author.InternalSendMessageAsync("I'm sorry you're not authorized to receive this kind of information.");
             }
             if (!(message.Channel is SocketDMChannel))
             {

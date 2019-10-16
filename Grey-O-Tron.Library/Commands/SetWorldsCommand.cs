@@ -43,7 +43,7 @@ namespace GreyOTron.Library.Commands
 
                 if (!worlds.Any())
                 {
-                    await message.Author.SendMessageAsync(
+                    await message.Author.InternalSendMessageAsync(
                         "You must give at least one world name separated by ; for the set-worlds command to work.");
                 }
                 else if (guildUser.IsAdminOrOwner())
@@ -51,18 +51,18 @@ namespace GreyOTron.Library.Commands
                     await discordGuildSettingsRepository.Set(new DiscordGuildSetting(guildUser.Guild.Id.ToString(),
                         guildUser.Guild.Name, DiscordGuildSetting.Worlds,
                         JsonConvert.SerializeObject(worlds.Select(x => x.Name.ToLowerInvariant()))));
-                    await guildUser.SendMessageAsync(
+                    await guildUser.InternalSendMessageAsync(
                         $"{worlds.Aggregate("", (a, b) => $"{a}{b.Name}, ").TrimEnd(',', ' ')} set for {guildUser.Guild.Name}");
                 }
                 else
                 {
-                    await guildUser.SendMessageAsync(
+                    await guildUser.InternalSendMessageAsync(
                         "You must have administrative permissions to perform the set-worlds command.");
                 }
             }
             else
             {
-                await message.Author.SendMessageAsync(
+                await message.Author.InternalSendMessageAsync(
                     "The set-worlds command must be used from within the server to which you want to apply it.");
             }
 

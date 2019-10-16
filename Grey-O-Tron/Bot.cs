@@ -21,21 +21,21 @@ namespace GreyOTron
     public class Bot
     {
         private readonly DiscordSocketClient client = new DiscordSocketClient();
-        private readonly DiscordBotsApi discordBotsApi;
         private readonly KeyRepository keyRepository;
         private readonly Gw2Api gw2Api;
         private readonly VerifyUser verifyUser;
+        private readonly RemoveUser removeUser;
         private readonly CommandProcessor processor;
         private readonly IConfiguration configuration;
         private readonly TelemetryClient log;
         private CancellationToken cancellationToken;
 
-        public Bot(DiscordBotsApi discordBotsApi, KeyRepository keyRepository, Gw2Api gw2Api, VerifyUser verifyUser, CommandProcessor processor, IConfiguration configuration, TelemetryClient log)
+        public Bot(KeyRepository keyRepository, Gw2Api gw2Api, VerifyUser verifyUser, RemoveUser removeUser, CommandProcessor processor, IConfiguration configuration, TelemetryClient log)
         {
-            this.discordBotsApi = discordBotsApi;
             this.keyRepository = keyRepository;
             this.gw2Api = gw2Api;
             this.verifyUser = verifyUser;
+            this.removeUser = removeUser;
             this.processor = processor;
             this.configuration = configuration;
             this.log = log;
@@ -43,6 +43,8 @@ namespace GreyOTron
             {
                 UserExtensions.OwnerId = ownerId;
             }
+
+            UserExtensions.Log = log;
         }
 
         public async Task Start(CancellationToken token)
@@ -52,8 +54,12 @@ namespace GreyOTron
             {
                 client.Ready += Ready;
                 client.MessageReceived += ClientOnMessageReceived;
+                const string configurationTokenName = "GreyOTron-Token";
+#if MAINTENANCE
+                const string configurationTokenName = "GreyOTron-TokenMaintenance";
+#endif
+                await client.LoginAsync(TokenType.Bot, configuration[configurationTokenName]);
 
-                await client.LoginAsync(TokenType.Bot, configuration["GreyOTron-Token"]);
                 await client.StartAsync();
 
                 log.TrackTrace("Bot started.");
@@ -79,35 +85,33 @@ namespace GreyOTron
             log.TrackTrace("Bot stopped.");
         }
 
-        private void UpdateStatistics()
-        {
-            try
-            {
-                if (client.CurrentUser != null)
-                {
-                    discordBotsApi.UpdateStatistics(client.CurrentUser.Id.ToString(), new Statistics { ServerCount = client.Guilds.Count });
-                }
-            }
-            catch (Exception e)
-            {
-                log.TrackException(e);
-            }
-        }
-
         private async Task Ready()
         {
+            var messages = new Carrousel(
+            new List<string> {
+                $"v{VersionResolver.Get()}",
+                "greyotron.eu",
+                "got#help"
+            });
+
+#if MAINTENANCE
+            messages = new Carrousel(
+                new List<string> {
+                   "MAINTENANCE MODE"
+                });
+#endif
+
             try
             {
-                UpdateStatistics();
                 var interval = TimeSpan.FromSeconds(30);
+
                 while (true)
                 {
-                    await client.SetGameAsync($"help on https://greyotron.eu | v{VersionResolver.Get()}");
+                    await client.SetGameAsync(messages.Next());
                     if (Math.Abs(DateTime.UtcNow.TimeOfDay.Subtract(new TimeSpan(0, 20, 0, 0)).TotalMilliseconds) <= interval.TotalMilliseconds / 2)
                     {
-                        UpdateStatistics();
                         var guildUsersQueue = new Queue<SocketGuildUser>(client.Guilds.SelectMany(x => x.Users));
-                        log.TrackEvent("UserVerification.Started");
+                        log.TrackEvent("UserVerification.Started", metrics: new Dictionary<string, double> { { "Count", guildUsersQueue.Count } });
                         var stopWatch = Stopwatch.StartNew();
                         while (guildUsersQueue.TryPeek(out var guildUser))
                         {
@@ -127,10 +131,11 @@ namespace GreyOTron
                                         }
                                         catch (InvalidKeyException)
                                         {
-                                            await guildUser.SendMessageAsync("Your api-key is invalid, please set a new one and re-verify.");
+                                            await guildUser.InternalSendMessageAsync("Your api-key is invalid, please set a new one and re-verify.");
+                                            await removeUser.Execute(guildUser, client.Guilds, cancellationToken);
                                             throw;
                                         }
-                                        await verifyUser.Verify(acInfo, guildUser, guildUser, true);
+                                        await verifyUser.Execute(acInfo, guildUser, guildUser, true);
                                     }
                                     catch (BrokenCircuitException)
                                     {

@@ -32,7 +32,7 @@ namespace GreyOTron.Library.ApiClients
                     500, //Technically this could be one but we're expecting more than 500 requests before it fails anyway.
                     TimeSpan.FromSeconds(30)
                 );
-            retryPolicy = Policy.Handle<TooManyRequestsException>()
+            retryPolicy = Policy.Handle<TooManyRequestsException>().Or<ApiTimeoutException>()
                 .WaitAndRetryForever(i => TimeSpan.FromSeconds(Math.Pow(2, i % 6))); //Exp back-off but with cutoff of 60s
         }
 
@@ -75,7 +75,7 @@ namespace GreyOTron.Library.ApiClients
                 {
                     ParseResponse(tokenInfoResponse, "tokenInfoResponse", key);
                 }
-                return null;
+                throw new ApiInformationForUserByKeyException("Should never get here", key, null, null);
             });
         }
 
@@ -83,9 +83,16 @@ namespace GreyOTron.Library.ApiClients
         {
             if (!string.IsNullOrWhiteSpace(response.Content))
             {
-                var json = JObject.Parse(response.Content);
-                var responseText = json?["text"]?.Value<string>().ToLowerInvariant() ?? string.Empty;
-
+                string responseText;
+                try
+                {
+                    var json = JObject.Parse(response.Content);
+                    responseText = json?["text"]?.Value<string>().ToLowerInvariant() ?? string.Empty;
+                }
+                catch (Exception e)
+                {
+                    throw new ApiInformationForUserByKeyException(section, key, response.Content, e);
+                }
                 if (responseText == "too many requests")
                 {
                     throw new TooManyRequestsException(semaphore.CurrentCount, section, key, response.Content, response.ErrorException);
@@ -94,6 +101,11 @@ namespace GreyOTron.Library.ApiClients
                 if (responseText == "invalid key" || responseText == "endpoint requires authentication")
                 {
                     throw new InvalidKeyException(key, section, response.Content, response.ErrorException);
+                }
+
+                if (responseText == "errtimeout")
+                {
+                    throw new ApiTimeoutException(key, section, response.Content, response.ErrorException);
                 }
                 throw new ApiInformationForUserByKeyException(section, key, response.Content, response.ErrorException);
             }
