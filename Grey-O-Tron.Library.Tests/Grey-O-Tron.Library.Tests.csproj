@@ -18,6 +18,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Grey-O-Tron.Library\Grey-O-Tron.Library.csproj" />
+    <ProjectReference Include="..\Grey-O-Tron\Grey-O-Tron.csproj" />
   </ItemGroup>
 
 </Project>

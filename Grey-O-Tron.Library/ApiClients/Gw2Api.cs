@@ -18,7 +18,8 @@ namespace GreyOTron.Library.ApiClients
         private const string BaseUrl = "https://api.guildwars2.com";
         private readonly Cache cache;
         private readonly TimeSpanSemaphore semaphore;
-        private readonly RetryPolicy retryPolicy;
+        private readonly RetryPolicy timeOutOrTooManyRequestsRetryPolicy;
+        private readonly RetryPolicy endpointRequiresAuthenticationRetryPolicy;
         private readonly CircuitBreakerPolicy circuitBreakerPolicy;
         public Gw2Api(Cache cache)
         {
@@ -32,8 +33,10 @@ namespace GreyOTron.Library.ApiClients
                     500, //Technically this could be one but we're expecting more than 500 requests before it fails anyway.
                     TimeSpan.FromSeconds(30)
                 );
-            retryPolicy = Policy.Handle<TooManyRequestsException>().Or<ApiTimeoutException>()
+            timeOutOrTooManyRequestsRetryPolicy = Policy.Handle<TooManyRequestsException>().Or<ApiTimeoutException>()
                 .WaitAndRetryForever(i => TimeSpan.FromSeconds(Math.Pow(2, i % 6))); //Exp back-off but with cutoff of 60s
+            endpointRequiresAuthenticationRetryPolicy = Policy.Handle<EndpointRequiresAuthenticationException>()
+                .WaitAndRetry(3, i => TimeSpan.FromMinutes(Math.Pow(2, i)));
         }
 
         public void Dispose()
@@ -43,7 +46,10 @@ namespace GreyOTron.Library.ApiClients
 
         public AccountInfo GetInformationForUserByKey(string key)
         {
-            return retryPolicy.Wrap(circuitBreakerPolicy).Execute(() =>
+            return endpointRequiresAuthenticationRetryPolicy
+                .Wrap(timeOutOrTooManyRequestsRetryPolicy)
+                .Wrap(circuitBreakerPolicy)
+                .Execute(() =>
             {
                 var client = new RestClient(BaseUrl);
                 client.AddDefaultHeader("Authorization", $"Bearer {key}");
@@ -98,14 +104,19 @@ namespace GreyOTron.Library.ApiClients
                     throw new TooManyRequestsException(semaphore.CurrentCount, section, key, response.Content, response.ErrorException);
                 }
 
-                if (responseText == "invalid key" || responseText == "endpoint requires authentication")
+                if (responseText == "invalid key")
                 {
-                    throw new InvalidKeyException(key, section, response.Content, response.ErrorException);
+                    throw new InvalidKeyException(section, key, response.Content, response.ErrorException);
+                }
+
+                if (responseText == "endpoint requires authentication")
+                {
+                    throw new EndpointRequiresAuthenticationException(section, key, response.Content, response.ErrorException);
                 }
 
                 if (responseText == "errtimeout")
                 {
-                    throw new ApiTimeoutException(key, section, response.Content, response.ErrorException);
+                    throw new ApiTimeoutException(section, key, response.Content, response.ErrorException);
                 }
                 throw new ApiInformationForUserByKeyException(section, key, response.Content, response.ErrorException);
             }
