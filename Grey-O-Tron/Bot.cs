@@ -152,7 +152,7 @@ namespace GreyOTron
                             guildUsersQueue.Dequeue();
                         }
                         stopWatch.Stop();
-                        log.TrackEvent("UserVerification.Ended", metrics: new Dictionary<string, double> { { "run-time", stopWatch.ElapsedMilliseconds } });
+                        log.TrackEvent("UserVerification.Ended", new Dictionary<string, string> { { "run-time", stopWatch.Elapsed.ToString("c") } });
                     }
                     await Task.Delay(interval, cancellationToken);
                 }
