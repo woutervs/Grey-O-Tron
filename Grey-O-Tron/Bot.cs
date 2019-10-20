@@ -89,6 +89,7 @@ namespace GreyOTron
 
         private async Task Ready()
         {
+            log.TrackTrace("Discord client is ready");
             var messages = new Carrousel(
             new List<string> {
                 $"v{VersionResolver.Get()}",
