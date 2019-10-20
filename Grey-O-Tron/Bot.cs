@@ -68,9 +68,6 @@ namespace GreyOTron
 
                 await Task.Delay(-1, token);
             }
-            catch (OperationCanceledException)
-            {
-            }
             catch (Exception ex)
             {
                 log.TrackException(ex);
