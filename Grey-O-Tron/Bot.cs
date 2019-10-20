@@ -54,7 +54,8 @@ namespace GreyOTron
             {
                 client.Ready += Ready;
                 client.MessageReceived += ClientOnMessageReceived;
-                
+                client.Disconnected += ClientOnDisconnected;
+
 #if MAINTENANCE
                 const string configurationTokenName = "GreyOTron-TokenMaintenance";
 #else
@@ -75,13 +76,31 @@ namespace GreyOTron
 
         }
 
+        private async Task ClientOnDisconnected(Exception arg)
+        {
+            log.TrackException(arg);
+            await Task.CompletedTask;
+            //await Stop();
+            //await Task.Delay(2000, cancellationToken);
+            //await Start(cancellationToken);
+        }
+
         public async Task Stop()
         {
             client.Ready -= Ready;
             client.MessageReceived -= ClientOnMessageReceived;
-            await client.LogoutAsync();
-            await client.StopAsync();
-            log.TrackTrace("Bot stopped.");
+            client.Disconnected -= ClientOnDisconnected;
+            try
+            {
+                await client.LogoutAsync();
+                await client.StopAsync();
+                log.TrackTrace("Bot stopped.");
+            }
+            catch (Exception e)
+            {
+                log.TrackException(e);
+            }
+
         }
 
         private async Task Ready()
