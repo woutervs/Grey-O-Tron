@@ -157,15 +157,18 @@ namespace GreyOTron
             }
             //Initiate full shutdown and restart.
             log.TrackTrace("Fully restart bot.");
-            await Stop();
-            await Start(cancellationToken);
-            await Task.Delay(-1, cancellationToken);
+            if (!cancellationToken.IsCancellationRequested)
+            {
+                await Stop();
+                await Start(cancellationToken);
+                await Task.Delay(-1, cancellationToken);
+            }
         }
 
         private async Task ClientOnDisconnected(Exception arg)
         {
             ready = false;
-            log.TrackException(arg, new Dictionary<string, string>{{"section", "ClientOnDisconnected"}});
+            log.TrackException(arg, new Dictionary<string, string> { { "section", "ClientOnDisconnected" } });
             await Task.CompletedTask;
         }
 
