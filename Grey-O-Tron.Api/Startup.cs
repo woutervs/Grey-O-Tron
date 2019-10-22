@@ -1,4 +1,5 @@
-﻿using Autofac;
+﻿using System.Data.OracleClient;
+using Autofac;
 using GreyOTron.Library.Helpers;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -20,7 +21,7 @@ namespace GreyOTron.Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddCors(options => options.AddDefaultPolicy(builder => builder.SetIsOriginAllowed(s => s.EndsWith("greyotron.eu"))
+            services.AddCors(options => options.AddDefaultPolicy(builder => builder.SetIsOriginAllowed(s => s.EndsWith("greyotron.eu") || s.Contains("localhost"))
                 .AllowAnyHeader()
                 .AllowAnyMethod()));
             services.AddControllers();
