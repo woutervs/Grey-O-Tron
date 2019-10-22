@@ -29,6 +29,7 @@ namespace GreyOTron
         private readonly IConfiguration configuration;
         private readonly TelemetryClient log;
         private CancellationToken cancellationToken;
+        private bool ready;
 
         public Bot(KeyRepository keyRepository, Gw2Api gw2Api, VerifyUser verifyUser, RemoveUser removeUser, CommandProcessor processor, IConfiguration configuration, TelemetryClient log)
         {
@@ -49,7 +50,16 @@ namespace GreyOTron
 
         public async Task Start(CancellationToken token)
         {
+            ready = false;
             cancellationToken = token;
+
+            var messages = new Carrousel(
+                new List<string> {
+                    $"v{VersionResolver.Get()}",
+                    "greyotron.eu",
+                    "got#help"
+                });
+
             try
             {
                 client.Ready += Ready;
@@ -58,6 +68,10 @@ namespace GreyOTron
 
 #if MAINTENANCE
                 const string configurationTokenName = "GreyOTron-TokenMaintenance";
+                messages = new Carrousel(
+                new List<string> {
+                   "MAINTENANCE MODE"
+                });
 #else
                 const string configurationTokenName = "GreyOTron-Token";
 #endif
@@ -66,23 +80,93 @@ namespace GreyOTron
                 await client.StartAsync();
 
                 log.TrackTrace("Bot started.");
-
-                await Task.Delay(-1, token);
             }
             catch (Exception ex)
             {
                 log.TrackException(ex);
             }
 
+            try
+            {
+                var interval = TimeSpan.FromSeconds(30);
+
+                while (true)
+                {
+                    if (ready)
+                    {
+                        await client.SetGameAsync(messages.Next());
+                        if (Math.Abs(DateTime.UtcNow.TimeOfDay.Subtract(new TimeSpan(0, 20, 0, 0)).TotalMilliseconds) <=
+                            interval.TotalMilliseconds / 2)
+                        {
+                            var guildUsersQueue = new Queue<SocketGuildUser>(client.Guilds.SelectMany(x => x.Users));
+                            log.TrackEvent("UserVerification.Started",
+                                metrics: new Dictionary<string, double> { { "Count", guildUsersQueue.Count } });
+                            var stopWatch = Stopwatch.StartNew();
+                            while (guildUsersQueue.TryPeek(out var guildUser))
+                            {
+                                await Policy.Handle<BrokenCircuitException>()
+                                    .WaitAndRetry(6, i => TimeSpan.FromMinutes(Math.Pow(2, i % 6)))
+                                    .Execute(async
+                                        () =>
+                                    {
+                                        try
+                                        {
+                                            var discordClientWithKey =
+                                                await keyRepository.Get("Gw2", guildUser.Id.ToString());
+                                            if (discordClientWithKey == null) return;
+                                            AccountInfo acInfo;
+                                            try
+                                            {
+                                                acInfo = gw2Api.GetInformationForUserByKey(discordClientWithKey.Key);
+                                            }
+                                            catch (InvalidKeyException)
+                                            {
+                                                await guildUser.InternalSendMessageAsync(
+                                                    "Your api-key is invalid, please set a new one and re-verify.");
+                                                await removeUser.Execute(guildUser, client.Guilds, cancellationToken);
+                                                throw;
+                                            }
+
+                                            await verifyUser.Execute(acInfo, guildUser, guildUser, true);
+                                        }
+                                        catch (BrokenCircuitException)
+                                        {
+                                            await client.SendMessageToBotOwner(
+                                                "Gw2 Api not recovering fast enough from repeated messages, pausing execution.");
+                                            throw;
+                                        }
+                                        catch (Exception e)
+                                        {
+                                            ExceptionHandler.HandleException(log, e, guildUser);
+                                        }
+                                    });
+                                guildUsersQueue.Dequeue();
+                            }
+
+                            stopWatch.Stop();
+                            log.TrackEvent("UserVerification.Ended",
+                                new Dictionary<string, string> { { "run-time", stopWatch.Elapsed.ToString("c") } });
+                        }
+                    }
+                    await Task.Delay(interval, cancellationToken);
+                }
+            }
+            catch (Exception e)
+            {
+                log.TrackException(e);
+            }
+            //Initiate full shutdown and restart.
+            log.TrackTrace("Fully restart bot.");
+            await Stop();
+            await Start(cancellationToken);
+            await Task.Delay(-1, cancellationToken);
         }
 
         private async Task ClientOnDisconnected(Exception arg)
         {
-            log.TrackException(arg);
+            ready = false;
+            log.TrackException(arg, new Dictionary<string, string>{{"section", "ClientOnDisconnected"}});
             await Task.CompletedTask;
-            //await Stop();
-            //await Task.Delay(2000, cancellationToken);
-            //await Start(cancellationToken);
         }
 
         public async Task Stop()
@@ -105,81 +189,8 @@ namespace GreyOTron
 
         private async Task Ready()
         {
-            log.TrackTrace("Discord client is ready");
-            var messages = new Carrousel(
-            new List<string> {
-                $"v{VersionResolver.Get()}",
-                "greyotron.eu",
-                "got#help"
-            });
-
-#if MAINTENANCE
-            messages = new Carrousel(
-                new List<string> {
-                   "MAINTENANCE MODE"
-                });
-#endif
-
-            try
-            {
-                var interval = TimeSpan.FromSeconds(30);
-
-                while (true)
-                {
-                    await client.SetGameAsync(messages.Next());
-                    if (Math.Abs(DateTime.UtcNow.TimeOfDay.Subtract(new TimeSpan(0, 20, 0, 0)).TotalMilliseconds) <= interval.TotalMilliseconds / 2)
-                    {
-                        var guildUsersQueue = new Queue<SocketGuildUser>(client.Guilds.SelectMany(x => x.Users));
-                        log.TrackEvent("UserVerification.Started", metrics: new Dictionary<string, double> { { "Count", guildUsersQueue.Count } });
-                        var stopWatch = Stopwatch.StartNew();
-                        while (guildUsersQueue.TryPeek(out var guildUser))
-                        {
-                            await Policy.Handle<BrokenCircuitException>()
-                                .WaitAndRetry(6, i => TimeSpan.FromMinutes(Math.Pow(2, i % 6)))
-                                .Execute(async
-                                    () =>
-                                {
-                                    try
-                                    {
-                                        var discordClientWithKey = await keyRepository.Get("Gw2", guildUser.Id.ToString());
-                                        if (discordClientWithKey == null) return;
-                                        AccountInfo acInfo;
-                                        try
-                                        {
-                                            acInfo = gw2Api.GetInformationForUserByKey(discordClientWithKey.Key);
-                                        }
-                                        catch (InvalidKeyException)
-                                        {
-                                            await guildUser.InternalSendMessageAsync("Your api-key is invalid, please set a new one and re-verify.");
-                                            await removeUser.Execute(guildUser, client.Guilds, cancellationToken);
-                                            throw;
-                                        }
-                                        await verifyUser.Execute(acInfo, guildUser, guildUser, true);
-                                    }
-                                    catch (BrokenCircuitException)
-                                    {
-                                        await client.SendMessageToBotOwner("Gw2 Api not recovering fast enough from repeated messages, pausing execution.");
-                                        throw;
-                                    }
-                                    catch (Exception e)
-                                    {
-                                        ExceptionHandler.HandleException(log, e, guildUser);
-                                    }
-                                });
-                            guildUsersQueue.Dequeue();
-                        }
-                        stopWatch.Stop();
-                        log.TrackEvent("UserVerification.Ended", new Dictionary<string, string> { { "run-time", stopWatch.Elapsed.ToString("c") } });
-                    }
-                    await Task.Delay(interval, cancellationToken);
-                }
-            }
-            catch (Exception e)
-            {
-                log.TrackException(e);
-            }
-            //Don't have to return since bot never stops anyway.
-            // ReSharper disable once FunctionNeverReturns
+            ready = true;
+            await Task.CompletedTask;
         }
 
         private async Task ClientOnMessageReceived(SocketMessage socketMessage)
