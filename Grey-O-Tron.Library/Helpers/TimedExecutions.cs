@@ -69,8 +69,8 @@ namespace GreyOTron.Library.Helpers
 
         public async Task Stop()
         {
-            cancellationTokenSource.Cancel();
-            cancellationTokenSource.Dispose();
+            cancellationTokenSource?.Cancel();
+            cancellationTokenSource?.Dispose();
             await Task.CompletedTask;
         }
 
