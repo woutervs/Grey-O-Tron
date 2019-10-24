@@ -1,19 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Discord;
 using Discord.WebSocket;
-using GreyOTron.Library.ApiClients;
 using GreyOTron.Library.Exceptions;
 using GreyOTron.Library.Helpers;
-using GreyOTron.Library.TableStorage;
 using Microsoft.ApplicationInsights;
 using Microsoft.Extensions.Configuration;
-using Polly;
-using Polly.CircuitBreaker;
 using UserExtensions = GreyOTron.Library.Helpers.UserExtensions;
 
 namespace GreyOTron
@@ -21,25 +15,18 @@ namespace GreyOTron
     public class Bot
     {
         private readonly DiscordSocketClient client = new DiscordSocketClient();
-        private readonly KeyRepository keyRepository;
-        private readonly Gw2Api gw2Api;
-        private readonly VerifyUser verifyUser;
-        private readonly RemoveUser removeUser;
         private readonly CommandProcessor processor;
         private readonly IConfiguration configuration;
         private readonly TelemetryClient log;
+        private readonly TimedExecutions timedExecutions;
         private CancellationToken cancellationToken;
-        private bool ready;
 
-        public Bot(KeyRepository keyRepository, Gw2Api gw2Api, VerifyUser verifyUser, RemoveUser removeUser, CommandProcessor processor, IConfiguration configuration, TelemetryClient log)
+        public Bot(CommandProcessor processor, IConfiguration configuration, TelemetryClient log, TimedExecutions timedExecutions)
         {
-            this.keyRepository = keyRepository;
-            this.gw2Api = gw2Api;
-            this.verifyUser = verifyUser;
-            this.removeUser = removeUser;
             this.processor = processor;
             this.configuration = configuration;
             this.log = log;
+            this.timedExecutions = timedExecutions;
             if (ulong.TryParse(configuration["OwnerId"], out var ownerId))
             {
                 UserExtensions.OwnerId = ownerId;
@@ -50,16 +37,7 @@ namespace GreyOTron
 
         public async Task Start(CancellationToken token)
         {
-            ready = false;
             cancellationToken = token;
-
-            var messages = new Carrousel(
-                new List<string> {
-                    $"v{VersionResolver.Get()}",
-                    "greyotron.eu",
-                    "got#help"
-                });
-
             try
             {
                 client.Ready += Ready;
@@ -68,10 +46,6 @@ namespace GreyOTron
 
 #if MAINTENANCE
                 const string configurationTokenName = "GreyOTron-TokenMaintenance";
-                messages = new Carrousel(
-                new List<string> {
-                   "MAINTENANCE MODE"
-                });
 #else
                 const string configurationTokenName = "GreyOTron-Token";
 #endif
@@ -86,86 +60,13 @@ namespace GreyOTron
                 log.TrackException(ex);
             }
 
-            try
-            {
-                var interval = TimeSpan.FromSeconds(30);
-
-                while (true)
-                {
-                    if (ready)
-                    {
-                        await client.SetGameAsync(messages.Next());
-                        if (Math.Abs(DateTime.UtcNow.TimeOfDay.Subtract(new TimeSpan(0, 20, 0, 0)).TotalMilliseconds) <=
-                            interval.TotalMilliseconds / 2)
-                        {
-                            var guildUsersQueue = new Queue<SocketGuildUser>(client.Guilds.SelectMany(x => x.Users));
-                            log.TrackEvent("UserVerification.Started",
-                                metrics: new Dictionary<string, double> { { "Count", guildUsersQueue.Count } });
-                            var stopWatch = Stopwatch.StartNew();
-                            while (guildUsersQueue.TryPeek(out var guildUser))
-                            {
-                                await Policy.Handle<BrokenCircuitException>()
-                                    .WaitAndRetry(6, i => TimeSpan.FromMinutes(Math.Pow(2, i % 6)))
-                                    .Execute(async
-                                        () =>
-                                    {
-                                        try
-                                        {
-                                            var discordClientWithKey =
-                                                await keyRepository.Get("Gw2", guildUser.Id.ToString());
-                                            if (discordClientWithKey == null) return;
-                                            AccountInfo acInfo;
-                                            try
-                                            {
-                                                acInfo = gw2Api.GetInformationForUserByKey(discordClientWithKey.Key);
-                                            }
-                                            catch (InvalidKeyException)
-                                            {
-                                                await guildUser.InternalSendMessageAsync(
-                                                    "Your api-key is invalid, please set a new one and re-verify.");
-                                                await removeUser.Execute(guildUser, client.Guilds, cancellationToken);
-                                                throw;
-                                            }
-
-                                            await verifyUser.Execute(acInfo, guildUser, guildUser, true);
-                                        }
-                                        catch (BrokenCircuitException)
-                                        {
-                                            await client.SendMessageToBotOwner(
-                                                "Gw2 Api not recovering fast enough from repeated messages, pausing execution.");
-                                            throw;
-                                        }
-                                        catch (Exception e)
-                                        {
-                                            ExceptionHandler.HandleException(log, e, guildUser);
-                                        }
-                                    });
-                                guildUsersQueue.Dequeue();
-                            }
-
-                            stopWatch.Stop();
-                            log.TrackEvent("UserVerification.Ended",
-                                new Dictionary<string, string> { { "run-time", stopWatch.Elapsed.ToString("c") } });
-                        }
-                    }
-                    await Task.Delay(interval, cancellationToken);
-                }
-            }
-            catch (Exception e)
-            {
-                log.TrackException(e);
-            }
-            //Initiate full shutdown and restart.
-            log.TrackTrace("Fully restart bot.");
-            await Stop();
-            await Start(cancellationToken);
             await Task.Delay(-1, cancellationToken);
         }
 
         private async Task ClientOnDisconnected(Exception arg)
         {
-            ready = false;
-            log.TrackException(arg, new Dictionary<string, string>{{"section", "ClientOnDisconnected"}});
+            log.TrackException(arg, new Dictionary<string, string> { { "section", "ClientOnDisconnected" } });
+            await timedExecutions.Stop();
             await Task.CompletedTask;
         }
 
@@ -189,8 +90,7 @@ namespace GreyOTron
 
         private async Task Ready()
         {
-            ready = true;
-            await Task.CompletedTask;
+            await timedExecutions.Start(client);
         }
 
         private async Task ClientOnMessageReceived(SocketMessage socketMessage)
