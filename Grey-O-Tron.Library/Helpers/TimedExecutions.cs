@@ -30,7 +30,12 @@ namespace GreyOTron.Library.Helpers
                 Name = "VerifyAll",
                 Action = async (d, c) => await verifyAll.Execute(d, c),
                 EnqueueTime = DateTime.UtcNow,
-                NextOccurence = () => DateTime.UtcNow.Date.Add(new TimeSpan(1, 22, 0, 0))
+                NextOccurence = () =>
+                {
+                    var next = DateTime.UtcNow.Date.Add(new TimeSpan(1, 20, 0, 0));
+                    log.TrackTrace($"Next verifyAll: {next}");
+                    return next;
+                }
             });
         }
 
@@ -62,7 +67,8 @@ namespace GreyOTron.Library.Helpers
                 else
                 {
                     var result = actions.Min(x => Math.Abs((x.EnqueueTime - DateTime.UtcNow).TotalMilliseconds));
-                    await Task.Delay(TimeSpan.FromMilliseconds(result));
+                    var max = TimeSpan.FromSeconds(30).TotalMilliseconds;
+                    await Task.Delay(TimeSpan.FromMilliseconds(result > max ? max : result));
                 }
             }
         }

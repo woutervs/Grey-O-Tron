@@ -77,19 +77,24 @@ namespace GreyOTron
             client.Disconnected -= ClientOnDisconnected;
             try
             {
+                await timedExecutions.Stop();
                 await client.LogoutAsync();
                 await client.StopAsync();
-                log.TrackTrace("Bot stopped.");
+
             }
             catch (Exception e)
             {
                 log.TrackException(e);
             }
-
+            finally
+            {
+                log.TrackTrace("Bot stopped.");
+            }
         }
 
         private async Task Ready()
         {
+            log.TrackTrace("Bot ready.");
             await timedExecutions.Start(client);
         }
 
