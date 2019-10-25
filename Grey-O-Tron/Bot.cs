@@ -94,6 +94,7 @@ namespace GreyOTron
 
         private async Task Ready()
         {
+            log.TrackTrace("Bot ready.");
             await timedExecutions.Start(client);
         }
 
