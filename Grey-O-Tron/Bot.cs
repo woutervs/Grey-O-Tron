@@ -60,6 +60,8 @@ namespace GreyOTron
                 log.TrackException(ex);
             }
 
+            await timedExecutions.Setup(client);
+
             await Task.Delay(-1, cancellationToken);
         }
 
@@ -67,7 +69,6 @@ namespace GreyOTron
         {
             log.TrackException(arg, new Dictionary<string, string> { { "section", "ClientOnDisconnected" } });
             await timedExecutions.Stop();
-            await Task.CompletedTask;
         }
 
         public async Task Stop()
@@ -95,7 +96,7 @@ namespace GreyOTron
         private async Task Ready()
         {
             log.TrackTrace("Bot ready.");
-            await timedExecutions.Start(client);
+            await timedExecutions.Start();
         }
 
         private async Task ClientOnMessageReceived(SocketMessage socketMessage)
