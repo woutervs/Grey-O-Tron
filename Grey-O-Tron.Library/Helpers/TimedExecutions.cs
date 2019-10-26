@@ -14,6 +14,7 @@ namespace GreyOTron.Library.Helpers
         private readonly TelemetryClient log;
         private CancellationTokenSource cancellationTokenSource;
         private readonly List<TimedExecution> actions = new List<TimedExecution>();
+        private bool running;
         public TimedExecutions(TelemetryClient log, BotMessages botMessages, VerifyAll verifyAll)
         {
             this.log = log;
@@ -39,13 +40,19 @@ namespace GreyOTron.Library.Helpers
             });
         }
 
-        public async Task Start(DiscordSocketClient client)
+        public async Task Start()
         {
+            running = true;
             cancellationTokenSource = new CancellationTokenSource();
-            while (!cancellationTokenSource.IsCancellationRequested)
+            await Task.CompletedTask;
+        }
+
+        public async Task Setup(DiscordSocketClient client)
+        {
+            while (true)
             {
                 var action = actions.FirstOrDefault(x => x.EnqueueTime <= DateTime.UtcNow);
-                if (action != null)
+                if (action != null && running)
                 {
                     var nextOccurence = action.NextOccurence();
                     try
@@ -75,6 +82,7 @@ namespace GreyOTron.Library.Helpers
 
         public async Task Stop()
         {
+            running = false;
             cancellationTokenSource?.Cancel();
             cancellationTokenSource?.Dispose();
             await Task.CompletedTask;
@@ -91,7 +99,6 @@ namespace GreyOTron.Library.Helpers
         public string Name { get; set; }
         public DateTime EnqueueTime { get; set; }
         public Func<DiscordSocketClient, CancellationToken, Task> Action { get; set; }
-
         public Func<DateTime> NextOccurence { get; set; }
     }
 }
