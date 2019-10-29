@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace GreyOTron.Library.Commands
+namespace GreyOTron.Library.Exceptions
 {
     public class RoleHierarchyException : Exception
     {
