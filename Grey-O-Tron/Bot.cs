@@ -68,7 +68,8 @@ namespace GreyOTron
         private async Task ClientOnDisconnected(Exception arg)
         {
             log.TrackException(arg, new Dictionary<string, string> { { "section", "ClientOnDisconnected" } });
-            await timedExecutions.Stop();
+            await Task.CompletedTask;
+            //await timedExecutions.Stop();
         }
 
         public async Task Stop()
