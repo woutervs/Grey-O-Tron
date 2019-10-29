@@ -137,9 +137,13 @@ namespace GreyOTron.Library.ApiClients
         private DateTimeOffset CalculateNextReset()
         {
             var now = DateTimeOffset.UtcNow;
+            var resetTime = new TimeSpan(18, 30, 0);
             var daysUntilNextFriday = ((11 - (int)now.DayOfWeek) % 7) + 1;
-            var nextCacheClear = new DateTimeOffset(now.Year, now.Month, now.Day, 18, 30, 0, TimeSpan.FromHours(0)).AddDays(daysUntilNextFriday);
-            return nextCacheClear;
+            if (daysUntilNextFriday == 7 && now.TimeOfDay < resetTime)
+            {
+                daysUntilNextFriday = 0;
+            }
+            return new DateTimeOffset(now.Date, TimeSpan.FromHours(0)).AddDays(daysUntilNextFriday).Add(resetTime);
         }
 
         public World ParseWorld(string identifier)
