@@ -137,7 +137,7 @@ namespace GreyOTron.Library.ApiClients
         private DateTimeOffset CalculateNextReset()
         {
             var now = DateTimeOffset.UtcNow;
-            var resetTime = new TimeSpan(18, 30, 0);
+            var resetTime = new TimeSpan(18, 0, 0).Add(new TimeSpan(1,55,0)); //let's place it somewhat before reverify time.
             var daysUntilNextFriday = ((11 - (int)now.DayOfWeek) % 7) + 1;
             if (daysUntilNextFriday == 7 && now.TimeOfDay < resetTime)
             {
