@@ -30,10 +30,12 @@ namespace GreyOTron.Library.Helpers
             return $"{user.Username}#{user.Discriminator}";
         }
 
-        public static async Task InternalSendMessageAsync(this IUser user, string text)
+        public static async Task InternalSendMessageAsync(this IUser user, string text, params string[] formatParameters)
         {
             try
             {
+                //TODO: lookup user language according to user id
+                //user.Id
                 await user.SendMessageAsync(text);
             }
             catch (Exception e)

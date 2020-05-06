@@ -33,6 +33,7 @@ namespace GreyOTron
             }
 
             UserExtensions.Log = log;
+            //TODO: UserExtensions.TranslationService ...
         }
 
         public async Task Start(CancellationToken token)
