@@ -103,27 +103,37 @@ namespace GreyOTron.Library.Helpers
                     }
                     if (role != null)
                     {
-
-                        try
+                        async Task catchRoleNotFoundOrBreakerAndNotifyUser(Action action)
                         {
-                            //This we can reset using a command TODO: create this command.
-                            await roleNotFoundCircuitBreakerPolicyHelper.RoleNotFoundCircuitBreakerPolicy.ExecuteAsync(async () => await roleNotFoundExceptionRetryPolicy.ExecuteAsync(async () => await CreateRoleIfNotExistsAndAssignIfNeeded(guildUser, contextUser, userOwnedRolesMatchingWorlds, role, bypassMessages)));
-                        }
-                        catch (Exception)
-                        {
-                            if (!bypassMessages)
+                            try
                             {
-                                if (contextUserIsNotGuildUser)
-                                {
-                                    await contextUser.InternalSendMessageAsync(nameof(GreyOTronResources.RoleAssignmentFailedForUser), contextUser.Nickname, role, contextUser.Guild.Name);
-                                }
-                                else
-                                {
-                                    await contextUser.InternalSendMessageAsync(nameof(GreyOTronResources.RoleAssignmentFailed), role, contextUser.Guild.Name);
-                                }
+                                action();
                             }
-                            throw;
+                            catch (Exception)
+                            {
+                                if (!bypassMessages)
+                                {
+                                    if (contextUserIsNotGuildUser)
+                                    {
+                                        await contextUser.InternalSendMessageAsync(nameof(GreyOTronResources.RoleAssignmentFailedForUser),
+                                            contextUser.Nickname, role, contextUser.Guild.Name);
+                                    }
+                                    else
+                                    {
+                                        await contextUser.InternalSendMessageAsync(nameof(GreyOTronResources.RoleAssignmentFailed), role,
+                                            contextUser.Guild.Name);
+                                    }
+                                }
+                                throw;
+                            }
                         }
+
+                        //This we can reset using a command TODO: create this command.
+                        ;
+                        await catchRoleNotFoundOrBreakerAndNotifyUser(async () => await roleNotFoundCircuitBreakerPolicyHelper.RoleNotFoundCircuitBreakerPolicy.ExecuteAsync(
+                            async () => await catchRoleNotFoundOrBreakerAndNotifyUser(async () =>
+                            await roleNotFoundExceptionRetryPolicy.ExecuteAsync(
+                                async () => await CreateRoleIfNotExistsAndAssignIfNeeded(guildUser, contextUser, userOwnedRolesMatchingWorlds, role, bypassMessages)))));
 
                     }
                     else
