@@ -81,7 +81,7 @@ namespace GreyOTron.Library.Commands
                     catch (InvalidKeyException)
                     {
                         await contextUser.InternalSendMessageAsync(nameof(GreyOTronResources.InvalidKey), guildUser.Id != contextUser.Id ? guildUser.Username + "'s" : "Your");
-                        await removeUser.Execute(guildUser, Client.Guilds, cancellationToken);
+                        await removeUser.Execute(Client, guildUser, Client.Guilds, cancellationToken);
                         throw;
                     }
                     await verifyUser.Execute(acInfo, userToUpdate, contextUser);

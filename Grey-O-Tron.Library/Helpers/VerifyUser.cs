@@ -23,13 +23,15 @@ namespace GreyOTron.Library.Helpers
         private readonly DiscordGuildSettingsRepository discordGuildSettingsRepository;
         private readonly Cache cache;
         private readonly IConfiguration configuration;
+        private readonly RoleNotFoundCircuitBreakerPolicyHelper roleNotFoundCircuitBreakerPolicyHelper;
         private readonly AsyncRetryPolicy roleNotFoundExceptionRetryPolicy;
 
-        public VerifyUser(DiscordGuildSettingsRepository discordGuildSettingsRepository, Cache cache, IConfiguration configuration)
+        public VerifyUser(DiscordGuildSettingsRepository discordGuildSettingsRepository, Cache cache, IConfiguration configuration, RoleNotFoundCircuitBreakerPolicyHelper roleNotFoundCircuitBreakerPolicyHelper)
         {
             this.discordGuildSettingsRepository = discordGuildSettingsRepository;
             this.cache = cache;
             this.configuration = configuration;
+            this.roleNotFoundCircuitBreakerPolicyHelper = roleNotFoundCircuitBreakerPolicyHelper;
             roleNotFoundExceptionRetryPolicy = Policy.Handle<RoleNotFoundException>()
                 .WaitAndRetryAsync(1, x => TimeSpan.FromSeconds(x * 30));
         }
@@ -101,14 +103,25 @@ namespace GreyOTron.Library.Helpers
                     }
                     if (role != null)
                     {
+
                         try
                         {
-                            await roleNotFoundExceptionRetryPolicy.ExecuteAsync(async () => await CreateRoleIfNotExistsAndAssignIfNeeded(guildUser, contextUser, userOwnedRolesMatchingWorlds, role, bypassMessages));
+                            //This we can reset using a command TODO: create this command.
+                            await roleNotFoundCircuitBreakerPolicyHelper.RoleNotFoundCircuitBreakerPolicy.ExecuteAsync(async () => await roleNotFoundExceptionRetryPolicy.ExecuteAsync(async () => await CreateRoleIfNotExistsAndAssignIfNeeded(guildUser, contextUser, userOwnedRolesMatchingWorlds, role, bypassMessages)));
                         }
-                        catch (Exception e)
+                        catch (Exception)
                         {
-                            //notify user of failure.
-
+                            if (!bypassMessages)
+                            {
+                                if (contextUserIsNotGuildUser)
+                                {
+                                    await contextUser.InternalSendMessageAsync(nameof(GreyOTronResources.RoleAssignmentFailedForUser), contextUser.Nickname, role, contextUser.Guild.Name);
+                                }
+                                else
+                                {
+                                    await contextUser.InternalSendMessageAsync(nameof(GreyOTronResources.RoleAssignmentFailed), role, contextUser.Guild.Name);
+                                }
+                            }
                             throw;
                         }
 

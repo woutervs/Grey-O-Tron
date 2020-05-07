@@ -59,20 +59,15 @@ namespace GreyOTron.Library.Helpers
                             catch (InvalidKeyException)
                             {
                                 await guildUser.InternalSendMessageAsync(nameof(GreyOTronResources.InvalidApiKey));
-                                await removeUser.Execute(guildUser, client.Guilds, cancellationToken);
+                                await removeUser.Execute(client, guildUser, client.Guilds, cancellationToken);
                                 throw;
                             }
 
                             await verifyUser.Execute(acInfo, guildUser, guildUser, true);
                         }
-                        catch (BrokenCircuitException)
-                        {
-                            await client.SendMessageToBotOwner(nameof(GreyOTronResources.Gw2ApiUnableToRecoverPausing));
-                            throw;
-                        }
                         catch (Exception e)
                         {
-                            ExceptionHandler.HandleException(log, e, guildUser);
+                            ExceptionHandler.HandleException(client, log, e, guildUser);
                         }
                     });
                 guildUsersQueue.Dequeue();

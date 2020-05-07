@@ -30,7 +30,7 @@ namespace GreyOTron.Library.Helpers
         }
 
 
-        public async Task Execute(IUser user, IEnumerable<SocketGuild> guilds, CancellationToken token)
+        public async Task Execute(DiscordSocketClient client, IUser user, IEnumerable<SocketGuild> guilds, CancellationToken token)
         {
             if (token.IsCancellationRequested) return;
 
@@ -66,7 +66,7 @@ namespace GreyOTron.Library.Helpers
                 }
                 catch (Exception ex)
                 {
-                    ExceptionHandler.HandleException(log, ex, user, $"Try delete roles in {guild.Name}.");
+                    ExceptionHandler.HandleException(client, log, ex, user, $"Try delete roles in {guild.Name}.");
                 }
             }
             await user.InternalSendMessageAsync(nameof(GreyOTronResources.RolesWereRemoved), affectedServers.Any() ? affectedServers.Aggregate("", (a, b) => $"{a}, {b} ").TrimEnd(',', ' ') : nameof(GreyOTronResources.RolesWereRemovedNoWhere));

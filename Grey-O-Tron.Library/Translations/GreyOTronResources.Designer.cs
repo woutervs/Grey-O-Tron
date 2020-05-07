@@ -214,6 +214,24 @@ namespace GreyOTron.Library.Translations {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Something went wrong whilst trying to assign you the &apos;{0}&apos; role on &apos;{1}&apos;, please  try again in 5 minutes..
+        /// </summary>
+        internal static string RoleAssignmentFailed {
+            get {
+                return ResourceManager.GetString("RoleAssignmentFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Something went wrong whilst trying to assign &apos;{0}&apos; the &apos;{1}&apos; role on &apos;{2}&apos;, please try again in 5 minutes..
+        /// </summary>
+        internal static string RoleAssignmentFailedForUser {
+            get {
+                return ResourceManager.GetString("RoleAssignmentFailedForUser", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Your gw2 world roles have been removed from {0}.\nGoodbye!.
         /// </summary>
         internal static string RolesWereRemoved {

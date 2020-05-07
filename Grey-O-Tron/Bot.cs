@@ -111,7 +111,7 @@ namespace GreyOTron
             }
             catch (Exception e)
             {
-                ExceptionHandler.HandleException(log, e, socketMessage.Author, socketMessage.Content);
+                ExceptionHandler.HandleException(client, log, e, socketMessage.Author, socketMessage.Content);
             }
         }
     }

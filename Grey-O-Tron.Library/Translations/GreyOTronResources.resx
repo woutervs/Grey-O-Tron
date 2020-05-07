@@ -205,4 +205,10 @@
   <data name="UserMessageForRoleIssue" xml:space="preserve">
     <value>There is an issue on the '{0}' for the role '{1}' an administrator from the server is notified.</value>
   </data>
+  <data name="RoleAssignmentFailedForUser" xml:space="preserve">
+    <value>Something went wrong whilst trying to assign '{0}' the '{1}' role on '{2}', please try again in 5 minutes.</value>
+  </data>
+  <data name="RoleAssignmentFailed" xml:space="preserve">
+    <value>Something went wrong whilst trying to assign you the '{0}' role on '{1}', please  try again in 5 minutes.</value>
+  </data>
 </root>
