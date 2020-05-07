@@ -133,15 +133,6 @@ namespace GreyOTron.Library.Translations {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Gw2 Api not recovering fast enough from repeated messages, pausing execution..
-        /// </summary>
-        internal static string Gw2ApiUnableToRecoverPausing {
-            get {
-                return ResourceManager.GetString("Gw2ApiUnableToRecoverPausing", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Help can be found on https://greyotron.eu\n {0} Or find help on https://discord.gg/6uybq5X.
         /// </summary>
         internal static string HelpMessage {
@@ -214,7 +205,7 @@ namespace GreyOTron.Library.Translations {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Something went wrong whilst trying to assign you the &apos;{0}&apos; role on &apos;{1}&apos;, please  try again in 5 minutes..
+        ///   Looks up a localized string similar to Something went wrong whilst trying to assign you the &apos;{0}&apos; role on &apos;{1}&apos;, the bot owner is notified, please  try again in 60 minutes..
         /// </summary>
         internal static string RoleAssignmentFailed {
             get {
@@ -223,7 +214,7 @@ namespace GreyOTron.Library.Translations {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Something went wrong whilst trying to assign &apos;{0}&apos; the &apos;{1}&apos; role on &apos;{2}&apos;, please try again in 5 minutes..
+        ///   Looks up a localized string similar to Something went wrong whilst trying to assign &apos;{0}&apos; the &apos;{1}&apos; role on &apos;{2}&apos;, the bot owner is notified please try again in 60 minutes..
         /// </summary>
         internal static string RoleAssignmentFailedForUser {
             get {
