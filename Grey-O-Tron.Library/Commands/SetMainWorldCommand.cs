@@ -4,6 +4,7 @@ using Discord.WebSocket;
 using GreyOTron.Library.ApiClients;
 using GreyOTron.Library.Helpers;
 using GreyOTron.Library.TableStorage;
+using GreyOTron.Library.Translations;
 
 namespace GreyOTron.Library.Commands
 {
@@ -29,25 +30,23 @@ namespace GreyOTron.Library.Commands
 
                 if (world == null)
                 {
-                    await message.Author.InternalSendMessageAsync($"Could not resolve your world from '{Arguments}'");
+                    await message.Author.InternalSendMessageAsync(nameof(GreyOTronResources.UnknownWorld),Arguments);
                 }
                 else if (guildUser.IsAdminOrOwner())
                 {
                     await discordGuildSettingsRepository.Set(new DiscordGuildSetting(guildUser.Guild.Id.ToString(), guildUser.Guild.Name, DiscordGuildSetting.MainWorld,
                         world.Name.ToLowerInvariant()));
 
-                    await guildUser.InternalSendMessageAsync($"{world.Name} set for {guildUser.Guild.Name} as main world.");
+                    await guildUser.InternalSendMessageAsync(nameof(GreyOTronResources.MainWorldSet), world.Name, guildUser.Guild.Name);
                 }
                 else
                 {
-                    await guildUser.InternalSendMessageAsync(
-                        "You must have administrative permissions to perform the set-worlds command.");
+                    await guildUser.InternalSendMessageAsync(nameof(GreyOTronResources.UnauthorizedToSetWorlds));
                 }
             }
             else
             {
-                await message.Author.InternalSendMessageAsync(
-                    "The set-worlds command must be used from within the server to which you want to apply it.");
+                await message.Author.InternalSendMessageAsync(nameof(GreyOTronResources.TriedSetWorldsWhilstNotOnServer));
             }
             if (!(message.Channel is SocketDMChannel))
             {

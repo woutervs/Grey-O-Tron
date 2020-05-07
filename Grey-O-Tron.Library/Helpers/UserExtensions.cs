@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Autofac.Features.ResolveAnything;
 using Discord;
 using Discord.WebSocket;
 using Microsoft.ApplicationInsights;
@@ -34,13 +35,11 @@ namespace GreyOTron.Library.Helpers
         {
             try
             {
-                //TODO: lookup user language according to user id
-                //user.Id
-                await user.SendMessageAsync(text);
+                await user.SendMessageAsync(string.Format(TranslationHelper.Translate(user.Id, text, formatParameters)));
             }
             catch (Exception e)
             {
-                var properties = new Dictionary<string, string> {{"UserId", user.UserId()}, {"Exception", e.Message}};
+                var properties = new Dictionary<string, string> { { "UserId", user.UserId() }, { "Exception", e.Message } };
                 if (user is SocketGuildUser guildUser)
                 {
                     properties.Add("ServerName", guildUser.Guild.Name);
@@ -54,6 +53,7 @@ namespace GreyOTron.Library.Helpers
 
         public static ulong? OwnerId { get; set; }
         public static TelemetryClient Log { get; set; }
+        public static TranslationHelper TranslationHelper { get; set; }
 
         public static async Task SendMessageToBotOwner(this DiscordSocketClient client, string message)
         {

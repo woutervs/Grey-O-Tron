@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
-	<!-- 
+  <!-- 
 		Microsoft ResX Schema
 
 		Version 1.3
@@ -58,44 +58,151 @@
 			: using a System.ComponentModel.TypeConverter
 			: and then encoded with base64 encoding.
 	-->
-	
-	<xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
-		<xsd:element name="root" msdata:IsDataSet="true">
-			<xsd:complexType>
-				<xsd:choice maxOccurs="unbounded">
-					<xsd:element name="data">
-						<xsd:complexType>
-							<xsd:sequence>
-								<xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
-								<xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
-							</xsd:sequence>
-							<xsd:attribute name="name" type="xsd:string" msdata:Ordinal="1" />
-							<xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
-							<xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
-						</xsd:complexType>
-					</xsd:element>
-					<xsd:element name="resheader">
-						<xsd:complexType>
-							<xsd:sequence>
-								<xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
-							</xsd:sequence>
-							<xsd:attribute name="name" type="xsd:string" use="required" />
-						</xsd:complexType>
-					</xsd:element>
-				</xsd:choice>
-			</xsd:complexType>
-		</xsd:element>
-	</xsd:schema>
-	<resheader name="resmimetype">
-		<value>text/microsoft-resx</value>
-	</resheader>
-	<resheader name="version">
-		<value>1.3</value>
-	</resheader>
-	<resheader name="reader">
-		<value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.3500.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-	</resheader>
-	<resheader name="writer">
-		<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.3500.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-	</resheader>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>1.3</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.3500.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.3500.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="EmptyKeyTryAgain" xml:space="preserve">
+    <value>This key seems empty to me, please try again.</value>
+  </data>
+  <data name="GW2ApiUnableToProcess" xml:space="preserve">
+    <value>The GW2 api can't handle this request at the time, please try again a bit later.</value>
+  </data>
+  <data name="InvalidApiKey" xml:space="preserve">
+    <value>Your api-key is invalid, please set a new one and re-verify.</value>
+  </data>
+  <data name="SuccessfullyVerified" xml:space="preserve">
+    <value>Your key has been stored, and we verified you on \n {0}</value>
+  </data>
+  <data name="DiscordNameDifferentFromGw2Key" xml:space="preserve">
+    <value>Please make sure your GW2 application key's name is the same as your discord username: {0}#{1}</value>
+  </data>
+  <data name="FindYourGW2ApplicationKey" xml:space="preserve">
+    <value>You can view, create and edit your GW2 application key's on https://account.arena.net/applications</value>
+  </data>
+  <data name="HelpMessage" xml:space="preserve">
+    <value>Help can be found on https://greyotron.eu\n {0} Or find help on https://discord.gg/6uybq5X</value>
+  </data>
+  <data name="CommandNotFound" xml:space="preserve">
+    <value>You tried using '{0}', unfortunately I haven't been taught that command.</value>
+  </data>
+  <data name="Unauthorized" xml:space="preserve">
+    <value>I'm sorry you're not authorized to receive this kind of information.</value>
+  </data>
+  <data name="UnknownWorld" xml:space="preserve">
+    <value>Could not resolve your world from '{0}'</value>
+  </data>
+  <data name="MainWorldSet" xml:space="preserve">
+    <value>{0} set for {0} as main world.</value>
+  </data>
+  <data name="UnauthorizedToSetWorlds" xml:space="preserve">
+    <value>You must have administrative permissions to perform the set-worlds command.</value>
+  </data>
+  <data name="TriedSetWorldsWhilstNotOnServer" xml:space="preserve">
+    <value>The set-worlds command must be used from within the server to which you want to apply it.</value>
+  </data>
+  <data name="KeyNotFound" xml:space="preserve">
+    <value>No key found for {0}</value>
+  </data>
+  <data name="KeyNotRegistered" xml:space="preserve">
+    <value>You haven't yet registered a key with me, use the gw2-key command to do so.</value>
+  </data>
+  <data name="UserNotFoundForVerification" xml:space="preserve">
+    <value>User you are trying to verify was not found on this Discord server.</value>
+  </data>
+  <data name="InvalidKey" xml:space="preserve">
+    <value>{0} api-key is invalid, please set a new one and re-verify.</value>
+  </data>
+  <data name="TriedVerifyWhilstNotOnServer" xml:space="preserve">
+    <value>You must use the gw2-verify command from within the discord server you try to get verified on.</value>
+  </data>
+  <data name="CurrentVersion" xml:space="preserve">
+    <value>Current version: {0}</value>
+  </data>
+  <data name="RolesWereRemoved" xml:space="preserve">
+    <value>Your gw2 world roles have been removed from {0}.\nGoodbye!</value>
+  </data>
+  <data name="RolesWereRemovedNoWhere" xml:space="preserve">
+    <value>no where</value>
+  </data>
+  <data name="NoWorldsInCommand" xml:space="preserve">
+    <value>You must give at least one world name separated by ; for the set-worlds command to work.</value>
+  </data>
+  <data name="WorldsSetForGuild" xml:space="preserve">
+    <value>{0} set for {1}</value>
+  </data>
+  <data name="Gw2ApiUnableToRecoverPausing" xml:space="preserve">
+    <value>Gw2 Api not recovering fast enough from repeated messages, pausing execution.</value>
+  </data>
+  <data name="UserChangedDiscordUsername" xml:space="preserve">
+    <value>{0} most likely changed their discord username from {1} to {2}#{3} please ask {0} to update their key.\n{4}</value>
+  </data>
+  <data name="YouChangedDiscordUsername" xml:space="preserve">
+    <value>You've most likely changed your discord username from {0} to {1}#{2}, please update your key.\n{3}</value>
+  </data>
+  <data name="ApiFailedToReturnWorldsForUser" xml:space="preserve">
+    <value>The GW2API did not return worlds for user {0}</value>
+  </data>
+  <data name="ApiFailedToReturnWorldsForYou" xml:space="preserve">
+    <value>The GW2API did not return worlds for you.</value>
+  </data>
+  <data name="WorldNotInDiscordServerWorlds" xml:space="preserve">
+    <value>{0}'s world is not in '{1}' worlds list, cannot assign the role {2}</value>
+  </data>
+  <data name="YourWorldNotInDiscordServerWorlds" xml:space="preserve">
+    <value>Your world '{0}' is not in this '{1}' worlds list.</value>
+  </data>
+  <data name="UserHasBeenAssignedRole" xml:space="preserve">
+    <value>{0} has been assigned {1} on {2}</value>
+  </data>
+  <data name="YouHaveBeenAssignedRole" xml:space="preserve">
+    <value>You've been assigned {0} on {1}</value>
+  </data>
+  <data name="UserAlreadyHadRole" xml:space="preserve">
+    <value>'{0}' already had the role '{1}' on '{2}', no action taken.</value>
+  </data>
+  <data name="YouAlreadyHadRole" xml:space="preserve">
+    <value>You already have the role '{0}' on '{1}', nothing changed.</value>
+  </data>
+  <data name="NotGuildUserRoleIssue" xml:space="preserve">
+    <value>There seems to be an issue with the role '{0}' on '{1}' it's most likely above the 'Grey-O-Tron' role making it impossible for the bot the assign it.</value>
+  </data>
+  <data name="UserMessageForRoleIssue" xml:space="preserve">
+    <value>There is an issue on the '{0}' for the role '{1}' an administrator from the server is notified.</value>
+  </data>
 </root>

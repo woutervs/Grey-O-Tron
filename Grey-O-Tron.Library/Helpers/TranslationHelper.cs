@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
+﻿using System.Globalization;
 using System.Linq;
-using System.Security.Cryptography;
-using System.Text;
 using GreyOTron.Library.Translations;
 
 namespace GreyOTron.Library.Helpers
@@ -12,15 +8,16 @@ namespace GreyOTron.Library.Helpers
     {
         public TranslationHelper()
         {
-            
+
         }
 
         public string Translate(ulong userId, string key, params string[] formatParameters)
         {
-            //get language.
-            var message = GreyOTronResources.ResourceManager.GetString("", CultureInfo.CurrentCulture);
-            if (message == null) return key;
-            return string.Format(message, formatParameters.ToArray<object>());
+            var ci = CultureInfo.CurrentCulture;
+
+            var message = GreyOTronResources.ResourceManager.GetString(key, ci) ?? key;
+            var translatedFormatParameters = formatParameters.Select(formatParameter => GreyOTronResources.ResourceManager.GetString(formatParameter, ci) ?? formatParameter).ToList();
+            return string.Format(message, translatedFormatParameters.ToArray<object>());
         }
     }
 }

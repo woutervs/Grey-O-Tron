@@ -21,7 +21,7 @@ namespace GreyOTron
         private readonly TimedExecutions timedExecutions;
         private CancellationToken cancellationToken;
 
-        public Bot(CommandProcessor processor, IConfiguration configuration, TelemetryClient log, TimedExecutions timedExecutions)
+        public Bot(CommandProcessor processor, IConfiguration configuration, TelemetryClient log, TimedExecutions timedExecutions, TranslationHelper translationHelper)
         {
             this.processor = processor;
             this.configuration = configuration;
@@ -33,7 +33,7 @@ namespace GreyOTron
             }
 
             UserExtensions.Log = log;
-            //TODO: UserExtensions.TranslationService ...
+            UserExtensions.TranslationHelper = translationHelper;
         }
 
         public async Task Start(CancellationToken token)

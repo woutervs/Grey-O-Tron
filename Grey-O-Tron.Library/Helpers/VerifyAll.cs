@@ -8,6 +8,7 @@ using Discord.WebSocket;
 using GreyOTron.Library.ApiClients;
 using GreyOTron.Library.Exceptions;
 using GreyOTron.Library.TableStorage;
+using GreyOTron.Library.Translations;
 using Microsoft.ApplicationInsights;
 using Polly;
 using Polly.CircuitBreaker;
@@ -57,8 +58,7 @@ namespace GreyOTron.Library.Helpers
                             }
                             catch (InvalidKeyException)
                             {
-                                await guildUser.InternalSendMessageAsync(
-                                    "Your api-key is invalid, please set a new one and re-verify.");
+                                await guildUser.InternalSendMessageAsync(nameof(GreyOTronResources.InvalidApiKey));
                                 await removeUser.Execute(guildUser, client.Guilds, cancellationToken);
                                 throw;
                             }
@@ -67,8 +67,7 @@ namespace GreyOTron.Library.Helpers
                         }
                         catch (BrokenCircuitException)
                         {
-                            await client.SendMessageToBotOwner(
-                                "Gw2 Api not recovering fast enough from repeated messages, pausing execution.");
+                            await client.SendMessageToBotOwner(nameof(GreyOTronResources.Gw2ApiUnableToRecoverPausing));
                             throw;
                         }
                         catch (Exception e)

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.Design;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
@@ -7,11 +8,13 @@ using Discord;
 using Discord.Net;
 using Discord.WebSocket;
 using GreyOTron.Library.ApiClients;
-using GreyOTron.Library.Commands;
 using GreyOTron.Library.Exceptions;
 using GreyOTron.Library.TableStorage;
+using GreyOTron.Library.Translations;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
+using Polly;
+using Polly.Retry;
 
 namespace GreyOTron.Library.Helpers
 {
@@ -20,12 +23,15 @@ namespace GreyOTron.Library.Helpers
         private readonly DiscordGuildSettingsRepository discordGuildSettingsRepository;
         private readonly Cache cache;
         private readonly IConfiguration configuration;
+        private readonly AsyncRetryPolicy roleNotFoundExceptionRetryPolicy;
 
         public VerifyUser(DiscordGuildSettingsRepository discordGuildSettingsRepository, Cache cache, IConfiguration configuration)
         {
             this.discordGuildSettingsRepository = discordGuildSettingsRepository;
             this.cache = cache;
             this.configuration = configuration;
+            roleNotFoundExceptionRetryPolicy = Policy.Handle<RoleNotFoundException>()
+                .WaitAndRetryAsync(1, x => TimeSpan.FromSeconds(x * 30));
         }
 
         public async Task Execute(AccountInfo gw2AccountInfo, SocketGuildUser guildUser, SocketGuildUser contextUser, bool bypassMessages = false)
@@ -45,36 +51,84 @@ namespace GreyOTron.Library.Helpers
 
             if (gw2AccountInfo.TokenInfo.Name != $"{guildUser.Username}#{guildUser.Discriminator}")
             {
-                await contextUser.InternalSendMessageAsync(
-                    $"{(contextUserIsNotGuildUser ? guildUser.Username : "You've")} most likely changed {(contextUserIsNotGuildUser ? "his/her" : "your")} discord username from {gw2AccountInfo.TokenInfo.Name} to {guildUser.Username}#{guildUser.Discriminator}." +
-                    $"\n{(contextUserIsNotGuildUser ? $"Please ask {guildUser.Username} to update his/her key." : "Please update your key.")}" +
-                    "\nYou can view, create and edit your GW2 application key's on https://account.arena.net/applications");
-            }
-            else
-            {
-                if (gw2AccountInfo.WorldInfo != null && worlds.Contains(gw2AccountInfo.WorldInfo.Name.ToLowerInvariant()))
+                if (contextUserIsNotGuildUser)
                 {
-                    await CreateRoleIfNotExistsAndAssignIfNeeded(guildUser, contextUser, userOwnedRolesMatchingWorlds, gw2AccountInfo.WorldInfo.Name, bypassMessages);
-
-                }
-                else if (gw2AccountInfo.WorldInfo != null && gw2AccountInfo.WorldInfo.LinkedWorlds.Any(x => string.Equals(x.Name, mainWorld, StringComparison.InvariantCultureIgnoreCase)))
-                {
-                    await CreateRoleIfNotExistsAndAssignIfNeeded(guildUser, contextUser, userOwnedRolesMatchingWorlds,
-                        configuration["LinkedServerRole"], bypassMessages);
-
+                    await contextUser.InternalSendMessageAsync(nameof(GreyOTronResources.UserChangedDiscordUsername),
+                        guildUser.Nickname,
+                        gw2AccountInfo.TokenInfo.Name,
+                        guildUser.Username,
+                        guildUser.Discriminator,
+                        nameof(GreyOTronResources.FindYourGW2ApplicationKey));
                 }
                 else
                 {
+                    await contextUser.InternalSendMessageAsync(
+                        nameof(GreyOTronResources.YouChangedDiscordUsername),
+                        gw2AccountInfo.TokenInfo.Name, guildUser.Username, guildUser.Discriminator,
+                        nameof(GreyOTronResources.FindYourGW2ApplicationKey));
+                }
+            }
+            else
+            {
+                if (gw2AccountInfo.WorldInfo == null)
+                {
                     if (!bypassMessages)
                     {
-                        if (gw2AccountInfo.WorldInfo == null)
+                        if (contextUserIsNotGuildUser)
                         {
-                            await contextUser.InternalSendMessageAsync($"Could not assign world roles on '{guildUser.Guild.Name}' for {(contextUserIsNotGuildUser ? guildUser.Username : "you")}.");
+                            await contextUser.InternalSendMessageAsync(
+                                nameof(GreyOTronResources.ApiFailedToReturnWorldsForUser), guildUser.Nickname);
                         }
                         else
                         {
-                            await contextUser.InternalSendMessageAsync(
-                                $"Your gw2 world does not belong to the verified worlds of '{guildUser.Guild.Name}' discord server, I can't assign {(contextUserIsNotGuildUser ? guildUser.Username : "your")} world role sorry!");
+                            await contextUser.InternalSendMessageAsync(nameof(GreyOTronResources
+                                .ApiFailedToReturnWorldsForYou));
+                        }
+                    }
+                }
+                else
+                {
+                    string role = null;
+                    if (worlds.Contains(gw2AccountInfo.WorldInfo.Name.ToLowerInvariant()))
+                    {
+                        role = gw2AccountInfo.WorldInfo.Name;
+
+                    }
+                    else if (gw2AccountInfo.WorldInfo.LinkedWorlds.Any(x => string.Equals(x.Name, mainWorld, StringComparison.InvariantCultureIgnoreCase)))
+                    {
+                        role = configuration["LinkedServerRole"];
+
+                    }
+                    if (role != null)
+                    {
+                        try
+                        {
+                            await roleNotFoundExceptionRetryPolicy.ExecuteAsync(async () => await CreateRoleIfNotExistsAndAssignIfNeeded(guildUser, contextUser, userOwnedRolesMatchingWorlds, role, bypassMessages));
+                        }
+                        catch (Exception e)
+                        {
+                            //notify user of failure.
+
+                            throw;
+                        }
+
+                    }
+                    else
+                    {
+                        if (!bypassMessages)
+                        {
+                            if (contextUserIsNotGuildUser)
+                            {
+                                await contextUser.InternalSendMessageAsync(
+                                    nameof(GreyOTronResources.WorldNotInDiscordServerWorlds), guildUser.Nickname, guildUser.Guild.Name,
+                                    gw2AccountInfo.WorldInfo.Name);
+                            }
+                            else
+                            {
+                                await contextUser.InternalSendMessageAsync(
+                                    nameof(GreyOTronResources.YourWorldNotInDiscordServerWorlds),
+                                    gw2AccountInfo.WorldInfo.Name, guildUser.Guild.Name);
+                            }
                         }
                     }
                 }
@@ -116,14 +170,39 @@ namespace GreyOTron.Library.Helpers
                     switch (e.HttpCode)
                     {
                         case HttpStatusCode.Forbidden:
+                            if (!bypassMessages)
+                            {
+                                if (contextUserIsNotGuildUser)
+                                {
+                                    await contextUser.InternalSendMessageAsync(
+                                        nameof(GreyOTronResources.NotGuildUserRoleIssue), roleName, contextUser.Guild.Name);
+
+                                }
+                                else
+                                {
+                                    foreach (var admin in contextUser.Guild.Users.Where(x => x.IsAdminOrOwner()))
+                                    {
+                                        await admin.InternalSendMessageAsync(nameof(GreyOTronResources.NotGuildUserRoleIssue),
+                                            roleName, contextUser.Guild.Name);
+                                    }
+
+                                    await contextUser.InternalSendMessageAsync(
+                                        nameof(GreyOTronResources.UserMessageForRoleIssue),
+                                        contextUser.Guild.Name, roleName);
+                                }
+                            }
+
                             throw new RoleHierarchyException("Could not add the role to the user.", e);
+
+                        //Notify admin of server
+                        //Notify user.
                         case HttpStatusCode.NotFound:
                             cache.RemoveFromCache(cachedName);
                             cache.GetFromCacheSliding(cachedName, TimeSpan.FromDays(1),
                                 () => (IRole)guildUser.Guild.CreateRoleAsync(roleName, GuildPermissions.None).Result);
-                            await CreateRoleIfNotExistsAndAssignIfNeeded(guildUser, contextUser,
-                                userOwnedRolesMatchingWorlds, roleName, bypassMessages);
-                            break;
+                            throw new RoleNotFoundException(cachedName, e);
+                        //await CreateRoleIfNotExistsAndAssignIfNeeded(guildUser, contextUser,
+                        //    userOwnedRolesMatchingWorlds, roleName, bypassMessages);
                         default:
                             throw;
                     }
@@ -132,7 +211,32 @@ namespace GreyOTron.Library.Helpers
 
                 if (!bypassMessages)
                 {
-                    await contextUser.InternalSendMessageAsync($"{(contextUserIsNotGuildUser ? guildUser.Username : "You")} {(contextUserIsNotGuildUser ? "has" : "have")} been assigned role: {roleName} on {guildUser.Guild.Name}");
+                    if (contextUserIsNotGuildUser)
+                    {
+                        await contextUser.InternalSendMessageAsync(nameof(GreyOTronResources.UserHasBeenAssignedRole),
+                            guildUser.Nickname, roleName, guildUser.Guild.Name);
+                    }
+                    else
+                    {
+                        await contextUser.InternalSendMessageAsync(nameof(GreyOTronResources.YouHaveBeenAssignedRole), roleName,
+                            guildUser.Guild.Name);
+                    }
+                }
+            }
+            else
+            {
+                if (!bypassMessages)
+                {
+                    if (contextUserIsNotGuildUser)
+                    {
+                        await contextUser.InternalSendMessageAsync(
+                            nameof(GreyOTronResources.UserAlreadyHadRole), guildUser.Nickname, roleName, guildUser.Guild.Name);
+                    }
+                    else
+                    {
+                        await contextUser.InternalSendMessageAsync(
+                            nameof(GreyOTronResources.YouAlreadyHadRole), roleName, guildUser.Guild.Name);
+                    }
                 }
             }
             userOwnedRolesMatchingWorlds.Remove(roleExistsAlready);
