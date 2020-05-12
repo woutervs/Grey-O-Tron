@@ -103,13 +103,10 @@ namespace GreyOTron.Library.Helpers
                     }
                     if (role != null)
                     {
-                        async Task catchRoleNotFoundOrBreakerAndNotifyUser(Action action)
+                        async Task catchRoleNotFoundOrBreakerAndNotifyUser(Func<Task<PolicyResult>> action)
                         {
-                            try
-                            {
-                                action();
-                            }
-                            catch (Exception)
+                            var p = await action();
+                            if (p.Outcome == OutcomeType.Failure)
                             {
                                 if (!bypassMessages)
                                 {
@@ -124,16 +121,17 @@ namespace GreyOTron.Library.Helpers
                                             contextUser.Guild.Name);
                                     }
                                 }
-                                throw;
+
+                                throw p.FinalException;
                             }
                         }
 
                         //This we can reset using a command TODO: create this command.
-                        ;
-                        await catchRoleNotFoundOrBreakerAndNotifyUser(async () => await roleNotFoundCircuitBreakerPolicyHelper.RoleNotFoundCircuitBreakerPolicy.ExecuteAsync(
-                            async () => await catchRoleNotFoundOrBreakerAndNotifyUser(async () =>
-                            await roleNotFoundExceptionRetryPolicy.ExecuteAsync(
-                                async () => await CreateRoleIfNotExistsAndAssignIfNeeded(guildUser, contextUser, userOwnedRolesMatchingWorlds, role, bypassMessages)))));
+                        await catchRoleNotFoundOrBreakerAndNotifyUser(async () => await roleNotFoundCircuitBreakerPolicyHelper.RoleNotFoundCircuitBreakerPolicy.ExecuteAndCaptureAsync(
+                             async () => await catchRoleNotFoundOrBreakerAndNotifyUser(async () =>
+                                 await roleNotFoundExceptionRetryPolicy.ExecuteAndCaptureAsync(
+                                     async () => await CreateRoleIfNotExistsAndAssignIfNeeded(guildUser, contextUser,
+                                         userOwnedRolesMatchingWorlds, role, bypassMessages)))));
 
                     }
                     else
