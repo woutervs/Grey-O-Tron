@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Discord.WebSocket;
 using GreyOTron.Library.Helpers;
+using GreyOTron.Library.Translations;
 
 namespace GreyOTron.Library.Commands
 {
@@ -11,7 +12,7 @@ namespace GreyOTron.Library.Commands
         public async Task Execute(SocketMessage message, CancellationToken cancellationToken)
         {
             if (cancellationToken.IsCancellationRequested) return;
-            await message.Author.InternalSendMessageAsync($"Current version: {VersionResolver.Get()}");
+            await message.Author.InternalSendMessageAsync(nameof(GreyOTronResources.CurrentVersion), VersionResolver.Get());
         }
 
         public string Arguments { get; set; }

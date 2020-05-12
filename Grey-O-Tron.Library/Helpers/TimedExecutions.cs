@@ -26,6 +26,7 @@ namespace GreyOTron.Library.Helpers
                 EnqueueTime = DateTime.UtcNow,
                 NextOccurence = () => DateTime.UtcNow.Add(TimeSpan.FromSeconds(30))
             });
+#if !DEBUG
             actions.Add(new TimedExecution
             {
                 Name = "VerifyAll",
@@ -38,6 +39,7 @@ namespace GreyOTron.Library.Helpers
                     return next;
                 }
             });
+#endif
         }
 
         public async Task Start()

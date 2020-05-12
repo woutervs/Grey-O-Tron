@@ -7,6 +7,7 @@ using Discord.WebSocket;
 using GreyOTron.Library.ApiClients;
 using GreyOTron.Library.Helpers;
 using GreyOTron.Library.TableStorage;
+using GreyOTron.Library.Translations;
 using Newtonsoft.Json;
 
 namespace GreyOTron.Library.Commands
@@ -42,27 +43,23 @@ namespace GreyOTron.Library.Commands
 
                 if (!worlds.Any())
                 {
-                    await message.Author.InternalSendMessageAsync(
-                        "You must give at least one world name separated by ; for the set-worlds command to work.");
+                    await message.Author.InternalSendMessageAsync(nameof(GreyOTronResources.NoWorldsInCommand));
                 }
                 else if (guildUser.IsAdminOrOwner())
                 {
                     await discordGuildSettingsRepository.Set(new DiscordGuildSetting(guildUser.Guild.Id.ToString(),
                         guildUser.Guild.Name, DiscordGuildSetting.Worlds,
                         JsonConvert.SerializeObject(worlds.Select(x => x.Name.ToLowerInvariant()))));
-                    await guildUser.InternalSendMessageAsync(
-                        $"{worlds.Aggregate("", (a, b) => $"{a}{b.Name}, ").TrimEnd(',', ' ')} set for {guildUser.Guild.Name}");
+                    await guildUser.InternalSendMessageAsync(nameof(GreyOTronResources.WorldsSetForGuild), worlds.Aggregate("", (a, b) => $"{a}{b.Name}, ").TrimEnd(',', ' '), guildUser.Guild.Name);
                 }
                 else
                 {
-                    await guildUser.InternalSendMessageAsync(
-                        "You must have administrative permissions to perform the set-worlds command.");
+                    await guildUser.InternalSendMessageAsync(nameof(GreyOTronResources.UnauthorizedToSetWorlds));
                 }
             }
             else
             {
-                await message.Author.InternalSendMessageAsync(
-                    "The set-worlds command must be used from within the server to which you want to apply it.");
+                await message.Author.InternalSendMessageAsync(nameof(GreyOTronResources.TriedSetWorldsWhilstNotOnServer));
             }
 
             if (!(message.Channel is SocketDMChannel))

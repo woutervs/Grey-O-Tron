@@ -5,12 +5,13 @@ using Discord;
 using Discord.WebSocket;
 using GreyOTron.Library.Helpers;
 using Microsoft.ApplicationInsights;
+using Polly.CircuitBreaker;
 
 namespace GreyOTron.Library.Exceptions
 {
     public static class ExceptionHandler
     {
-        public static void HandleException(TelemetryClient log, Exception e, IUser user, string content = null)
+        public static void HandleException(DiscordSocketClient client ,TelemetryClient log, Exception e, IUser user, string content = null)
         {
             var properties = new Dictionary<string, string>();
 
@@ -26,6 +27,19 @@ namespace GreyOTron.Library.Exceptions
             if (e is ApiInformationForUserByKeyException apiInformationForUserByKeyException)
             {
                 properties = apiInformationForUserByKeyException.AsDictionary();
+            }
+
+            if (e is BrokenCircuitException)
+            {
+                try
+                {
+                    client.SendMessageToBotOwner("Something went wrong, check the logs, execution of the program is now paused.").Wait();
+                }
+                catch (Exception exception)
+                {
+                    log.TrackException(exception);
+                }
+                
             }
 
             properties.Add("UserId", user.UserId());

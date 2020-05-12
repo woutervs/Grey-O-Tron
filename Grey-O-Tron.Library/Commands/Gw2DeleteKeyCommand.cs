@@ -18,7 +18,7 @@ namespace GreyOTron.Library.Commands
         public async Task Execute(SocketMessage message, CancellationToken cancellationToken)
         {
             if (cancellationToken.IsCancellationRequested) return;
-            await removeUser.Execute(message.Author, Client.Guilds, cancellationToken);
+            await removeUser.Execute(Client, message.Author, Client.Guilds, cancellationToken);
 
             if (!(message.Channel is SocketDMChannel))
             {

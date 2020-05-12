@@ -7,6 +7,7 @@ using Discord;
 using Discord.WebSocket;
 using GreyOTron.Library.Exceptions;
 using GreyOTron.Library.TableStorage;
+using GreyOTron.Library.Translations;
 using Microsoft.ApplicationInsights;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
@@ -29,7 +30,7 @@ namespace GreyOTron.Library.Helpers
         }
 
 
-        public async Task Execute(IUser user, IEnumerable<SocketGuild> guilds, CancellationToken token)
+        public async Task Execute(DiscordSocketClient client, IUser user, IEnumerable<SocketGuild> guilds, CancellationToken token)
         {
             if (token.IsCancellationRequested) return;
 
@@ -65,10 +66,10 @@ namespace GreyOTron.Library.Helpers
                 }
                 catch (Exception ex)
                 {
-                    ExceptionHandler.HandleException(log, ex, user, $"Try delete roles in {guild.Name}.");
+                    ExceptionHandler.HandleException(client, log, ex, user, $"Try delete roles in {guild.Name}.");
                 }
             }
-            await user.InternalSendMessageAsync($"Your gw2 world roles have been removed from {(affectedServers.Any() ? affectedServers.Aggregate("", (a, b) => $"{a}, {b} ").TrimEnd(',', ' ') : "no where")}.\nGoodbye!");
+            await user.InternalSendMessageAsync(nameof(GreyOTronResources.RolesWereRemoved), affectedServers.Any() ? affectedServers.Aggregate("", (a, b) => $"{a}, {b} ").TrimEnd(',', ' ') : nameof(GreyOTronResources.RolesWereRemovedNoWhere));
         }
     }
 }

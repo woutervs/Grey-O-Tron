@@ -104,7 +104,7 @@ namespace GreyOTron.Library.ApiClients
                     throw new TooManyRequestsException(semaphore.CurrentCount, section, key, response.Content, response.ErrorException);
                 }
 
-                if (responseText == "invalid key")
+                if (responseText == "invalid key" || responseText == "invalid access token")
                 {
                     throw new InvalidKeyException(section, key, response.Content, response.ErrorException);
                 }
