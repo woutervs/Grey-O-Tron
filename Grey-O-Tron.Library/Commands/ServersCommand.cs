@@ -3,6 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Discord.WebSocket;
 using GreyOTron.Library.Helpers;
+using GreyOTron.Library.Translations;
 
 namespace GreyOTron.Library.Commands
 {
@@ -19,7 +20,7 @@ namespace GreyOTron.Library.Commands
             }
             else
             {
-                await message.Author.InternalSendMessageAsync("I'm sorry you're not authorized to receive this kind of information.");
+                await message.Author.InternalSendMessageAsync(nameof(GreyOTronResources.Unauthorized));
             }
             if (!(message.Channel is SocketDMChannel))
             {

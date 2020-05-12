@@ -3,6 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Discord.WebSocket;
 using GreyOTron.Library.Helpers;
+using GreyOTron.Library.Translations;
 
 namespace GreyOTron.Library.Commands
 {
@@ -27,9 +28,7 @@ namespace GreyOTron.Library.Commands
             {
                 resolverCommands = resolverCommands.Where(x => !x.Options.HasFlag(CommandOptions.RequiresAdmin));
             }
-            await message.Author.InternalSendMessageAsync("Help can be found on https://greyotron.eu\n" +
-                                                  $"{resolverCommands.Aggregate("", (s, command) => $"{s} {command}\n")}" +
-                                                  "Or find help on https://discord.gg/6uybq5X\n");
+            await message.Author.InternalSendMessageAsync(nameof(GreyOTronResources.HelpMessage), $"{resolverCommands.Aggregate("", (s, command) => $"{s} {command}\n")}");
 
 
             if (!(message.Channel is SocketDMChannel))
