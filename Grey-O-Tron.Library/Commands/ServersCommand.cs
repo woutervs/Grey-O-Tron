@@ -16,7 +16,7 @@ namespace GreyOTron.Library.Commands
             if (message.Author.IsOwner())
             {
                 var guilds = Client.Guilds.Aggregate("", (s, guild) => $"{s}{guild.Name}\n");
-                await message.Author.InternalSendMessageAsync($"Total: {Client.Guilds.Count}\n{guilds}");
+                await message.Author.InternalSendMessageAsync("Total: {0}\n{1}", Client.Guilds.Count.ToString(), guilds);
             }
             else
             {

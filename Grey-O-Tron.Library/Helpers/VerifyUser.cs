@@ -179,7 +179,7 @@ namespace GreyOTron.Library.Helpers
                 var cachedName = $"roles::{guildUser.Guild.Id}::{roleName}";
                 var role = cache.GetFromCacheSliding(cachedName, TimeSpan.FromDays(1), () =>
                 {
-                    return guildUser.Guild.Roles.FirstOrDefault(x => x.Name == roleName) ?? (IRole)guildUser.Guild.CreateRoleAsync(roleName, GuildPermissions.None).Result;
+                    return guildUser.Guild.Roles.FirstOrDefault(x => x.Name == roleName) ?? (IRole)guildUser.Guild.CreateRoleAsync(roleName, GuildPermissions.None, null, false, false).Result;
                 });
 
                 try
@@ -220,7 +220,7 @@ namespace GreyOTron.Library.Helpers
                         case HttpStatusCode.NotFound:
                             cache.RemoveFromCache(cachedName);
                             cache.GetFromCacheSliding(cachedName, TimeSpan.FromDays(1),
-                                () => (IRole)guildUser.Guild.CreateRoleAsync(roleName, GuildPermissions.None).Result);
+                                () => (IRole)guildUser.Guild.CreateRoleAsync(roleName, GuildPermissions.None, null, false, false).Result);
                             throw new RoleNotFoundException(cachedName, e);
                         //await CreateRoleIfNotExistsAndAssignIfNeeded(guildUser, contextUser,
                         //    userOwnedRolesMatchingWorlds, roleName, bypassMessages);
