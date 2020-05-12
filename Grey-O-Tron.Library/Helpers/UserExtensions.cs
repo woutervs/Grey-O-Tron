@@ -6,6 +6,7 @@ using Autofac.Features.ResolveAnything;
 using Discord;
 using Discord.WebSocket;
 using Microsoft.ApplicationInsights;
+using Newtonsoft.Json;
 
 namespace GreyOTron.Library.Helpers
 {
@@ -39,7 +40,7 @@ namespace GreyOTron.Library.Helpers
             }
             catch (Exception e)
             {
-                var properties = new Dictionary<string, string> { { "UserId", user.UserId() }, { "Exception", e.Message } };
+                var properties = new Dictionary<string, string> { { "UserId", user.UserId() }, { "Exception", e.Message }, { "FormatParameters", JsonConvert.SerializeObject(formatParameters) }, { "Text or Key", text } };
                 if (user is SocketGuildUser guildUser)
                 {
                     properties.Add("ServerName", guildUser.Guild.Name);
