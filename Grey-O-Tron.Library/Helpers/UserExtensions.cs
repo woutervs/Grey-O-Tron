@@ -35,7 +35,7 @@ namespace GreyOTron.Library.Helpers
         {
             try
             {
-                await user.SendMessageAsync(string.Format(TranslationHelper.Translate(user.Id, text, formatParameters)));
+                await user.SendMessageAsync(TranslationHelper.Translate(user.Id, text, formatParameters));
             }
             catch (Exception e)
             {

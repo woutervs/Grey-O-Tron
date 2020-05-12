@@ -127,7 +127,8 @@
     <value>Your api-key is invalid, please set a new one and re-verify.</value>
   </data>
   <data name="SuccessfullyVerified" xml:space="preserve">
-    <value>Your key has been stored, and we verified you on \n {0}</value>
+    <value>Your key has been stored, and we verified you on
+{0}</value>
   </data>
   <data name="DiscordNameDifferentFromGw2Key" xml:space="preserve">
     <value>Please make sure your GW2 application key's name is the same as your discord username: {0}#{1}</value>
@@ -136,7 +137,8 @@
     <value>You can view, create and edit your GW2 application key's on https://account.arena.net/applications</value>
   </data>
   <data name="HelpMessage" xml:space="preserve">
-    <value>Help can be found on https://greyotron.eu\n {0} Or find help on https://discord.gg/6uybq5X</value>
+    <value>Help can be found on https://greyotron.eu
+{0} Or find help on https://discord.gg/6uybq5X</value>
   </data>
   <data name="CommandNotFound" xml:space="preserve">
     <value>You tried using '{0}', unfortunately I haven't been taught that command.</value>
@@ -175,7 +177,8 @@
     <value>Current version: {0}</value>
   </data>
   <data name="RolesWereRemoved" xml:space="preserve">
-    <value>Your gw2 world roles have been removed from {0}.\nGoodbye!</value>
+    <value>Your gw2 world roles have been removed from {0}.
+Goodbye!</value>
   </data>
   <data name="RolesWereRemovedNoWhere" xml:space="preserve">
     <value>no where</value>
