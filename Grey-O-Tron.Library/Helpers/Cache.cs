@@ -15,7 +15,8 @@ namespace GreyOTron.Library.Helpers
                 if (slidingExpiration.HasValue)
                 {
                     policy.SlidingExpiration = slidingExpiration.Value;
-                } else if (absoluteDateTimeOffset.HasValue)
+                }
+                else if (absoluteDateTimeOffset.HasValue)
                 {
                     policy.AbsoluteExpiration = absoluteDateTimeOffset.Value;
                 }
@@ -40,6 +41,32 @@ namespace GreyOTron.Library.Helpers
         {
             var cache = MemoryCache.Default;
             cache.Remove(name, CacheEntryRemovedReason.Removed);
+        }
+
+        public void Replace<T>(string name, T obj, TimeSpan? slidingExpiration, DateTimeOffset? absoluteExpiration)
+        {
+            var cache = MemoryCache.Default;
+            cache.Remove(name, CacheEntryRemovedReason.Removed);
+            var policy = new CacheItemPolicy();
+            if (slidingExpiration.HasValue)
+            {
+                policy.SlidingExpiration = slidingExpiration.Value;
+            }
+            else if (absoluteExpiration.HasValue)
+            {
+                policy.AbsoluteExpiration = absoluteExpiration.Value;
+            }
+            cache.Set(name, obj, policy);
+        }
+
+        public void Replace<T>(string name, T obj, TimeSpan? slidingExpiration)
+        {
+            Replace(name, obj, slidingExpiration, null);
+        }
+
+        public void Replace<T>(string name, T obj, DateTimeOffset? absoluteExpiration)
+        {
+            Replace(name, obj, null, absoluteExpiration);
         }
     }
 }
