@@ -31,7 +31,7 @@ namespace GreyOTron.Library.Helpers
             {
                 Name = "VerifyAll",
                 Action = async (d, c) => await verifyAll.Execute(d, c),
-                EnqueueTime = DateTime.UtcNow,
+                EnqueueTime = DateTime.UtcNow.Date.Add(new TimeSpan(0, 20, 0, 0)),
                 NextOccurence = () =>
                 {
                     var next = DateTime.UtcNow.Date.Add(new TimeSpan(1, 20, 0, 0));

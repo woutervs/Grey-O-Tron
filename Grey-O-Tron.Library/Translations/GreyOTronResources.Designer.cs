@@ -133,7 +133,8 @@ namespace GreyOTron.Library.Translations {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Help can be found on https://greyotron.eu\n {0} Or find help on https://discord.gg/6uybq5X.
+        ///   Looks up a localized string similar to Help can be found on https://greyotron.eu
+        ///{0} Or find help on https://discord.gg/6uybq5X.
         /// </summary>
         internal static string HelpMessage {
             get {
@@ -223,7 +224,8 @@ namespace GreyOTron.Library.Translations {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Your gw2 world roles have been removed from {0}.\nGoodbye!.
+        ///   Looks up a localized string similar to Your gw2 world roles have been removed from {0}.
+        ///Goodbye!.
         /// </summary>
         internal static string RolesWereRemoved {
             get {
@@ -241,7 +243,8 @@ namespace GreyOTron.Library.Translations {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Your key has been stored, and we verified you on \n {0}.
+        ///   Looks up a localized string similar to Your key has been stored, and we verified you on
+        ///{0}.
         /// </summary>
         internal static string SuccessfullyVerified {
             get {
