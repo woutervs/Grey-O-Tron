@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using Discord.WebSocket;
 using GreyOTron.Library.ApiClients;
 using GreyOTron.Library.Exceptions;
-using GreyOTron.Library.TableStorage;
+using GreyOTron.Library.RepositoryInterfaces;
 using GreyOTron.Library.Translations;
 using Microsoft.ApplicationInsights;
 using Polly;
@@ -18,15 +18,15 @@ namespace GreyOTron.Library.Helpers
     public class VerifyAll
     {
         private readonly TelemetryClient log;
-        private readonly KeyRepository keyRepository;
+        private readonly IGw2DiscordUserRepository gw2ApiKeyRepository;
         private readonly Gw2Api gw2Api;
         private readonly RemoveUser removeUser;
         private readonly VerifyUser verifyUser;
 
-        public VerifyAll(TelemetryClient log, KeyRepository keyRepository, Gw2Api gw2Api, RemoveUser removeUser, VerifyUser verifyUser)
+        public VerifyAll(TelemetryClient log, IGw2DiscordUserRepository gw2ApiKeyRepository, Gw2Api gw2Api, RemoveUser removeUser, VerifyUser verifyUser)
         {
             this.log = log;
-            this.keyRepository = keyRepository;
+            this.gw2ApiKeyRepository = gw2ApiKeyRepository;
             this.gw2Api = gw2Api;
             this.removeUser = removeUser;
             this.verifyUser = verifyUser;
@@ -49,12 +49,12 @@ namespace GreyOTron.Library.Helpers
                         try
                         {
                             var discordClientWithKey =
-                                await keyRepository.Get("Gw2", guildUser.Id.ToString());
+                                await gw2ApiKeyRepository.Get(guildUser.Id);
                             if (discordClientWithKey == null) return;
                             AccountInfo acInfo;
                             try
                             {
-                                acInfo = gw2Api.GetInformationForUserByKey(discordClientWithKey.Key);
+                                acInfo = gw2Api.GetInformationForUserByKey(discordClientWithKey.ApiKey);
                             }
                             catch (InvalidKeyException)
                             {

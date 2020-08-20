@@ -150,7 +150,7 @@
     <value>Could not resolve your world from '{0}'</value>
   </data>
   <data name="MainWorldSet" xml:space="preserve">
-    <value>{0} set for {0} as main world.</value>
+    <value>{0} set for {1} as main world.</value>
   </data>
   <data name="UnauthorizedToSetWorlds" xml:space="preserve">
     <value>You must have administrative permissions to perform the set-worlds command.</value>

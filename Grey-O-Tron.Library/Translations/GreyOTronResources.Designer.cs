@@ -179,7 +179,7 @@ namespace GreyOTron.Library.Translations {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to {0} set for {0} as main world..
+        ///   Looks up a localized string similar to {0} set for {1} as main world..
         /// </summary>
         internal static string MainWorldSet {
             get {

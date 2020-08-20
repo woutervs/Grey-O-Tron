@@ -1,13 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
 using Discord.WebSocket;
 using GreyOTron.Library.ApiClients;
 using GreyOTron.Library.Exceptions;
 using GreyOTron.Library.Helpers;
-using GreyOTron.Library.TableStorage;
+using GreyOTron.Library.Models;
+using GreyOTron.Library.RepositoryInterfaces;
 using GreyOTron.Library.Translations;
 using Microsoft.ApplicationInsights;
 using Microsoft.Extensions.Configuration;
@@ -18,14 +20,14 @@ namespace GreyOTron.Library.Commands
     [Command("sync-roles", CommandDescription = "Cleans up duplicate roles on a server", CommandArguments = "", CommandOptions = CommandOptions.DiscordServer | CommandOptions.RequiresAdmin)]
     public class SyncRolesCommand : ICommand
     {
-        private readonly DiscordGuildSettingsRepository discordGuildSettingsRepository;
+        private readonly IGw2DiscordServerRepository gw2DiscordServerRepository;
         private readonly Cache cache;
         private readonly IConfiguration configuration;
         private readonly TelemetryClient log;
 
-        public SyncRolesCommand(DiscordGuildSettingsRepository discordGuildSettingsRepository, Cache cache, IConfiguration configuration, TelemetryClient log)
+        public SyncRolesCommand(IGw2DiscordServerRepository gw2DiscordServerRepository, Cache cache, IConfiguration configuration, TelemetryClient log)
         {
-            this.discordGuildSettingsRepository = discordGuildSettingsRepository;
+            this.gw2DiscordServerRepository = gw2DiscordServerRepository;
             this.cache = cache;
             this.configuration = configuration;
             this.log = log;
@@ -39,7 +41,7 @@ namespace GreyOTron.Library.Commands
             {
                 if (guildUser.IsAdminOrOwner())
                 {
-                    var worlds = JsonConvert.DeserializeObject<List<string>>((await discordGuildSettingsRepository.Get(DiscordGuildSetting.Worlds, guildUser.Guild.Id.ToString()))?.Value ?? "[]");
+                    var worlds = ((await gw2DiscordServerRepository.Get(guildUser.Guild.Id))?.Worlds ?? new List<Gw2WorldDto>()).Select(x=>x.Name).ToList();
                     worlds.Add(configuration["LinkedServerRole"]);
                     foreach (var world in worlds)
                     {

@@ -6,7 +6,8 @@ using Discord.WebSocket;
 using GreyOTron.Library.ApiClients;
 using GreyOTron.Library.Exceptions;
 using GreyOTron.Library.Helpers;
-using GreyOTron.Library.TableStorage;
+using GreyOTron.Library.Models;
+using GreyOTron.Library.RepositoryInterfaces;
 using GreyOTron.Library.Translations;
 using Microsoft.ApplicationInsights;
 using Newtonsoft.Json;
@@ -18,14 +19,14 @@ namespace GreyOTron.Library.Commands
     public class Gw2KeyCommand : ICommand
     {
         private readonly Gw2Api gw2Api;
-        private readonly KeyRepository gw2KeyRepository;
+        private readonly IGw2DiscordUserRepository gw2Gw2ApiKeyRepository;
         private readonly VerifyUser verifyUser;
         private readonly TelemetryClient log;
 
-        public Gw2KeyCommand(Gw2Api gw2Api, KeyRepository gw2KeyRepository, VerifyUser verifyUser, TelemetryClient log)
+        public Gw2KeyCommand(Gw2Api gw2Api, IGw2DiscordUserRepository gw2Gw2ApiKeyRepository, VerifyUser verifyUser, TelemetryClient log)
         {
             this.gw2Api = gw2Api;
-            this.gw2KeyRepository = gw2KeyRepository;
+            this.gw2Gw2ApiKeyRepository = gw2Gw2ApiKeyRepository;
             this.verifyUser = verifyUser;
             this.log = log;
         }
@@ -58,8 +59,18 @@ namespace GreyOTron.Library.Commands
                 log.TrackTrace(message.Content, new Dictionary<string, string> { { "DiscordUser", message.Author.UserId() }, { "AccountInfo", JsonConvert.SerializeObject(acInfo, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }) } });
                 if (acInfo?.TokenInfo?.Name == $"{message.Author.Username}#{message.Author.Discriminator}")
                 {
-                    await gw2KeyRepository.Set(new DiscordClientWithKey("Gw2", message.Author.Id.ToString(),
-                        $"{message.Author.Username}#{message.Author.Discriminator}", key));
+                    var gw2DiscordUser = new Gw2DiscordUser
+                    {
+                        ApiKey = key,
+                        DiscordUserDto = new DiscordUserDto
+                        {
+                            Discriminator = message.Author.Discriminator,
+                            Id = message.Author.Id,
+                            Username = message.Author.Username
+                        },
+                        Gw2AccountId = acInfo.Id
+                    };
+                    await gw2Gw2ApiKeyRepository.InsertOrUpdate(gw2DiscordUser);
 
                     if (message.Author is SocketGuildUser guildUser)
                     {

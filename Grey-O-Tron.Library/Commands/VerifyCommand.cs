@@ -2,25 +2,25 @@
 using GreyOTron.Library.ApiClients;
 using GreyOTron.Library.Exceptions;
 using GreyOTron.Library.Helpers;
-using GreyOTron.Library.TableStorage;
 using GreyOTron.Library.Translations;
 using Polly.CircuitBreaker;
 using System.Threading;
 using System.Threading.Tasks;
+using GreyOTron.Library.RepositoryInterfaces;
 
 namespace GreyOTron.Library.Commands
 {
     [Command("gw2-verify", CommandDescription = "Use the stored Guild Wars 2 key to verify if a user belongs to worlds set by the discord server.", CommandOptions = CommandOptions.DiscordServer)]
     public class VerifyCommand : ICommand
     {
-        private readonly KeyRepository keyRepository;
+        private readonly IGw2DiscordUserRepository gw2ApiKeyRepository;
         private readonly Gw2Api gw2Api;
         private readonly VerifyUser verifyUser;
         private readonly RemoveUser removeUser;
 
-        public VerifyCommand(KeyRepository keyRepository, Gw2Api gw2Api, VerifyUser verifyUser, RemoveUser removeUser)
+        public VerifyCommand(IGw2DiscordUserRepository gw2ApiKeyRepository, Gw2Api gw2Api, VerifyUser verifyUser, RemoveUser removeUser)
         {
-            this.keyRepository = keyRepository;
+            this.gw2ApiKeyRepository = gw2ApiKeyRepository;
             this.gw2Api = gw2Api;
             this.verifyUser = verifyUser;
             this.removeUser = removeUser;
@@ -38,7 +38,7 @@ namespace GreyOTron.Library.Commands
                     userId = Arguments.Trim();
                     context = userId;
                 }
-                var discordClientWithKey = await keyRepository.Get("Gw2", userId);
+                var discordClientWithKey = await gw2ApiKeyRepository.Get(ulong.Parse(userId));
                 if (discordClientWithKey == null)
                 {
                     if (context != null)
@@ -71,7 +71,7 @@ namespace GreyOTron.Library.Commands
                     AccountInfo acInfo;
                     try
                     {
-                        acInfo = gw2Api.GetInformationForUserByKey(discordClientWithKey.Key);
+                        acInfo = gw2Api.GetInformationForUserByKey(discordClientWithKey.ApiKey);
                     }
                     catch (BrokenCircuitException)
                     {
