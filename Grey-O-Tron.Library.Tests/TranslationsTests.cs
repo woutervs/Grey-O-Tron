@@ -9,8 +9,8 @@ namespace Grey_O_Tron.Library.Tests
         [Fact]
         public void Test_TranslationIssues()
         {
-            var t = new TranslationHelper();
-            var result = t.Translate(0, "{0}", "thing {thing}");
+            var t = new TranslationHelper(new Languages(new Cache(), null, null));
+            var result = t.Translate(0, null, "{0}", "thing {thing}");
             result.Should().Be("thing {thing}");
         }
     }

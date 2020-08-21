@@ -118,117 +118,136 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="EmptyKeyTryAgain" xml:space="preserve">
-    <value>This key seems empty to me, please try again.</value>
+    <value>Deze sleutel lijkt me leeg, probeer het opnieuw.</value>
   </data>
   <data name="GW2ApiUnableToProcess" xml:space="preserve">
-    <value>The GW2 api can't handle this request at the time, please try again a bit later.</value>
+    <value>De GW2-api kan dit verzoek op dat moment niet verwerken, probeer het later opnieuw.</value>
   </data>
   <data name="InvalidApiKey" xml:space="preserve">
-    <value>Your api-key is invalid, please set a new one and re-verify.</value>
+    <value>Uw api-key is ongeldig, stel een nieuwe in en verifieer opnieuw.</value>
   </data>
   <data name="SuccessfullyVerified" xml:space="preserve">
-    <value>Your key has been stored, and we verified you on
-{0}</value>
+    <value>Je sleutel is opgeslagen en ik heb ook geprobeerd je te verifiëren op de volgende Discord-servers: {0}</value>
   </data>
   <data name="DiscordNameDifferentFromGw2Key" xml:space="preserve">
-    <value>Please make sure your GW2 application key's name is the same as your discord username: {0}#{1}</value>
+    <value>Zorg ervoor dat de naam van uw GW2-toepassingssleutel hetzelfde is als uw discord-gebruikersnaam: {0}#{1}</value>
   </data>
   <data name="FindYourGW2ApplicationKey" xml:space="preserve">
-    <value>You can view, create and edit your GW2 application key's on https://account.arena.net/applications</value>
+    <value>U kunt uw GW2-toepassingssleutels bekijken, maken en bewerken op https://account.arena.net/applications</value>
   </data>
   <data name="HelpMessage" xml:space="preserve">
-    <value>Help can be found on https://greyotron.eu
-{0} Or find help on https://discord.gg/6uybq5X</value>
+    <value>Hulp is te vinden op https://greyotron.eu 
+{0} Of vind hulp op https://discord.gg/6uybq5X</value>
   </data>
   <data name="CommandNotFound" xml:space="preserve">
-    <value>You tried using '{0}', unfortunately I haven't been taught that command.</value>
+    <value>Je hebt geprobeerd '{0}' te gebruiken, helaas heb ik dat commando niet geleerd.</value>
   </data>
   <data name="Unauthorized" xml:space="preserve">
-    <value>I'm sorry you're not authorized to receive this kind of information.</value>
+    <value>Het spijt me dat u niet bevoegd bent om deze informatie te ontvangen.</value>
   </data>
   <data name="UnknownWorld" xml:space="preserve">
-    <value>Could not resolve your world from '{0}'</value>
+    <value>Deze wereld '{0}' lijkt niet te bestaan</value>
   </data>
   <data name="MainWorldSet" xml:space="preserve">
-    <value>{0} set for {0} as main world.</value>
-  </data>
-  <data name="UnauthorizedToSetWorlds" xml:space="preserve">
-    <value>You must have administrative permissions to perform the set-worlds command.</value>
-  </data>
-  <data name="TriedSetWorldsWhilstNotOnServer" xml:space="preserve">
-    <value>The set-worlds command must be used from within the server to which you want to apply it.</value>
+    <value>{0} ingesteld voor {1} als hoofdwereld.</value>
   </data>
   <data name="KeyNotFound" xml:space="preserve">
-    <value>No key found for {0}</value>
+    <value>Geen sleutel gevonden voor {0}</value>
   </data>
   <data name="KeyNotRegistered" xml:space="preserve">
-    <value>You haven't yet registered a key with me, use the gw2-key command to do so.</value>
+    <value>U heeft nog geen sleutel bij mij geregistreerd, gebruik hiervoor het gw2-key commando.</value>
   </data>
   <data name="UserNotFoundForVerification" xml:space="preserve">
-    <value>User you are trying to verify was not found on this Discord server.</value>
+    <value>De gebruiker die u probeert te verifiëren, is niet gevonden op deze Discord-server.</value>
   </data>
   <data name="InvalidKey" xml:space="preserve">
-    <value>{0} api-key is invalid, please set a new one and re-verify.</value>
-  </data>
-  <data name="TriedVerifyWhilstNotOnServer" xml:space="preserve">
-    <value>You must use the gw2-verify command from within the discord server you try to get verified on.</value>
+    <value>{0} api-key is ongeldig, stel een nieuwe in en verifieer opnieuw.</value>
   </data>
   <data name="CurrentVersion" xml:space="preserve">
-    <value>Current version: {0}</value>
+    <value>Huidige versie: {0}</value>
   </data>
   <data name="RolesWereRemoved" xml:space="preserve">
-    <value>Your gw2 world roles have been removed from {0}.
-Goodbye!</value>
+    <value>Je gw2-wereldrollen zijn verwijderd uit {0}.
+Vaarwel!</value>
   </data>
   <data name="RolesWereRemovedNoWhere" xml:space="preserve">
-    <value>no where</value>
+    <value>nergens</value>
   </data>
   <data name="NoWorldsInCommand" xml:space="preserve">
-    <value>You must give at least one world name separated by ; for the set-worlds command to work.</value>
+    <value>U moet ten minste één wereldnaam opgeven, gescheiden door een ; om het commando set-worlds te laten werken.</value>
   </data>
   <data name="WorldsSetForGuild" xml:space="preserve">
-    <value>{0} set for {1}</value>
+    <value>{0} ingesteld voor {1}</value>
   </data>
   <data name="UserChangedDiscordUsername" xml:space="preserve">
-    <value>{0} most likely changed their discord username from {1} to {2}#{3} please ask {0} to update their key.\n{4}</value>
+    <value>{0} heeft waarschijnlijk hun discord-gebruikersnaam gewijzigd van {1} naar {2} # {3} vraag {0} om hun sleutel bij te werken.
+{4}</value>
   </data>
   <data name="YouChangedDiscordUsername" xml:space="preserve">
-    <value>You've most likely changed your discord username from {0} to {1}#{2}, please update your key.\n{3}</value>
+    <value>U heeft waarschijnlijk uw Discord-gebruikersnaam gewijzigd van {0} naar {1} # {2}. Werk uw sleutel bij.
+{3}</value>
   </data>
   <data name="ApiFailedToReturnWorldsForUser" xml:space="preserve">
-    <value>The GW2API did not return worlds for user {0}</value>
+    <value>De GW2API heeft geen werelden teruggegeven voor gebruiker {0}</value>
   </data>
   <data name="ApiFailedToReturnWorldsForYou" xml:space="preserve">
-    <value>The GW2API did not return worlds for you.</value>
+    <value>De GW2API heeft geen werelden voor je teruggegeven.</value>
   </data>
   <data name="WorldNotInDiscordServerWorlds" xml:space="preserve">
-    <value>{0}'s world is not in '{1}' worlds list, cannot assign the role {2}</value>
+    <value>De wereld van {0} staat niet in de lijst met '{1}' werelden, kan de rol {2} niet toewijzen</value>
   </data>
   <data name="YourWorldNotInDiscordServerWorlds" xml:space="preserve">
-    <value>Your world '{0}' is not in this '{1}' worlds list.</value>
+    <value>Uw wereld '{0}' staat niet op de '{1}' wereldenlijst van deze server.</value>
   </data>
   <data name="UserHasBeenAssignedRole" xml:space="preserve">
-    <value>{0} has been assigned {1} on {2}</value>
+    <value>{0} is toegewezen aan {1} op {2}</value>
   </data>
   <data name="YouHaveBeenAssignedRole" xml:space="preserve">
-    <value>You've been assigned {0} on {1}</value>
+    <value>U bent {0} toegewezen op {1}</value>
   </data>
   <data name="UserAlreadyHadRole" xml:space="preserve">
-    <value>'{0}' already had the role '{1}' on '{2}', no action taken.</value>
+    <value>'{0}' had al de rol '{1}' op '{2}', er is geen actie ondernomen.</value>
   </data>
   <data name="YouAlreadyHadRole" xml:space="preserve">
-    <value>You already have the role '{0}' on '{1}', nothing changed.</value>
+    <value>Je hebt al de rol '{0}' op '{1}', er is niets veranderd.</value>
   </data>
   <data name="NotGuildUserRoleIssue" xml:space="preserve">
-    <value>There seems to be an issue with the role '{0}' on '{1}' it's most likely above the 'Grey-O-Tron' role making it impossible for the bot the assign it.</value>
+    <value>Er lijkt een probleem te zijn met de rol '{0}' op '{1}', het is hoogstwaarschijnlijk boven de 'Gray-O-Tron'-rol, waardoor het onmogelijk is voor de bot om deze toe te wijzen.</value>
   </data>
   <data name="UserMessageForRoleIssue" xml:space="preserve">
-    <value>There is an issue on the '{0}' for the role '{1}' an administrator from the server is notified.</value>
+    <value>Er is een probleem met de '{0}' voor de rol '{1}' een beheerder van de server wordt op de hoogte gebracht.</value>
   </data>
   <data name="RoleAssignmentFailedForUser" xml:space="preserve">
-    <value>Something went wrong whilst trying to assign '{0}' the '{1}' role on '{2}', the bot owner is notified please try again in 60 minutes.</value>
+    <value>Er is iets misgegaan bij het toewijzen van '{0}' aan de '{1}' rol op '{2}'. De eigenaar van de bot krijgt een melding, probeer het over 60 minuten opnieuw.</value>
   </data>
   <data name="RoleAssignmentFailed" xml:space="preserve">
-    <value>Something went wrong whilst trying to assign you the '{0}' role on '{1}', the bot owner is notified, please  try again in 60 minutes.</value>
+    <value>Er is iets misgegaan bij het aan u toewijzen van de rol '{0}' op '{1}'. De eigenaar van de bot wordt op de hoogte gebracht, probeer het over 60 minuten opnieuw.</value>
+  </data>
+  <data name="AlreadyHasGw2KeyRegisteredAutoVerifyOnJoin" xml:space="preserve">
+    <value>Welkom {0} bij '{1}'
+Ik heb gemerkt dat je al een GW2 api-sleutel bij mij hebt geregistreerd en ik zal nu proberen je te verifiëren op deze server.</value>
+  </data>
+  <data name="NoGw2KeyRegisteredAutoVerifyOnJoin" xml:space="preserve">
+    <value>Welkom {0} bij '{1}', ik heb geen GW2 api-sleutel voor je gevonden.
+Registreer uw api-sleutel om uzelf wvw-rollen toe te wijzen.
+Voor meer informatie stuur me een bericht 'got#help'!</value>
+  </data>
+  <data name="Your" xml:space="preserve">
+    <value>Uw</value>
+  </data>
+  <data name="ServerOnlyCommand" xml:space="preserve">
+    <value>U moet de opdracht {0} gebruiken binnen de onenigheidsserver waarop u probeert te worden geverifieerd.</value>
+  </data>
+  <data name="AdministrativePermissionsOnly" xml:space="preserve">
+    <value>U moet beheerdersrechten hebben om de {0} -opdracht uit te voeren.</value>
+  </data>
+  <data name="InvalidLanguage" xml:space="preserve">
+    <value>De taal '{0}' die u heeft geprobeerd, is niet geldig.</value>
+  </data>
+  <data name="LanguageSet" xml:space="preserve">
+    <value>Taal '{0}' is nu ingesteld als de voorkeurstaal voor {1}.</value>
+  </data>
+  <data name="You" xml:space="preserve">
+    <value>u</value>
   </data>
 </root>

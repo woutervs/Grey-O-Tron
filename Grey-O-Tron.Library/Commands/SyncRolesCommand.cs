@@ -4,28 +4,27 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Discord.WebSocket;
-using GreyOTron.Library.ApiClients;
 using GreyOTron.Library.Exceptions;
 using GreyOTron.Library.Helpers;
-using GreyOTron.Library.TableStorage;
-using GreyOTron.Library.Translations;
+using GreyOTron.Library.Models;
+using GreyOTron.Library.RepositoryInterfaces;
+using GreyOTron.Resources;
 using Microsoft.ApplicationInsights;
 using Microsoft.Extensions.Configuration;
-using Newtonsoft.Json;
 
 namespace GreyOTron.Library.Commands
 {
     [Command("sync-roles", CommandDescription = "Cleans up duplicate roles on a server", CommandArguments = "", CommandOptions = CommandOptions.DiscordServer | CommandOptions.RequiresAdmin)]
     public class SyncRolesCommand : ICommand
     {
-        private readonly DiscordGuildSettingsRepository discordGuildSettingsRepository;
+        private readonly IGw2DiscordServerRepository gw2DiscordServerRepository;
         private readonly Cache cache;
         private readonly IConfiguration configuration;
         private readonly TelemetryClient log;
 
-        public SyncRolesCommand(DiscordGuildSettingsRepository discordGuildSettingsRepository, Cache cache, IConfiguration configuration, TelemetryClient log)
+        public SyncRolesCommand(IGw2DiscordServerRepository gw2DiscordServerRepository, Cache cache, IConfiguration configuration, TelemetryClient log)
         {
-            this.discordGuildSettingsRepository = discordGuildSettingsRepository;
+            this.gw2DiscordServerRepository = gw2DiscordServerRepository;
             this.cache = cache;
             this.configuration = configuration;
             this.log = log;
@@ -39,7 +38,7 @@ namespace GreyOTron.Library.Commands
             {
                 if (guildUser.IsAdminOrOwner())
                 {
-                    var worlds = JsonConvert.DeserializeObject<List<string>>((await discordGuildSettingsRepository.Get(DiscordGuildSetting.Worlds, guildUser.Guild.Id.ToString()))?.Value ?? "[]");
+                    var worlds = ((await gw2DiscordServerRepository.Get(guildUser.Guild.Id))?.Worlds ?? new List<Gw2WorldDto>()).Select(x=>x.Name).ToList();
                     worlds.Add(configuration["LinkedServerRole"]);
                     foreach (var world in worlds)
                     {
@@ -93,12 +92,12 @@ namespace GreyOTron.Library.Commands
                 }
                 else
                 {
-                    await guildUser.InternalSendMessageAsync("Unauthorized to cleanup roles on this server.");
+                    await guildUser.InternalSendMessageAsync(nameof(GreyOTronResources.AdministrativePermissionsOnly), "sync-roles");
                 }
             }
             else
             {
-                await message.Author.InternalSendMessageAsync("You have to use this command from within a server.");
+                await message.Author.InternalSendMessageAsync(nameof(GreyOTronResources.ServerOnlyCommand), "sync-roles");
             }
             if (!(message.Channel is SocketDMChannel))
             {

@@ -6,27 +6,27 @@ using System.Threading.Tasks;
 using Discord;
 using Discord.WebSocket;
 using GreyOTron.Library.Exceptions;
-using GreyOTron.Library.TableStorage;
-using GreyOTron.Library.Translations;
+using GreyOTron.Library.Models;
+using GreyOTron.Library.RepositoryInterfaces;
+using GreyOTron.Resources;
 using Microsoft.ApplicationInsights;
 using Microsoft.Extensions.Configuration;
-using Newtonsoft.Json;
 
 namespace GreyOTron.Library.Helpers
 {
     public class RemoveUser
     {
-        private readonly KeyRepository gw2KeyRepository;
+        private readonly IGw2DiscordUserRepository gw2Gw2ApiKeyRepository;
         private readonly IConfiguration configuration;
         private readonly TelemetryClient log;
-        private readonly DiscordGuildSettingsRepository discordGuildSettingsRepository;
+        private readonly IGw2DiscordServerRepository gw2DiscordServerRepository;
 
-        public RemoveUser(KeyRepository gw2KeyRepository, IConfiguration configuration, TelemetryClient log, DiscordGuildSettingsRepository discordGuildSettingsRepository)
+        public RemoveUser(IGw2DiscordUserRepository gw2Gw2ApiKeyRepository, IConfiguration configuration, TelemetryClient log, IGw2DiscordServerRepository gw2DiscordServerRepository)
         {
-            this.gw2KeyRepository = gw2KeyRepository;
+            this.gw2Gw2ApiKeyRepository = gw2Gw2ApiKeyRepository;
             this.configuration = configuration;
             this.log = log;
-            this.discordGuildSettingsRepository = discordGuildSettingsRepository;
+            this.gw2DiscordServerRepository = gw2DiscordServerRepository;
         }
 
 
@@ -34,22 +34,19 @@ namespace GreyOTron.Library.Helpers
         {
             if (token.IsCancellationRequested) return;
 
-            await gw2KeyRepository.Delete("Gw2", user.Id.ToString());
+            await gw2Gw2ApiKeyRepository.RemoveApiKey(user.Id);
             var affectedServers = new List<string>();
             foreach (var guild in guilds)
             {
                 try
                 {
-                    var worlds = JsonConvert.DeserializeObject<List<string>>(
-                        (await discordGuildSettingsRepository.Get(DiscordGuildSetting.Worlds, guild.Id.ToString()))
-                        ?.Value ?? "[]");
-                    var mainWorld =
-                        (await discordGuildSettingsRepository.Get(DiscordGuildSetting.MainWorld, guild.Id.ToString()))
-                        ?.Value;
+                    var gw2DiscordServer = await gw2DiscordServerRepository.Get(guild.Id);
 
-                    if (mainWorld != null && !worlds.Contains(mainWorld))
+                    var worlds = (gw2DiscordServer?.Worlds ?? new List<Gw2WorldDto>()).Select(x => x.Name).ToList();
+
+                    if (gw2DiscordServer?.MainWorld != null && !worlds.Any(y=>y.Equals(gw2DiscordServer.MainWorld.Name)))
                     {
-                        worlds.Add(mainWorld);
+                        worlds.Add(gw2DiscordServer.MainWorld.Name);
                     }
 
                     var guildUser = guild.Users.FirstOrDefault(u => u.Id == user.Id);
@@ -57,7 +54,7 @@ namespace GreyOTron.Library.Helpers
                     {
                         affectedServers.Add(guild.Name);
                         var userOwnedRolesMatchingWorlds = guildUser.Roles.Where(x =>
-                            worlds.Contains(x.Name.ToLowerInvariant()) || x.Name.Equals(
+                            worlds.Any(y=>y.Equals(x.Name, StringComparison.InvariantCultureIgnoreCase)) || x.Name.Equals(
                                 configuration["LinkedServerRole"],
                                 StringComparison.InvariantCultureIgnoreCase)).ToList();
                         await guildUser.RemoveRolesAsync(userOwnedRolesMatchingWorlds,

@@ -6,8 +6,9 @@ using System.Threading.Tasks;
 using Discord.WebSocket;
 using GreyOTron.Library.ApiClients;
 using GreyOTron.Library.Helpers;
-using GreyOTron.Library.TableStorage;
-using GreyOTron.Library.Translations;
+using GreyOTron.Library.Models;
+using GreyOTron.Library.RepositoryInterfaces;
+using GreyOTron.Resources;
 using Newtonsoft.Json;
 
 namespace GreyOTron.Library.Commands
@@ -15,12 +16,12 @@ namespace GreyOTron.Library.Commands
     [Command("gw2-set-worlds", CommandDescription = "Stores worlds where roles will be assigned for to the database.", CommandArguments = "{world (name|id);world (name|id);...}|{all}", CommandOptions = CommandOptions.DiscordServer | CommandOptions.RequiresAdmin)]
     public class SetWorldsCommand : ICommand
     {
-        private readonly DiscordGuildSettingsRepository discordGuildSettingsRepository;
+        private readonly IGw2DiscordServerRepository gw2DiscordServerRepository;
         private readonly Gw2Api gw2Api;
 
-        public SetWorldsCommand(DiscordGuildSettingsRepository discordGuildSettingsRepository, Gw2Api gw2Api)
+        public SetWorldsCommand(IGw2DiscordServerRepository gw2DiscordServerRepository, Gw2Api gw2Api)
         {
-            this.discordGuildSettingsRepository = discordGuildSettingsRepository;
+            this.gw2DiscordServerRepository = gw2DiscordServerRepository;
             this.gw2Api = gw2Api;
         }
 
@@ -47,19 +48,27 @@ namespace GreyOTron.Library.Commands
                 }
                 else if (guildUser.IsAdminOrOwner())
                 {
-                    await discordGuildSettingsRepository.Set(new DiscordGuildSetting(guildUser.Guild.Id.ToString(),
-                        guildUser.Guild.Name, DiscordGuildSetting.Worlds,
-                        JsonConvert.SerializeObject(worlds.Select(x => x.Name.ToLowerInvariant()))));
+                    var gw2DiscordServer = new Gw2DiscordServer
+                    {
+                        DiscordServer = new DiscordServerDto
+                        {
+                            Id = guildUser.Guild.Id,
+                            Name = guildUser.Guild.Name,
+                        },
+                        Worlds = worlds.Select(x => new Gw2WorldDto { Id = x.Id }).ToList()
+                    };
+                    await gw2DiscordServerRepository.InsertOrUpdate(gw2DiscordServer);
+
                     await guildUser.InternalSendMessageAsync(nameof(GreyOTronResources.WorldsSetForGuild), worlds.Aggregate("", (a, b) => $"{a}{b.Name}, ").TrimEnd(',', ' '), guildUser.Guild.Name);
                 }
                 else
                 {
-                    await guildUser.InternalSendMessageAsync(nameof(GreyOTronResources.UnauthorizedToSetWorlds));
+                    await guildUser.InternalSendMessageAsync(nameof(GreyOTronResources.AdministrativePermissionsOnly), "gw2-set-worlds");
                 }
             }
             else
             {
-                await message.Author.InternalSendMessageAsync(nameof(GreyOTronResources.TriedSetWorldsWhilstNotOnServer));
+                await message.Author.InternalSendMessageAsync(nameof(GreyOTronResources.ServerOnlyCommand), "gw2-set-worlds");
             }
 
             if (!(message.Channel is SocketDMChannel))
