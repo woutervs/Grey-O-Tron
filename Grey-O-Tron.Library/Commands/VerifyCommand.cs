@@ -89,7 +89,7 @@ namespace GreyOTron.Library.Commands
             }
             else
             {
-                await message.Author.InternalSendMessageAsync(nameof(GreyOTronResources.TriedVerifyWhilstNotOnServer));
+                await message.Author.InternalSendMessageAsync(nameof(GreyOTronResources.ServerOnlyCommand), "gw2-verify");
             }
 
             if (!(message.Channel is SocketDMChannel))

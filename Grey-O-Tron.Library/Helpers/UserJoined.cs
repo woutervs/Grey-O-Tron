@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using Discord.WebSocket;
 using GreyOTron.Library.ApiClients;
 using GreyOTron.Library.Exceptions;
-using GreyOTron.Library.RepositoryImplementationsSql;
+using GreyOTron.Library.RepositoryInterfaces;
 using GreyOTron.Library.Translations;
 using Polly.CircuitBreaker;
 
@@ -12,13 +12,13 @@ namespace GreyOTron.Library.Helpers
 {
     public class UserJoined
     {
-        private readonly SqlGw2DiscordServerRepository gw2DiscordServerRepository;
-        private readonly SqlGw2DiscordUserRepository gw2DiscordUserRepository;
+        private readonly IGw2DiscordServerRepository gw2DiscordServerRepository;
+        private readonly IGw2DiscordUserRepository gw2DiscordUserRepository;
         private readonly Gw2Api gw2Api;
         private readonly RemoveUser removeUser;
         private readonly VerifyUser verifyUser;
 
-        public UserJoined(SqlGw2DiscordServerRepository gw2DiscordServerRepository, SqlGw2DiscordUserRepository gw2DiscordUserRepository, Gw2Api gw2Api, RemoveUser removeUser, VerifyUser verifyUser)
+        public UserJoined(IGw2DiscordServerRepository gw2DiscordServerRepository, IGw2DiscordUserRepository gw2DiscordUserRepository, Gw2Api gw2Api, RemoveUser removeUser, VerifyUser verifyUser)
         {
             this.gw2DiscordServerRepository = gw2DiscordServerRepository;
             this.gw2DiscordUserRepository = gw2DiscordUserRepository;
@@ -48,7 +48,7 @@ namespace GreyOTron.Library.Helpers
                     }
                     catch (InvalidKeyException)
                     {
-                        await joinedUser.InternalSendMessageAsync(nameof(GreyOTronResources.InvalidKey), "Your");
+                        await joinedUser.InternalSendMessageAsync(nameof(GreyOTronResources.InvalidKey), nameof(GreyOTronResources.Your));
                         await removeUser.Execute(client, joinedUser, client.Guilds, cancellationToken);
                         throw;
                     }

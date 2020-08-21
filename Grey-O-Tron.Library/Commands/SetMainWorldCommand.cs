@@ -50,12 +50,12 @@ namespace GreyOTron.Library.Commands
                 }
                 else
                 {
-                    await guildUser.InternalSendMessageAsync(nameof(GreyOTronResources.UnauthorizedToSetWorlds));
+                    await guildUser.InternalSendMessageAsync(nameof(GreyOTronResources.AdministrativePermissionsOnly), "gw2-set-main-world");
                 }
             }
             else
             {
-                await message.Author.InternalSendMessageAsync(nameof(GreyOTronResources.TriedSetWorldsWhilstNotOnServer));
+                await message.Author.InternalSendMessageAsync(nameof(GreyOTronResources.ServerOnlyCommand), "gw2-set-main-world");
             }
             if (!(message.Channel is SocketDMChannel))
             {

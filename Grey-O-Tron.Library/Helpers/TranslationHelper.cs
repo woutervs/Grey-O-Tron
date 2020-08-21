@@ -1,19 +1,31 @@
 ﻿using System.Globalization;
 using System.Linq;
+using GreyOTron.Library.RepositoryInterfaces;
 using GreyOTron.Library.Translations;
 
 namespace GreyOTron.Library.Helpers
 {
     public class TranslationHelper
     {
-        public TranslationHelper()
-        {
+        private readonly Languages languages;
 
+        public TranslationHelper(Languages languages)
+        {
+            this.languages = languages;
         }
 
-        public string Translate(ulong userId, string key, params string[] formatParameters)
+        public string Translate(ulong userId, ulong? serverId, string key, params string[] formatParameters)
         {
-            var ci = CultureInfo.CurrentCulture;
+            var ci = languages.GetForUserId(userId);
+            if (ci == null && serverId.HasValue)
+            {
+                ci = languages.GetForServerId(serverId.Value);
+            }
+
+            if (ci == null)
+            {
+                ci = CultureInfo.InvariantCulture;
+            }
 
             var message = GreyOTronResources.ResourceManager.GetString(key, ci) ?? key;
             var translatedFormatParameters = formatParameters.Select(formatParameter => GreyOTronResources.ResourceManager.GetString(formatParameter, ci) ?? formatParameter).ToList();

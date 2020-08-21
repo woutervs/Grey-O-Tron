@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
 using Discord.WebSocket;
-using GreyOTron.Library.ApiClients;
 using GreyOTron.Library.Exceptions;
 using GreyOTron.Library.Helpers;
 using GreyOTron.Library.Models;
@@ -13,7 +11,6 @@ using GreyOTron.Library.RepositoryInterfaces;
 using GreyOTron.Library.Translations;
 using Microsoft.ApplicationInsights;
 using Microsoft.Extensions.Configuration;
-using Newtonsoft.Json;
 
 namespace GreyOTron.Library.Commands
 {
@@ -95,12 +92,12 @@ namespace GreyOTron.Library.Commands
                 }
                 else
                 {
-                    await guildUser.InternalSendMessageAsync("Unauthorized to cleanup roles on this server.");
+                    await guildUser.InternalSendMessageAsync(nameof(GreyOTronResources.AdministrativePermissionsOnly), "sync-roles");
                 }
             }
             else
             {
-                await message.Author.InternalSendMessageAsync("You have to use this command from within a server.");
+                await message.Author.InternalSendMessageAsync(nameof(GreyOTronResources.ServerOnlyCommand), "sync-roles");
             }
             if (!(message.Channel is SocketDMChannel))
             {

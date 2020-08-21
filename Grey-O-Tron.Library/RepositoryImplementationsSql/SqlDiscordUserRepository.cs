@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Dapper;
 using GreyOTron.Library.Models;
 using GreyOTron.Library.RepositoryInterfaces;
 using Microsoft.Data.SqlClient;
@@ -34,6 +35,17 @@ else
             command.Parameters.AddWithValue("@discriminator", discordUser.Discriminator);
             command.Parameters.AddWithValue("@preferredlanguage", (object)discordUser.PreferredLanguage?.ToLowerInvariant() ?? DBNull.Value);
             await command.ExecuteNonQueryAsync();
+        }
+
+        public async Task<DiscordUserDto> Get(ulong discordUserId)
+        {
+            await using var db = new SqlConnection(dbConfiguration.ConnectionString);
+            dbConfiguration.AuthenticateDbConnection(db);
+
+            var user = await db.QuerySingleOrDefaultAsync<DiscordUserDto>(
+                "select * from got.discordusers where id = @discordUserId",
+                new {discordUserId = (decimal) discordUserId});
+            return user;
         }
     }
 }
