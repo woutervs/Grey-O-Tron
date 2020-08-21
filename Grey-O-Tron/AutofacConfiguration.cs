@@ -3,7 +3,6 @@ using System.Diagnostics;
 using Autofac;
 using Autofac.Core;
 using GreyOTron.Library.Helpers;
-using GreyOTron.Library.RepositoryInterfaces;
 using Microsoft.Azure.Services.AppAuthentication;
 using Microsoft.Extensions.Configuration;
 
@@ -28,7 +27,7 @@ namespace GreyOTron
 
             builder.RegisterType<AzureServiceTokenProvider>().SingleInstance();
             builder.RegisterType<Bot>().AsSelf().SingleInstance();
-            if (env == "Development")
+            if (env == "Development1")
             {
                 builder.RegisterType<SqlLocalDbConfiguration>().AsImplementedInterfaces().SingleInstance();
             }
@@ -52,6 +51,7 @@ namespace GreyOTron
                 builder.AddUserSecrets<Program>();
             }
             builder.AddJsonFile("app.json");
+            builder.AddJsonFile($"app.{env}.json", true);
             builder.AddEnvironmentVariables();
             return builder.Build();
         }

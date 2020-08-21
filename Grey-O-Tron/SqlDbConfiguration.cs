@@ -19,6 +19,7 @@ namespace GreyOTron
                 switch (connection)
                 {
                     case SqlConnection sqlConnection:
+                        sqlConnection.Credential = null;
                         sqlConnection.AccessToken = tokenProvider
                             .GetAccessTokenAsync("https://database.windows.net/", configuration["tenantId"]).Result;
                         break;
