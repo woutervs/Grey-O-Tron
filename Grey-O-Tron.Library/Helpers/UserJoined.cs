@@ -5,7 +5,7 @@ using Discord.WebSocket;
 using GreyOTron.Library.ApiClients;
 using GreyOTron.Library.Exceptions;
 using GreyOTron.Library.RepositoryInterfaces;
-using GreyOTron.Library.Translations;
+using GreyOTron.Resources;
 using Polly.CircuitBreaker;
 
 namespace GreyOTron.Library.Helpers

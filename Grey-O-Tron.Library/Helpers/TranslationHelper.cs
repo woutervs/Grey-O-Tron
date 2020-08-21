@@ -1,7 +1,7 @@
 ﻿using System.Globalization;
 using System.Linq;
-using GreyOTron.Library.RepositoryInterfaces;
-using GreyOTron.Library.Translations;
+using System.Resources;
+using GreyOTron.Resources;
 
 namespace GreyOTron.Library.Helpers
 {
@@ -26,7 +26,7 @@ namespace GreyOTron.Library.Helpers
             {
                 ci = CultureInfo.InvariantCulture;
             }
-
+            
             var message = GreyOTronResources.ResourceManager.GetString(key, ci) ?? key;
             var translatedFormatParameters = formatParameters.Select(formatParameter => GreyOTronResources.ResourceManager.GetString(formatParameter, ci) ?? formatParameter).ToList();
             return string.Format(message, translatedFormatParameters.ToArray<object>());

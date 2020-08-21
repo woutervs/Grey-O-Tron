@@ -4,7 +4,7 @@ using Discord.WebSocket;
 using GreyOTron.Library.Helpers;
 using GreyOTron.Library.Models;
 using GreyOTron.Library.RepositoryInterfaces;
-using GreyOTron.Library.Translations;
+using GreyOTron.Resources;
 
 namespace GreyOTron.Library.Commands
 {

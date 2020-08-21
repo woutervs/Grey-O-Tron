@@ -37,7 +37,7 @@ namespace GreyOTron.Library.Helpers
             var language = cache.GetFromCacheSliding($"language-for-user-{userId}", TimeSpan.FromDays(7), () => discordUserRepository.Get(userId).Result?.PreferredLanguage ?? "notset");
             try
             {
-                return CultureInfo.CreateSpecificCulture(language);
+                return CultureInfo.GetCultureInfoByIetfLanguageTag(language);
             }
             catch (Exception)
             {
@@ -56,7 +56,7 @@ namespace GreyOTron.Library.Helpers
                 () => discordServerRepository.Get(serverId).Result?.PreferredLanguage ?? "notset");
             try
             {
-                return CultureInfo.CreateSpecificCulture(language);
+                return CultureInfo.GetCultureInfoByIetfLanguageTag(language);
             }
             catch (Exception)
             {

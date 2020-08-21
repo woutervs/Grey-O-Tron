@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace GreyOTron.Library.Translations {
+namespace GreyOTron.Resources {
     using System;
     
     
@@ -22,7 +22,7 @@ namespace GreyOTron.Library.Translations {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    internal class GreyOTronResources {
+    public class GreyOTronResources {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
@@ -36,10 +36,10 @@ namespace GreyOTron.Library.Translations {
         ///   Returns the cached ResourceManager instance used by this class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Resources.ResourceManager ResourceManager {
+        public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("GreyOTron.Library.Translations.GreyOTronResources", typeof(GreyOTronResources).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("GreyOTron.Resources.GreyOTronResources", typeof(GreyOTronResources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -51,7 +51,7 @@ namespace GreyOTron.Library.Translations {
         ///   resource lookups using this strongly typed resource class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Globalization.CultureInfo Culture {
+        public static global::System.Globalization.CultureInfo Culture {
             get {
                 return resourceCulture;
             }
@@ -63,7 +63,7 @@ namespace GreyOTron.Library.Translations {
         /// <summary>
         ///   Looks up a localized string similar to You must have administrative permissions to perform the {0} command..
         /// </summary>
-        internal static string AdministrativePermissionsOnly {
+        public static string AdministrativePermissionsOnly {
             get {
                 return ResourceManager.GetString("AdministrativePermissionsOnly", resourceCulture);
             }
@@ -73,7 +73,7 @@ namespace GreyOTron.Library.Translations {
         ///   Looks up a localized string similar to Welcome {0} to &apos;{1}&apos;
         ///I noticed you already have a GW2 api key registered with me and I will now attempt to verify you in this server..
         /// </summary>
-        internal static string AlreadyHasGw2KeyRegisteredAutoVerifyOnJoin {
+        public static string AlreadyHasGw2KeyRegisteredAutoVerifyOnJoin {
             get {
                 return ResourceManager.GetString("AlreadyHasGw2KeyRegisteredAutoVerifyOnJoin", resourceCulture);
             }
@@ -82,7 +82,7 @@ namespace GreyOTron.Library.Translations {
         /// <summary>
         ///   Looks up a localized string similar to The GW2API did not return worlds for user {0}.
         /// </summary>
-        internal static string ApiFailedToReturnWorldsForUser {
+        public static string ApiFailedToReturnWorldsForUser {
             get {
                 return ResourceManager.GetString("ApiFailedToReturnWorldsForUser", resourceCulture);
             }
@@ -91,7 +91,7 @@ namespace GreyOTron.Library.Translations {
         /// <summary>
         ///   Looks up a localized string similar to The GW2API did not return worlds for you..
         /// </summary>
-        internal static string ApiFailedToReturnWorldsForYou {
+        public static string ApiFailedToReturnWorldsForYou {
             get {
                 return ResourceManager.GetString("ApiFailedToReturnWorldsForYou", resourceCulture);
             }
@@ -100,7 +100,7 @@ namespace GreyOTron.Library.Translations {
         /// <summary>
         ///   Looks up a localized string similar to You tried using &apos;{0}&apos;, unfortunately I haven&apos;t been taught that command..
         /// </summary>
-        internal static string CommandNotFound {
+        public static string CommandNotFound {
             get {
                 return ResourceManager.GetString("CommandNotFound", resourceCulture);
             }
@@ -109,7 +109,7 @@ namespace GreyOTron.Library.Translations {
         /// <summary>
         ///   Looks up a localized string similar to Current version: {0}.
         /// </summary>
-        internal static string CurrentVersion {
+        public static string CurrentVersion {
             get {
                 return ResourceManager.GetString("CurrentVersion", resourceCulture);
             }
@@ -118,7 +118,7 @@ namespace GreyOTron.Library.Translations {
         /// <summary>
         ///   Looks up a localized string similar to Please make sure your GW2 application key&apos;s name is the same as your discord username: {0}#{1}.
         /// </summary>
-        internal static string DiscordNameDifferentFromGw2Key {
+        public static string DiscordNameDifferentFromGw2Key {
             get {
                 return ResourceManager.GetString("DiscordNameDifferentFromGw2Key", resourceCulture);
             }
@@ -127,7 +127,7 @@ namespace GreyOTron.Library.Translations {
         /// <summary>
         ///   Looks up a localized string similar to This key seems empty to me, please try again..
         /// </summary>
-        internal static string EmptyKeyTryAgain {
+        public static string EmptyKeyTryAgain {
             get {
                 return ResourceManager.GetString("EmptyKeyTryAgain", resourceCulture);
             }
@@ -136,7 +136,7 @@ namespace GreyOTron.Library.Translations {
         /// <summary>
         ///   Looks up a localized string similar to You can view, create and edit your GW2 application key&apos;s on https://account.arena.net/applications.
         /// </summary>
-        internal static string FindYourGW2ApplicationKey {
+        public static string FindYourGW2ApplicationKey {
             get {
                 return ResourceManager.GetString("FindYourGW2ApplicationKey", resourceCulture);
             }
@@ -145,7 +145,7 @@ namespace GreyOTron.Library.Translations {
         /// <summary>
         ///   Looks up a localized string similar to The GW2 api can&apos;t handle this request at the time, please try again a bit later..
         /// </summary>
-        internal static string GW2ApiUnableToProcess {
+        public static string GW2ApiUnableToProcess {
             get {
                 return ResourceManager.GetString("GW2ApiUnableToProcess", resourceCulture);
             }
@@ -155,7 +155,7 @@ namespace GreyOTron.Library.Translations {
         ///   Looks up a localized string similar to Help can be found on https://greyotron.eu
         ///{0} Or find help on https://discord.gg/6uybq5X.
         /// </summary>
-        internal static string HelpMessage {
+        public static string HelpMessage {
             get {
                 return ResourceManager.GetString("HelpMessage", resourceCulture);
             }
@@ -164,7 +164,7 @@ namespace GreyOTron.Library.Translations {
         /// <summary>
         ///   Looks up a localized string similar to Your api-key is invalid, please set a new one and re-verify..
         /// </summary>
-        internal static string InvalidApiKey {
+        public static string InvalidApiKey {
             get {
                 return ResourceManager.GetString("InvalidApiKey", resourceCulture);
             }
@@ -173,7 +173,7 @@ namespace GreyOTron.Library.Translations {
         /// <summary>
         ///   Looks up a localized string similar to {0} api-key is invalid, please set a new one and re-verify..
         /// </summary>
-        internal static string InvalidKey {
+        public static string InvalidKey {
             get {
                 return ResourceManager.GetString("InvalidKey", resourceCulture);
             }
@@ -182,7 +182,7 @@ namespace GreyOTron.Library.Translations {
         /// <summary>
         ///   Looks up a localized string similar to The language &apos;{0}&apos; you tried setting isn&apos;t valid..
         /// </summary>
-        internal static string InvalidLanguage {
+        public static string InvalidLanguage {
             get {
                 return ResourceManager.GetString("InvalidLanguage", resourceCulture);
             }
@@ -191,7 +191,7 @@ namespace GreyOTron.Library.Translations {
         /// <summary>
         ///   Looks up a localized string similar to No key found for {0}.
         /// </summary>
-        internal static string KeyNotFound {
+        public static string KeyNotFound {
             get {
                 return ResourceManager.GetString("KeyNotFound", resourceCulture);
             }
@@ -200,7 +200,7 @@ namespace GreyOTron.Library.Translations {
         /// <summary>
         ///   Looks up a localized string similar to You haven&apos;t yet registered a key with me, use the gw2-key command to do so..
         /// </summary>
-        internal static string KeyNotRegistered {
+        public static string KeyNotRegistered {
             get {
                 return ResourceManager.GetString("KeyNotRegistered", resourceCulture);
             }
@@ -209,7 +209,7 @@ namespace GreyOTron.Library.Translations {
         /// <summary>
         ///   Looks up a localized string similar to Language &apos;{0}&apos; is now set as the preferred language for {1}..
         /// </summary>
-        internal static string LanguageSet {
+        public static string LanguageSet {
             get {
                 return ResourceManager.GetString("LanguageSet", resourceCulture);
             }
@@ -218,7 +218,7 @@ namespace GreyOTron.Library.Translations {
         /// <summary>
         ///   Looks up a localized string similar to {0} set for {1} as main world..
         /// </summary>
-        internal static string MainWorldSet {
+        public static string MainWorldSet {
             get {
                 return ResourceManager.GetString("MainWorldSet", resourceCulture);
             }
@@ -229,7 +229,7 @@ namespace GreyOTron.Library.Translations {
         ///To get yourself wvw roles assigned please register your api key.
         ///For more information message me &quot;got#help&quot;!.
         /// </summary>
-        internal static string NoGw2KeyRegisteredAutoVerifyOnJoin {
+        public static string NoGw2KeyRegisteredAutoVerifyOnJoin {
             get {
                 return ResourceManager.GetString("NoGw2KeyRegisteredAutoVerifyOnJoin", resourceCulture);
             }
@@ -238,7 +238,7 @@ namespace GreyOTron.Library.Translations {
         /// <summary>
         ///   Looks up a localized string similar to There seems to be an issue with the role &apos;{0}&apos; on &apos;{1}&apos; it&apos;s most likely above the &apos;Grey-O-Tron&apos; role making it impossible for the bot the assign it..
         /// </summary>
-        internal static string NotGuildUserRoleIssue {
+        public static string NotGuildUserRoleIssue {
             get {
                 return ResourceManager.GetString("NotGuildUserRoleIssue", resourceCulture);
             }
@@ -247,7 +247,7 @@ namespace GreyOTron.Library.Translations {
         /// <summary>
         ///   Looks up a localized string similar to You must give at least one world name separated by ; for the set-worlds command to work..
         /// </summary>
-        internal static string NoWorldsInCommand {
+        public static string NoWorldsInCommand {
             get {
                 return ResourceManager.GetString("NoWorldsInCommand", resourceCulture);
             }
@@ -256,7 +256,7 @@ namespace GreyOTron.Library.Translations {
         /// <summary>
         ///   Looks up a localized string similar to Something went wrong whilst trying to assign you the &apos;{0}&apos; role on &apos;{1}&apos;, the bot owner is notified, please  try again in 60 minutes..
         /// </summary>
-        internal static string RoleAssignmentFailed {
+        public static string RoleAssignmentFailed {
             get {
                 return ResourceManager.GetString("RoleAssignmentFailed", resourceCulture);
             }
@@ -265,7 +265,7 @@ namespace GreyOTron.Library.Translations {
         /// <summary>
         ///   Looks up a localized string similar to Something went wrong whilst trying to assign &apos;{0}&apos; the &apos;{1}&apos; role on &apos;{2}&apos;, the bot owner is notified, please try again in 60 minutes..
         /// </summary>
-        internal static string RoleAssignmentFailedForUser {
+        public static string RoleAssignmentFailedForUser {
             get {
                 return ResourceManager.GetString("RoleAssignmentFailedForUser", resourceCulture);
             }
@@ -275,7 +275,7 @@ namespace GreyOTron.Library.Translations {
         ///   Looks up a localized string similar to Your gw2 world roles have been removed from {0}.
         ///Goodbye!.
         /// </summary>
-        internal static string RolesWereRemoved {
+        public static string RolesWereRemoved {
             get {
                 return ResourceManager.GetString("RolesWereRemoved", resourceCulture);
             }
@@ -284,7 +284,7 @@ namespace GreyOTron.Library.Translations {
         /// <summary>
         ///   Looks up a localized string similar to no where.
         /// </summary>
-        internal static string RolesWereRemovedNoWhere {
+        public static string RolesWereRemovedNoWhere {
             get {
                 return ResourceManager.GetString("RolesWereRemovedNoWhere", resourceCulture);
             }
@@ -293,7 +293,7 @@ namespace GreyOTron.Library.Translations {
         /// <summary>
         ///   Looks up a localized string similar to You must use the {0} command within the discord server you try to get verified on..
         /// </summary>
-        internal static string ServerOnlyCommand {
+        public static string ServerOnlyCommand {
             get {
                 return ResourceManager.GetString("ServerOnlyCommand", resourceCulture);
             }
@@ -303,7 +303,7 @@ namespace GreyOTron.Library.Translations {
         ///   Looks up a localized string similar to Your key has been stored, and I also tried to verify you on the following Discord servers:
         ///{0}.
         /// </summary>
-        internal static string SuccessfullyVerified {
+        public static string SuccessfullyVerified {
             get {
                 return ResourceManager.GetString("SuccessfullyVerified", resourceCulture);
             }
@@ -312,7 +312,7 @@ namespace GreyOTron.Library.Translations {
         /// <summary>
         ///   Looks up a localized string similar to I&apos;m sorry you&apos;re not authorized to receive this kind of information..
         /// </summary>
-        internal static string Unauthorized {
+        public static string Unauthorized {
             get {
                 return ResourceManager.GetString("Unauthorized", resourceCulture);
             }
@@ -321,7 +321,7 @@ namespace GreyOTron.Library.Translations {
         /// <summary>
         ///   Looks up a localized string similar to Could not resolve your world from &apos;{0}&apos;.
         /// </summary>
-        internal static string UnknownWorld {
+        public static string UnknownWorld {
             get {
                 return ResourceManager.GetString("UnknownWorld", resourceCulture);
             }
@@ -330,7 +330,7 @@ namespace GreyOTron.Library.Translations {
         /// <summary>
         ///   Looks up a localized string similar to &apos;{0}&apos; already had the role &apos;{1}&apos; on &apos;{2}&apos;, no action taken..
         /// </summary>
-        internal static string UserAlreadyHadRole {
+        public static string UserAlreadyHadRole {
             get {
                 return ResourceManager.GetString("UserAlreadyHadRole", resourceCulture);
             }
@@ -340,7 +340,7 @@ namespace GreyOTron.Library.Translations {
         ///   Looks up a localized string similar to {0} most likely changed their discord username from {1} to {2}#{3} please ask {0} to update their key.
         ///{4}.
         /// </summary>
-        internal static string UserChangedDiscordUsername {
+        public static string UserChangedDiscordUsername {
             get {
                 return ResourceManager.GetString("UserChangedDiscordUsername", resourceCulture);
             }
@@ -349,7 +349,7 @@ namespace GreyOTron.Library.Translations {
         /// <summary>
         ///   Looks up a localized string similar to {0} has been assigned {1} on {2}.
         /// </summary>
-        internal static string UserHasBeenAssignedRole {
+        public static string UserHasBeenAssignedRole {
             get {
                 return ResourceManager.GetString("UserHasBeenAssignedRole", resourceCulture);
             }
@@ -358,7 +358,7 @@ namespace GreyOTron.Library.Translations {
         /// <summary>
         ///   Looks up a localized string similar to There is an issue on the &apos;{0}&apos; for the role &apos;{1}&apos; an administrator from the server is notified..
         /// </summary>
-        internal static string UserMessageForRoleIssue {
+        public static string UserMessageForRoleIssue {
             get {
                 return ResourceManager.GetString("UserMessageForRoleIssue", resourceCulture);
             }
@@ -367,7 +367,7 @@ namespace GreyOTron.Library.Translations {
         /// <summary>
         ///   Looks up a localized string similar to The user you are trying to verify was not found on this Discord server..
         /// </summary>
-        internal static string UserNotFoundForVerification {
+        public static string UserNotFoundForVerification {
             get {
                 return ResourceManager.GetString("UserNotFoundForVerification", resourceCulture);
             }
@@ -376,7 +376,7 @@ namespace GreyOTron.Library.Translations {
         /// <summary>
         ///   Looks up a localized string similar to {0}&apos;s world is not in &apos;{1}&apos; worlds list, cannot assign the role {2}.
         /// </summary>
-        internal static string WorldNotInDiscordServerWorlds {
+        public static string WorldNotInDiscordServerWorlds {
             get {
                 return ResourceManager.GetString("WorldNotInDiscordServerWorlds", resourceCulture);
             }
@@ -385,7 +385,7 @@ namespace GreyOTron.Library.Translations {
         /// <summary>
         ///   Looks up a localized string similar to {0} set for {1}.
         /// </summary>
-        internal static string WorldsSetForGuild {
+        public static string WorldsSetForGuild {
             get {
                 return ResourceManager.GetString("WorldsSetForGuild", resourceCulture);
             }
@@ -394,7 +394,7 @@ namespace GreyOTron.Library.Translations {
         /// <summary>
         ///   Looks up a localized string similar to you.
         /// </summary>
-        internal static string You {
+        public static string You {
             get {
                 return ResourceManager.GetString("You", resourceCulture);
             }
@@ -403,7 +403,7 @@ namespace GreyOTron.Library.Translations {
         /// <summary>
         ///   Looks up a localized string similar to You already have the role &apos;{0}&apos; on &apos;{1}&apos;, nothing changed..
         /// </summary>
-        internal static string YouAlreadyHadRole {
+        public static string YouAlreadyHadRole {
             get {
                 return ResourceManager.GetString("YouAlreadyHadRole", resourceCulture);
             }
@@ -413,7 +413,7 @@ namespace GreyOTron.Library.Translations {
         ///   Looks up a localized string similar to You&apos;ve most likely changed your discord username from {0} to {1}#{2}, please update your key.
         ///{3}.
         /// </summary>
-        internal static string YouChangedDiscordUsername {
+        public static string YouChangedDiscordUsername {
             get {
                 return ResourceManager.GetString("YouChangedDiscordUsername", resourceCulture);
             }
@@ -422,7 +422,7 @@ namespace GreyOTron.Library.Translations {
         /// <summary>
         ///   Looks up a localized string similar to You&apos;ve been assigned {0} on {1}.
         /// </summary>
-        internal static string YouHaveBeenAssignedRole {
+        public static string YouHaveBeenAssignedRole {
             get {
                 return ResourceManager.GetString("YouHaveBeenAssignedRole", resourceCulture);
             }
@@ -431,7 +431,7 @@ namespace GreyOTron.Library.Translations {
         /// <summary>
         ///   Looks up a localized string similar to Your.
         /// </summary>
-        internal static string Your {
+        public static string Your {
             get {
                 return ResourceManager.GetString("Your", resourceCulture);
             }
@@ -440,7 +440,7 @@ namespace GreyOTron.Library.Translations {
         /// <summary>
         ///   Looks up a localized string similar to Your world &apos;{0}&apos; is not in this server&apos;s &apos;{1}&apos; worlds list..
         /// </summary>
-        internal static string YourWorldNotInDiscordServerWorlds {
+        public static string YourWorldNotInDiscordServerWorlds {
             get {
                 return ResourceManager.GetString("YourWorldNotInDiscordServerWorlds", resourceCulture);
             }

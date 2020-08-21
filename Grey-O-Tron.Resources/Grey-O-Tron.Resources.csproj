@@ -1,0 +1,24 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <RootNamespace>GreyOTron.Resources</RootNamespace>
+    <AssemblyName>GreyOTron.Resources</AssemblyName>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Update="GreyOTronResources.Designer.cs">
+      <DependentUpon>GreyOTronResources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="GreyOTronResources.resx">
+      <LastGenOutput>GreyOTronResources.Designer.cs</LastGenOutput>
+      <Generator>PublicResXFileCodeGenerator</Generator>
+    </EmbeddedResource>
+  </ItemGroup>
+
+</Project>

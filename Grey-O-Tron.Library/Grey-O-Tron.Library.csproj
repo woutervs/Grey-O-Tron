@@ -24,18 +24,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="Translations\GreyOTronResources.Designer.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>GreyOTronResources.resx</DependentUpon>
-    </Compile>
-  </ItemGroup>
-
-  <ItemGroup>
-    <EmbeddedResource Update="Translations\GreyOTronResources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>GreyOTronResources.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
+    <ProjectReference Include="..\Grey-O-Tron.Resources\Grey-O-Tron.Resources.csproj" />
   </ItemGroup>
 
 </Project>

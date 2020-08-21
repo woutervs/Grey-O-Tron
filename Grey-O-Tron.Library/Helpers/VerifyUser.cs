@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.Design;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
@@ -11,9 +10,8 @@ using GreyOTron.Library.ApiClients;
 using GreyOTron.Library.Exceptions;
 using GreyOTron.Library.Models;
 using GreyOTron.Library.RepositoryInterfaces;
-using GreyOTron.Library.Translations;
+using GreyOTron.Resources;
 using Microsoft.Extensions.Configuration;
-using Newtonsoft.Json;
 using Polly;
 using Polly.Retry;
 

@@ -2,11 +2,11 @@
 using GreyOTron.Library.ApiClients;
 using GreyOTron.Library.Exceptions;
 using GreyOTron.Library.Helpers;
-using GreyOTron.Library.Translations;
 using Polly.CircuitBreaker;
 using System.Threading;
 using System.Threading.Tasks;
 using GreyOTron.Library.RepositoryInterfaces;
+using GreyOTron.Resources;
 
 namespace GreyOTron.Library.Commands
 {

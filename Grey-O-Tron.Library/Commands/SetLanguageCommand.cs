@@ -4,7 +4,7 @@ using Discord.WebSocket;
 using GreyOTron.Library.Helpers;
 using GreyOTron.Library.Models;
 using GreyOTron.Library.RepositoryInterfaces;
-using GreyOTron.Library.Translations;
+using GreyOTron.Resources;
 
 namespace GreyOTron.Library.Commands
 {
@@ -23,7 +23,6 @@ namespace GreyOTron.Library.Commands
         public async Task Execute(SocketMessage message, CancellationToken cancellationToken)
         {
             if (cancellationToken.IsCancellationRequested) return;
-            var key = Arguments;
             var language = Arguments.Trim().ToLowerInvariant();
             var languageExists = languages.Exists(language);
             if (languageExists)

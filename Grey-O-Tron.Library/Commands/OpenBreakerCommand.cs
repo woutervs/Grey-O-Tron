@@ -1,10 +1,8 @@
-﻿using System;
-using System.Linq;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
 using Discord.WebSocket;
 using GreyOTron.Library.Helpers;
-using GreyOTron.Library.Translations;
+using GreyOTron.Resources;
 using Polly.CircuitBreaker;
 
 namespace GreyOTron.Library.Commands
