@@ -231,4 +231,10 @@ Goodbye!</value>
   <data name="RoleAssignmentFailed" xml:space="preserve">
     <value>Something went wrong whilst trying to assign you the '{0}' role on '{1}', the bot owner is notified, please  try again in 60 minutes.</value>
   </data>
+  <data name="AlreadyHasGw2KeyRegisteredAutoVerifyOnJoin" xml:space="preserve">
+    <value>Welcome {0} to '{1}', I noticed you already have a GW2 api key registered with me.\nI will now attempt to verify you in this server.</value>
+  </data>
+  <data name="NoGw2KeyRegisteredAutoVerifyOnJoin" xml:space="preserve">
+    <value>Welcome {0} to '{1}', I didn't found a GW2 api key for you. To get yourself wvw roles assigned please register your api key. More information with got#help</value>
+  </data>
 </root>

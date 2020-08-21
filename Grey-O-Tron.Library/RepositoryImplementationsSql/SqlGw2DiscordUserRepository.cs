@@ -32,7 +32,7 @@ namespace GreyOTron.Library.RepositoryImplementationsSql
 	else
 		update got.discordusergw2apikeys set apikey = @apikey  where discorduserid = @discorduserid;
 else 
-	insert into got.discordusergw2apikeys (discorduserid, apikey, gw2accountid) values (@discorduserid, @apikey, @discorduserid);";
+	insert into got.discordusergw2apikeys (discorduserid, apikey, gw2accountid) values (@discorduserid, @apikey, @gw2accountid);";
 
             var command = new SqlCommand(sql, db);
             command.Parameters.AddWithValue("@discorduserid", (decimal) gw2DiscordUser.DiscordUserDto.Id);
@@ -47,9 +47,9 @@ else
             dbConfiguration.AuthenticateDbConnection(db);
 
 
-            var result = await db.QueryAsync<Gw2DiscordUser, DiscordUserDto, Gw2DiscordUser>(@"select * from got.discordusers du
+            var result = await db.QueryAsync<DiscordUserDto, Gw2DiscordUser, Gw2DiscordUser>(@"select * from got.discordusers du
 inner join got.discordusergw2apikeys dugw2 on du.id = dugw2.discorduserid
-where id = @userId", (user, dto) => { user.DiscordUserDto = dto;
+where id = @userId", (dto, user) => { user.DiscordUserDto = dto;
                 return user;
             }, new {userId = (decimal) userId}, splitOn: "discorduserid");
             return result.Distinct().SingleOrDefault();

@@ -61,6 +61,15 @@ namespace GreyOTron.Library.Translations {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Welcome {0} to &apos;{1}&apos;, I noticed you already have a GW2 api key registered with me.\nI will now attempt to verify you in this server..
+        /// </summary>
+        internal static string AlreadyHasGw2KeyRegisteredAutoVerifyOnJoin {
+            get {
+                return ResourceManager.GetString("AlreadyHasGw2KeyRegisteredAutoVerifyOnJoin", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The GW2API did not return worlds for user {0}.
         /// </summary>
         internal static string ApiFailedToReturnWorldsForUser {
@@ -184,6 +193,15 @@ namespace GreyOTron.Library.Translations {
         internal static string MainWorldSet {
             get {
                 return ResourceManager.GetString("MainWorldSet", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Welcome {0} to &apos;{1}&apos;, I didn&apos;t found a GW2 api key for you. To get yourself wvw roles assigned please register your api key. More information with got#help.
+        /// </summary>
+        internal static string NoGw2KeyRegisteredAutoVerifyOnJoin {
+            get {
+                return ResourceManager.GetString("NoGw2KeyRegisteredAutoVerifyOnJoin", resourceCulture);
             }
         }
         

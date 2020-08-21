@@ -19,14 +19,16 @@ namespace GreyOTron
         private readonly IConfiguration configuration;
         private readonly TelemetryClient log;
         private readonly TimedExecutions timedExecutions;
+        private readonly UserJoined userJoined;
         private CancellationToken cancellationToken;
 
-        public Bot(CommandProcessor processor, IConfiguration configuration, TelemetryClient log, TimedExecutions timedExecutions, TranslationHelper translationHelper)
+        public Bot(CommandProcessor processor, IConfiguration configuration, TelemetryClient log, TimedExecutions timedExecutions, TranslationHelper translationHelper, UserJoined userJoined)
         {
             this.processor = processor;
             this.configuration = configuration;
             this.log = log;
             this.timedExecutions = timedExecutions;
+            this.userJoined = userJoined;
             if (ulong.TryParse(configuration["OwnerId"], out var ownerId))
             {
                 UserExtensions.OwnerId = ownerId;
@@ -44,6 +46,7 @@ namespace GreyOTron
                 client.Ready += Ready;
                 client.MessageReceived += ClientOnMessageReceived;
                 client.Disconnected += ClientOnDisconnected;
+                client.UserJoined += ClientOnUserJoined;
 
 #if MAINTENANCE
                 const string configurationTokenName = "GreyOTron-TokenMaintenance";
@@ -64,6 +67,19 @@ namespace GreyOTron
             await timedExecutions.Setup(client);
 
             await Task.Delay(-1, cancellationToken);
+        }
+
+        private async Task ClientOnUserJoined(SocketGuildUser joinedUser)
+        {
+            try
+            {
+
+                await userJoined.Execute(client, joinedUser, cancellationToken);
+            }
+            catch (Exception e)
+            {
+                ExceptionHandler.HandleException(client, log, e, joinedUser);
+            }
         }
 
         private async Task ClientOnDisconnected(Exception arg)
