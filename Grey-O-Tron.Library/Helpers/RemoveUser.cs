@@ -44,7 +44,7 @@ namespace GreyOTron.Library.Helpers
 
                     var worlds = (gw2DiscordServer?.Worlds ?? new List<Gw2WorldDto>()).Select(x => x.Name).ToList();
 
-                    if (gw2DiscordServer?.MainWorld != null && !worlds.Contains(gw2DiscordServer.MainWorld.Name))
+                    if (gw2DiscordServer?.MainWorld != null && !worlds.Any(y=>y.Equals(gw2DiscordServer.MainWorld.Name)))
                     {
                         worlds.Add(gw2DiscordServer.MainWorld.Name);
                     }
@@ -54,7 +54,7 @@ namespace GreyOTron.Library.Helpers
                     {
                         affectedServers.Add(guild.Name);
                         var userOwnedRolesMatchingWorlds = guildUser.Roles.Where(x =>
-                            worlds.Contains(x.Name.ToLowerInvariant()) || x.Name.Equals(
+                            worlds.Any(y=>y.Equals(x.Name, StringComparison.InvariantCultureIgnoreCase)) || x.Name.Equals(
                                 configuration["LinkedServerRole"],
                                 StringComparison.InvariantCultureIgnoreCase)).ToList();
                         await guildUser.RemoveRolesAsync(userOwnedRolesMatchingWorlds,
