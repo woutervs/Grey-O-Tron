@@ -227,7 +227,7 @@ namespace GreyOTron.Library.Translations {
         /// <summary>
         ///   Looks up a localized string similar to Welcome {0} to &apos;{1}&apos;, I didn&apos;t found a GW2 api key for you.
         ///To get yourself wvw roles assigned please register your api key.
-        ///For more information message me &quot;got#help&quot; !.
+        ///For more information message me &quot;got#help&quot;!.
         /// </summary>
         internal static string NoGw2KeyRegisteredAutoVerifyOnJoin {
             get {
