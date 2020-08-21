@@ -18,6 +18,7 @@ namespace GreyOTron.Library.RepositoryImplementationsSql
         {
             await using var db = new SqlConnection(dbConfiguration.ConnectionString);
             dbConfiguration.AuthenticateDbConnection(db);
+            await db.OpenAsync();
 
             var sql = @"if exists(select id from got.discordusers where id = @id)
 	if @preferredlanguage is not null
@@ -28,10 +29,11 @@ else
 	insert into got.discordusers (id, [username], discriminator, preferredlanguage) values (@id, @username, @discriminator, @preferredlanguage);";
 
             var command = new SqlCommand(sql, db);
-            command.Parameters.AddWithValue("@id", discordUser.Id);
+            command.Parameters.AddWithValue("@id", (decimal) discordUser.Id);
             command.Parameters.AddWithValue("@username", discordUser.Username);
             command.Parameters.AddWithValue("@discriminator", discordUser.Discriminator);
-            command.Parameters.AddWithValue("@preferredlanguage", discordUser.PreferredLanguage.ToLowerInvariant());
+            command.Parameters.AddWithValue("@preferredlanguage", (object)discordUser.PreferredLanguage?.ToLowerInvariant() ?? DBNull.Value);
+            await command.ExecuteNonQueryAsync();
         }
     }
 }

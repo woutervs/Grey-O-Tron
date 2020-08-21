@@ -243,7 +243,7 @@ namespace GreyOTron.Library.Translations {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Your key has been stored, and we verified you on
+        ///   Looks up a localized string similar to Your key has been stored, and we also tried to verify you on the following Discord servers:
         ///{0}.
         /// </summary>
         internal static string SuccessfullyVerified {
@@ -388,7 +388,7 @@ namespace GreyOTron.Library.Translations {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Your world &apos;{0}&apos; is not in this &apos;{1}&apos; worlds list..
+        ///   Looks up a localized string similar to Your world &apos;{0}&apos; is not in this server&apos;s &apos;{1}&apos; worlds list..
         /// </summary>
         internal static string YourWorldNotInDiscordServerWorlds {
             get {

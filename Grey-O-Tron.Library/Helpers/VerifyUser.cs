@@ -45,12 +45,12 @@ namespace GreyOTron.Library.Helpers
 
             var worlds = (gw2DiscordServer?.Worlds ?? new List<Gw2WorldDto>()).Select(x => x.Name).ToList();
 
-            if (gw2DiscordServer?.MainWorld != null && !worlds.Contains(gw2DiscordServer.MainWorld.Name))
+            if (gw2DiscordServer?.MainWorld != null && !worlds.Any(y=>y.Equals(gw2DiscordServer.MainWorld.Name, StringComparison.InvariantCultureIgnoreCase)))
             {
                 worlds.Add(gw2DiscordServer.MainWorld.Name);
             }
 
-            var userOwnedRolesMatchingWorlds = guildUser.Roles.Where(x => worlds.Contains(x.Name.ToLowerInvariant()) || x.Name.Equals(configuration["LinkedServerRole"], StringComparison.InvariantCultureIgnoreCase)).ToList();
+            var userOwnedRolesMatchingWorlds = guildUser.Roles.Where(x => worlds.Any(y => y.Equals(x.Name, StringComparison.InvariantCultureIgnoreCase)) || x.Name.Equals(configuration["LinkedServerRole"], StringComparison.InvariantCultureIgnoreCase)).ToList();
 
             if (gw2AccountInfo.TokenInfo.Name != $"{guildUser.Username}#{guildUser.Discriminator}")
             {
@@ -92,7 +92,7 @@ namespace GreyOTron.Library.Helpers
                 else
                 {
                     string role = null;
-                    if (worlds.Contains(gw2AccountInfo.WorldInfo.Name.ToLowerInvariant()))
+                    if (worlds.Any(y=>y.Equals(gw2AccountInfo.WorldInfo.Name, StringComparison.InvariantCultureIgnoreCase)))
                     {
                         role = gw2AccountInfo.WorldInfo.Name;
 

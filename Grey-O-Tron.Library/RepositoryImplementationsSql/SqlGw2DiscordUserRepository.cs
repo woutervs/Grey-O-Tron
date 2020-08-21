@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
+using Dapper;
 using GreyOTron.Library.Models;
 using GreyOTron.Library.RepositoryInterfaces;
 using Microsoft.Data.SqlClient;
@@ -22,8 +24,9 @@ namespace GreyOTron.Library.RepositoryImplementationsSql
 
             await using var db = new SqlConnection(dbConfiguration.ConnectionString);
             dbConfiguration.AuthenticateDbConnection(db);
+            await db.OpenAsync();
 
-            var sql = @"if exists(select id from got.discordusergw2apikeys where discorduserid = @discorduserid)
+            var sql = @"if exists(select discorduserid from got.discordusergw2apikeys where discorduserid = @discorduserid)
 	if @gw2accountid is not null
 		update got.discordusergw2apikeys set apikey = @apikey, gw2accountid = @gw2accountid  where discorduserid = @discorduserid;
 	else
@@ -32,19 +35,36 @@ else
 	insert into got.discordusergw2apikeys (discorduserid, apikey, gw2accountid) values (@discorduserid, @apikey, @discorduserid);";
 
             var command = new SqlCommand(sql, db);
-            command.Parameters.AddWithValue("@discorduserid", gw2DiscordUser.DiscordUserDto.Id);
+            command.Parameters.AddWithValue("@discorduserid", (decimal) gw2DiscordUser.DiscordUserDto.Id);
             command.Parameters.AddWithValue("@apikey", gw2DiscordUser.ApiKey);
             command.Parameters.AddWithValue("@gw2accountid", gw2DiscordUser.Gw2AccountId);
+            await command.ExecuteNonQueryAsync();
         }
 
-        public Task<Gw2DiscordUser> Get(ulong userId)
+        public async Task<Gw2DiscordUser> Get(ulong userId)
         {
-            throw new NotImplementedException();
+            await using var db = new SqlConnection(dbConfiguration.ConnectionString);
+            dbConfiguration.AuthenticateDbConnection(db);
+
+
+            var result = await db.QueryAsync<Gw2DiscordUser, DiscordUserDto, Gw2DiscordUser>(@"select * from got.discordusers du
+inner join got.discordusergw2apikeys dugw2 on du.id = dugw2.discorduserid
+where id = @userId", (user, dto) => { user.DiscordUserDto = dto;
+                return user;
+            }, new {userId = (decimal) userId}, splitOn: "discorduserid");
+            return result.Distinct().SingleOrDefault();
         }
 
-        public Task RemoveApiKey(ulong userId)
+        public async Task RemoveApiKey(ulong userId)
         {
-            throw new NotImplementedException();
+            await using var db = new SqlConnection(dbConfiguration.ConnectionString);
+            dbConfiguration.AuthenticateDbConnection(db);
+            await db.OpenAsync();
+
+            var sql = @"delete from got.discordusergw2apikeys where discorduserid = @discorduserid";
+            var command = new SqlCommand(sql, db);
+            command.Parameters.AddWithValue("@discorduserid", (decimal) userId);
+            await command.ExecuteNonQueryAsync();
         }
     }
 }

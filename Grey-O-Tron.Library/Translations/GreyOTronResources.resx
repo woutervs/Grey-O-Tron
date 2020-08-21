@@ -127,7 +127,7 @@
     <value>Your api-key is invalid, please set a new one and re-verify.</value>
   </data>
   <data name="SuccessfullyVerified" xml:space="preserve">
-    <value>Your key has been stored, and we verified you on
+    <value>Your key has been stored, and we also tried to verify you on the following Discord servers:
 {0}</value>
   </data>
   <data name="DiscordNameDifferentFromGw2Key" xml:space="preserve">
@@ -205,7 +205,7 @@ Goodbye!</value>
     <value>{0}'s world is not in '{1}' worlds list, cannot assign the role {2}</value>
   </data>
   <data name="YourWorldNotInDiscordServerWorlds" xml:space="preserve">
-    <value>Your world '{0}' is not in this '{1}' worlds list.</value>
+    <value>Your world '{0}' is not in this server's '{1}' worlds list.</value>
   </data>
   <data name="UserHasBeenAssignedRole" xml:space="preserve">
     <value>{0} has been assigned {1} on {2}</value>

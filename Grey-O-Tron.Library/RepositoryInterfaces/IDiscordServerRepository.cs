@@ -6,5 +6,6 @@ namespace GreyOTron.Library.RepositoryInterfaces
     public interface IDiscordServerRepository
     {
         Task InsertOrUpdate(DiscordServerDto discordServer);
+        Task<DiscordServerDto> Get(ulong discordServerId);
     }
 }
