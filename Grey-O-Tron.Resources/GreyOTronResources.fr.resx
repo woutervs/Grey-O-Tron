@@ -1,0 +1,254 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="EmptyKeyTryAgain" xml:space="preserve">
+    <value>Cette clé me semble vide, veuillez réessayer.</value>
+  </data>
+  <data name="GW2ApiUnableToProcess" xml:space="preserve">
+    <value>L'API GW2 ne peut pas gérer cette demande pour le moment, veuillez réessayer un peu plus tard.</value>
+  </data>
+  <data name="InvalidApiKey" xml:space="preserve">
+    <value>Votre clé API n'est pas valide, veuillez en définir une nouvelle et la revérifier.</value>
+  </data>
+  <data name="SuccessfullyVerified" xml:space="preserve">
+    <value>Votre clé a été stockée et j'ai également essayé de vous vérifier sur les serveurs Discord suivants:
+{0}</value>
+  </data>
+  <data name="DiscordNameDifferentFromGw2Key" xml:space="preserve">
+    <value>Veuillez vous assurer que le nom de votre clé d'application GW2 est le même que votre nom d'utilisateur Discord: {0}#{1}</value>
+  </data>
+  <data name="FindYourGW2ApplicationKey" xml:space="preserve">
+    <value>Vous pouvez afficher, créer et modifier vos clés d'application GW2 sur https://account.arena.net/applications</value>
+  </data>
+  <data name="HelpMessage" xml:space="preserve">
+    <value>L'aide peut être trouvée sur https://greyotron.eu
+{0} Ou trouvez de l'aide sur https://discord.gg/6uybq5X</value>
+  </data>
+  <data name="CommandNotFound" xml:space="preserve">
+    <value>Vous avez essayé d'utiliser '{0}', malheureusement je n'ai pas appris cette commande.</value>
+  </data>
+  <data name="Unauthorized" xml:space="preserve">
+    <value>Je suis désolé que vous ne soyez pas autorisé à recevoir ce type d'informations.</value>
+  </data>
+  <data name="UnknownWorld" xml:space="preserve">
+    <value>Impossible de résoudre votre monde à partir de '{0}'</value>
+  </data>
+  <data name="MainWorldSet" xml:space="preserve">
+    <value>{0} défini pour {1} comme monde principal.</value>
+  </data>
+  <data name="KeyNotFound" xml:space="preserve">
+    <value>Aucune clé trouvée pour {0}</value>
+  </data>
+  <data name="KeyNotRegistered" xml:space="preserve">
+    <value>Vous n'avez pas encore enregistré de clé avec moi, utilisez la commande gw2-key pour le faire.</value>
+  </data>
+  <data name="UserNotFoundForVerification" xml:space="preserve">
+    <value>L'utilisateur que vous essayez de vérifier n'a pas été trouvé sur ce serveur Discord.</value>
+  </data>
+  <data name="InvalidKey" xml:space="preserve">
+    <value>{0} api-key n'est pas valide, veuillez en définir une nouvelle et la revérifier.</value>
+  </data>
+  <data name="CurrentVersion" xml:space="preserve">
+    <value>Version actuelle : {0}</value>
+  </data>
+  <data name="RolesWereRemoved" xml:space="preserve">
+    <value>Vos rôles mondiaux gw2 ont été supprimés de {0}.
+Au revoir!</value>
+  </data>
+  <data name="RolesWereRemovedNoWhere" xml:space="preserve">
+    <value>nulle part vite</value>
+  </data>
+  <data name="NoWorldsInCommand" xml:space="preserve">
+    <value>Vous devez donner au moins un nom de monde séparé par ; pour que la commande set-worlds fonctionne.</value>
+  </data>
+  <data name="WorldsSetForGuild" xml:space="preserve">
+    <value>{0} pour {1}</value>
+  </data>
+  <data name="UserChangedDiscordUsername" xml:space="preserve">
+    <value>{0} a probablement changé son nom d'utilisateur Discord de {1} à {2} # {3}, veuillez demander à {0} de mettre à jour sa clé.
+{4}</value>
+  </data>
+  <data name="YouChangedDiscordUsername" xml:space="preserve">
+    <value>Vous avez probablement changé votre nom d'utilisateur Discord de {0} à {1} # {2}, veuillez mettre à jour votre clé.
+{3}</value>
+  </data>
+  <data name="ApiFailedToReturnWorldsForUser" xml:space="preserve">
+    <value>Le GW2API n'a pas renvoyé de mondes pour l'utilisateur {0}</value>
+  </data>
+  <data name="ApiFailedToReturnWorldsForYou" xml:space="preserve">
+    <value>Le GW2API n'a pas renvoyé de mondes pour vous.</value>
+  </data>
+  <data name="WorldNotInDiscordServerWorlds" xml:space="preserve">
+    <value>Le monde de {0} n'est pas dans la liste des mondes &amp;quot;{1}&amp;quot;, impossible d'attribuer le rôle {2}</value>
+  </data>
+  <data name="YourWorldNotInDiscordServerWorlds" xml:space="preserve">
+    <value>Votre monde '{0}' ne figure pas dans la liste des mondes &amp;quot;{1}&amp;quot; de ce serveur.</value>
+  </data>
+  <data name="UserHasBeenAssignedRole" xml:space="preserve">
+    <value>{0} a été attribué {1} le {2}</value>
+  </data>
+  <data name="YouHaveBeenAssignedRole" xml:space="preserve">
+    <value>Vous avez été attribué {0} le {1}</value>
+  </data>
+  <data name="UserAlreadyHadRole" xml:space="preserve">
+    <value>'{0}' avait déjà le rôle '{1}' sur '{2}', aucune action n'a été effectuée.</value>
+  </data>
+  <data name="YouAlreadyHadRole" xml:space="preserve">
+    <value>Vous avez déjà le rôle '{0}' sur '{1}', rien n'a changé.</value>
+  </data>
+  <data name="NotGuildUserRoleIssue" xml:space="preserve">
+    <value>Il semble y avoir un problème avec le rôle '{0}' sur '{1}', il est très probablement au-dessus du rôle 'Grey-O-Tron', ce qui empêche le bot de l'attribuer.</value>
+  </data>
+  <data name="UserMessageForRoleIssue" xml:space="preserve">
+    <value>Il y a un problème sur le '{0}' pour le rôle '{1}', un administrateur du serveur est averti.</value>
+  </data>
+  <data name="RoleAssignmentFailedForUser" xml:space="preserve">
+    <value>Une erreur s'est produite lors de la tentative d'attribution du rôle'{0}' au rôle '{1}' sur '{2}'. Le propriétaire du bot est averti. Veuillez réessayer dans 60 minutes.</value>
+  </data>
+  <data name="RoleAssignmentFailed" xml:space="preserve">
+    <value>Une erreur s'est produite lors de la tentative de vous attribuer le rôle '{0}' sur '{1}', le propriétaire du bot est averti, veuillez réessayer dans 60 minutes.</value>
+  </data>
+  <data name="AlreadyHasGw2KeyRegisteredAutoVerifyOnJoin" xml:space="preserve">
+    <value>Bienvenue {0} dans '{1}'
+J'ai remarqué que vous aviez déjà une clé API GW2 enregistrée avec moi et je vais maintenant essayer de vous vérifier sur ce serveur.</value>
+  </data>
+  <data name="NoGw2KeyRegisteredAutoVerifyOnJoin" xml:space="preserve">
+    <value>Bienvenue {0} dans '{1}', je n'ai pas trouvé de clé API GW2 pour vous.
+Pour vous attribuer des rôles wvw, veuillez enregistrer votre clé API.
+Pour plus d'informations, envoyez-moi un message 'got#help'!</value>
+  </data>
+  <data name="Your" xml:space="preserve">
+    <value>Votre</value>
+  </data>
+  <data name="ServerOnlyCommand" xml:space="preserve">
+    <value>Vous devez utiliser la commande {0} sur le serveur Discord sur lequel vous essayez d'être vérifié.</value>
+  </data>
+  <data name="AdministrativePermissionsOnly" xml:space="preserve">
+    <value>Vous devez disposer des autorisations administratives pour exécuter la commande {0}.</value>
+  </data>
+  <data name="InvalidLanguage" xml:space="preserve">
+    <value>La langue {0} que vous avez essayé de définir n'est pas valide.</value>
+  </data>
+  <data name="LanguageSet" xml:space="preserve">
+    <value>La langue {0} est désormais définie comme langue préférée pour {1}.</value>
+  </data>
+  <data name="You" xml:space="preserve">
+    <value>vous</value>
+  </data>
+</root>

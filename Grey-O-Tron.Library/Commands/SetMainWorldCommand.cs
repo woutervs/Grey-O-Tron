@@ -3,20 +3,21 @@ using System.Threading.Tasks;
 using Discord.WebSocket;
 using GreyOTron.Library.ApiClients;
 using GreyOTron.Library.Helpers;
-using GreyOTron.Library.TableStorage;
-using GreyOTron.Library.Translations;
+using GreyOTron.Library.Models;
+using GreyOTron.Library.RepositoryInterfaces;
+using GreyOTron.Resources;
 
 namespace GreyOTron.Library.Commands
 {
     [Command("gw2-set-main-world", CommandDescription = "Stores the discord server's main world to the database.", CommandArguments = "{world (name|id)}", CommandOptions = CommandOptions.DiscordServer | CommandOptions.RequiresAdmin)]
     public class SetMainWorldCommand : ICommand
     {
-        private readonly DiscordGuildSettingsRepository discordGuildSettingsRepository;
+        private readonly IGw2DiscordServerRepository gw2DiscordServerRepository;
         private readonly Gw2Api gw2Api;
 
-        public SetMainWorldCommand(DiscordGuildSettingsRepository discordGuildSettingsRepository, Gw2Api gw2Api)
+        public SetMainWorldCommand(IGw2DiscordServerRepository gw2DiscordServerRepository, Gw2Api gw2Api)
         {
-            this.discordGuildSettingsRepository = discordGuildSettingsRepository;
+            this.gw2DiscordServerRepository = gw2DiscordServerRepository;
             this.gw2Api = gw2Api;
         }
 
@@ -30,23 +31,31 @@ namespace GreyOTron.Library.Commands
 
                 if (world == null)
                 {
-                    await message.Author.InternalSendMessageAsync(nameof(GreyOTronResources.UnknownWorld),Arguments);
+                    await message.Author.InternalSendMessageAsync(nameof(GreyOTronResources.UnknownWorld), Arguments);
                 }
                 else if (guildUser.IsAdminOrOwner())
                 {
-                    await discordGuildSettingsRepository.Set(new DiscordGuildSetting(guildUser.Guild.Id.ToString(), guildUser.Guild.Name, DiscordGuildSetting.MainWorld,
-                        world.Name.ToLowerInvariant()));
+                    var gw2DiscordServer = new Gw2DiscordServer
+                    {
+                        DiscordServer = new DiscordServerDto
+                        {
+                            Id = guildUser.Guild.Id,
+                            Name = guildUser.Guild.Name,
+                        },
+                        MainWorld = new Gw2WorldDto {Id = world.Id, Name = world.Name}
+                    };
+                    await gw2DiscordServerRepository.InsertOrUpdate(gw2DiscordServer);
 
                     await guildUser.InternalSendMessageAsync(nameof(GreyOTronResources.MainWorldSet), world.Name, guildUser.Guild.Name);
                 }
                 else
                 {
-                    await guildUser.InternalSendMessageAsync(nameof(GreyOTronResources.UnauthorizedToSetWorlds));
+                    await guildUser.InternalSendMessageAsync(nameof(GreyOTronResources.AdministrativePermissionsOnly), "gw2-set-main-world");
                 }
             }
             else
             {
-                await message.Author.InternalSendMessageAsync(nameof(GreyOTronResources.TriedSetWorldsWhilstNotOnServer));
+                await message.Author.InternalSendMessageAsync(nameof(GreyOTronResources.ServerOnlyCommand), "gw2-set-main-world");
             }
             if (!(message.Channel is SocketDMChannel))
             {

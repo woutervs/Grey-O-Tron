@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.Design;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
@@ -9,10 +8,10 @@ using Discord.Net;
 using Discord.WebSocket;
 using GreyOTron.Library.ApiClients;
 using GreyOTron.Library.Exceptions;
-using GreyOTron.Library.TableStorage;
-using GreyOTron.Library.Translations;
+using GreyOTron.Library.Models;
+using GreyOTron.Library.RepositoryInterfaces;
+using GreyOTron.Resources;
 using Microsoft.Extensions.Configuration;
-using Newtonsoft.Json;
 using Polly;
 using Polly.Retry;
 
@@ -20,15 +19,15 @@ namespace GreyOTron.Library.Helpers
 {
     public class VerifyUser
     {
-        private readonly DiscordGuildSettingsRepository discordGuildSettingsRepository;
+        private readonly IGw2DiscordServerRepository gw2DiscordServerRepository;
         private readonly Cache cache;
         private readonly IConfiguration configuration;
         private readonly RoleNotFoundCircuitBreakerPolicyHelper roleNotFoundCircuitBreakerPolicyHelper;
         private readonly AsyncRetryPolicy roleNotFoundExceptionRetryPolicy;
 
-        public VerifyUser(DiscordGuildSettingsRepository discordGuildSettingsRepository, Cache cache, IConfiguration configuration, RoleNotFoundCircuitBreakerPolicyHelper roleNotFoundCircuitBreakerPolicyHelper)
+        public VerifyUser(IGw2DiscordServerRepository gw2DiscordServerRepository, Cache cache, IConfiguration configuration, RoleNotFoundCircuitBreakerPolicyHelper roleNotFoundCircuitBreakerPolicyHelper)
         {
-            this.discordGuildSettingsRepository = discordGuildSettingsRepository;
+            this.gw2DiscordServerRepository = gw2DiscordServerRepository;
             this.cache = cache;
             this.configuration = configuration;
             this.roleNotFoundCircuitBreakerPolicyHelper = roleNotFoundCircuitBreakerPolicyHelper;
@@ -40,16 +39,16 @@ namespace GreyOTron.Library.Helpers
         {
             var contextUserIsNotGuildUser = guildUser.Id != contextUser.Id;
 
-            var worlds = JsonConvert.DeserializeObject<List<string>>((await discordGuildSettingsRepository.Get(DiscordGuildSetting.Worlds, guildUser.Guild.Id.ToString()))?.Value ?? "[]");
-            var mainWorld =
-                (await discordGuildSettingsRepository.Get(DiscordGuildSetting.MainWorld, guildUser.Guild.Id.ToString()))?.Value;
+            var gw2DiscordServer = await gw2DiscordServerRepository.Get(guildUser.Guild.Id);
 
-            if (mainWorld != null && !worlds.Contains(mainWorld))
+            var worlds = (gw2DiscordServer?.Worlds ?? new List<Gw2WorldDto>()).Select(x => x.Name).ToList();
+
+            if (gw2DiscordServer?.MainWorld != null && !worlds.Any(y=>y.Equals(gw2DiscordServer.MainWorld.Name, StringComparison.InvariantCultureIgnoreCase)))
             {
-                worlds.Add(mainWorld);
+                worlds.Add(gw2DiscordServer.MainWorld.Name);
             }
 
-            var userOwnedRolesMatchingWorlds = guildUser.Roles.Where(x => worlds.Contains(x.Name.ToLowerInvariant()) || x.Name.Equals(configuration["LinkedServerRole"], StringComparison.InvariantCultureIgnoreCase)).ToList();
+            var userOwnedRolesMatchingWorlds = guildUser.Roles.Where(x => worlds.Any(y => y.Equals(x.Name, StringComparison.InvariantCultureIgnoreCase)) || x.Name.Equals(configuration["LinkedServerRole"], StringComparison.InvariantCultureIgnoreCase)).ToList();
 
             if (gw2AccountInfo.TokenInfo.Name != $"{guildUser.Username}#{guildUser.Discriminator}")
             {
@@ -91,12 +90,12 @@ namespace GreyOTron.Library.Helpers
                 else
                 {
                     string role = null;
-                    if (worlds.Contains(gw2AccountInfo.WorldInfo.Name.ToLowerInvariant()))
+                    if (worlds.Any(y=>y.Equals(gw2AccountInfo.WorldInfo.Name, StringComparison.InvariantCultureIgnoreCase)))
                     {
                         role = gw2AccountInfo.WorldInfo.Name;
 
                     }
-                    else if (gw2AccountInfo.WorldInfo.LinkedWorlds.Any(x => string.Equals(x.Name, mainWorld, StringComparison.InvariantCultureIgnoreCase)))
+                    else if (gw2AccountInfo.WorldInfo.LinkedWorlds.Any(x => string.Equals(x.Name, gw2DiscordServer?.MainWorld.Name, StringComparison.InvariantCultureIgnoreCase)))
                     {
                         role = configuration["LinkedServerRole"];
 

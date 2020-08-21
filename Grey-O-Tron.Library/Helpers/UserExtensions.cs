@@ -36,7 +36,12 @@ namespace GreyOTron.Library.Helpers
         {
             try
             {
-                await user.SendMessageAsync(TranslationHelper.Translate(user.Id, text, formatParameters));
+                ulong? serverId = null;
+                if (user is SocketGuildUser guildUser)
+                {
+                    serverId = guildUser.Guild.Id;
+                }
+                await user.SendMessageAsync(TranslationHelper.Translate(user.Id, serverId, text, formatParameters));
             }
             catch (Exception e)
             {

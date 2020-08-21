@@ -203,6 +203,7 @@ namespace GreyOTron.Library.ApiClients
     public class AccountInfo
     {
         public int World { get; set; }
+        public string Id { get; set; }
         public World WorldInfo { get; set; }
         public TokenInfo TokenInfo { get; set; }
     }
