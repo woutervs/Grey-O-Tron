@@ -1,5 +1,8 @@
 {
   "CommandPrefix": "got#",
   "OwnerId": 188365172757233664,
-  "LinkedServerRole": "Linked Server"
+  "LinkedServerRole": "Linked Server",
+  "ConnectionStrings": {
+    "SqlConnection": "Server=greyotron.database.windows.net,1433;Database=greyotron"
+  }
 }
