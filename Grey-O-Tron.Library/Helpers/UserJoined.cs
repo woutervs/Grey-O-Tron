@@ -30,7 +30,7 @@ namespace GreyOTron.Library.Helpers
         public async Task Execute(DiscordSocketClient client, SocketGuildUser joinedUser, CancellationToken cancellationToken)
         {
             var guild = await gw2DiscordServerRepository.Get(joinedUser.Guild.Id);
-            if (guild.MainWorld != null || guild.Worlds != null && guild.Worlds.Any())
+            if (guild?.MainWorld != null || guild?.Worlds != null && guild.Worlds.Any())
             {
                 var user = await gw2DiscordUserRepository.Get(joinedUser.Id);
                 if (user != null)
