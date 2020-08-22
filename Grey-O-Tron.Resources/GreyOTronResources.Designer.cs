@@ -236,7 +236,7 @@ namespace GreyOTron.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to There seems to be an issue with the role &apos;{0}&apos; on &apos;{1}&apos; it&apos;s most likely above the &apos;Grey-O-Tron&apos; role making it impossible for the bot the assign it..
+        ///   Looks up a localized string similar to There seems to be an issue with the role &apos;{0}&apos; on &apos;{1}&apos; it&apos;s most likely above the &apos;Grey-O-Tron&apos; role making it impossible for me to assign it..
         /// </summary>
         public static string NotGuildUserRoleIssue {
             get {
@@ -272,7 +272,7 @@ namespace GreyOTron.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Your gw2 world roles have been removed from {0}.
+        ///   Looks up a localized string similar to Your GW2 world roles have been removed from {0}.
         ///Goodbye!.
         /// </summary>
         public static string RolesWereRemoved {
@@ -291,7 +291,7 @@ namespace GreyOTron.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to You must use the {0} command within the discord server you try to get verified on..
+        ///   Looks up a localized string similar to You must use the {0} command on a Discord server..
         /// </summary>
         public static string ServerOnlyCommand {
             get {
@@ -337,7 +337,7 @@ namespace GreyOTron.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to {0} most likely changed their discord username from {1} to {2}#{3} please ask {0} to update their key.
+        ///   Looks up a localized string similar to {0} most likely changed their Discord username from {1} to {2}#{3} please ask {0} to update their key.
         ///{4}.
         /// </summary>
         public static string UserChangedDiscordUsername {

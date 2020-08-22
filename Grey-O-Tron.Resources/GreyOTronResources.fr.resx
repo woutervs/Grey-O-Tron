@@ -137,7 +137,7 @@
     <value>Vous pouvez afficher, créer et modifier vos clés d'application GW2 sur https://account.arena.net/applications</value>
   </data>
   <data name="HelpMessage" xml:space="preserve">
-    <value>L'aide peut être trouvée sur https://greyotron.eu
+    <value>De l'aide peut être trouvée sur https://greyotron.eu
 {0} Ou trouvez de l'aide sur https://discord.gg/6uybq5X</value>
   </data>
   <data name="CommandNotFound" xml:space="preserve">
@@ -172,7 +172,7 @@
 Au revoir!</value>
   </data>
   <data name="RolesWereRemovedNoWhere" xml:space="preserve">
-    <value>nulle part vite</value>
+    <value>nulle part</value>
   </data>
   <data name="NoWorldsInCommand" xml:space="preserve">
     <value>Vous devez donner au moins un nom de monde séparé par ; pour que la commande set-worlds fonctionne.</value>
@@ -195,16 +195,16 @@ Au revoir!</value>
     <value>Le GW2API n'a pas renvoyé de mondes pour vous.</value>
   </data>
   <data name="WorldNotInDiscordServerWorlds" xml:space="preserve">
-    <value>Le monde de {0} n'est pas dans la liste des mondes &amp;quot;{1}&amp;quot;, impossible d'attribuer le rôle {2}</value>
+    <value>Le monde de {0} n'est pas dans la liste des mondes '{1}' , impossible d'attribuer le rôle {2}</value>
   </data>
   <data name="YourWorldNotInDiscordServerWorlds" xml:space="preserve">
-    <value>Votre monde '{0}' ne figure pas dans la liste des mondes &amp;quot;{1}&amp;quot; de ce serveur.</value>
+    <value>Votre monde '{0}' ne figure pas dans la liste des mondes '{1}' de ce serveur.</value>
   </data>
   <data name="UserHasBeenAssignedRole" xml:space="preserve">
-    <value>{0} a été attribué {1} le {2}</value>
+    <value>{0} a été attribué {1} sur {2}</value>
   </data>
   <data name="YouHaveBeenAssignedRole" xml:space="preserve">
-    <value>Vous avez été attribué {0} le {1}</value>
+    <value>Vous avez été attribué {0} sur {1}</value>
   </data>
   <data name="UserAlreadyHadRole" xml:space="preserve">
     <value>'{0}' avait déjà le rôle '{1}' sur '{2}', aucune action n'a été effectuée.</value>
@@ -219,7 +219,7 @@ Au revoir!</value>
     <value>Il y a un problème sur le '{0}' pour le rôle '{1}', un administrateur du serveur est averti.</value>
   </data>
   <data name="RoleAssignmentFailedForUser" xml:space="preserve">
-    <value>Une erreur s'est produite lors de la tentative d'attribution du rôle'{0}' au rôle '{1}' sur '{2}'. Le propriétaire du bot est averti. Veuillez réessayer dans 60 minutes.</value>
+    <value>Une erreur s'est produite lors de la tentative d'attribuer à '{0}' le rôle '{1}' sur '{2}'. Le propriétaire du bot est averti. Veuillez réessayer dans 60 minutes.</value>
   </data>
   <data name="RoleAssignmentFailed" xml:space="preserve">
     <value>Une erreur s'est produite lors de la tentative de vous attribuer le rôle '{0}' sur '{1}', le propriétaire du bot est averti, veuillez réessayer dans 60 minutes.</value>
@@ -237,7 +237,7 @@ Pour plus d'informations, envoyez-moi un message 'got#help'!</value>
     <value>Votre</value>
   </data>
   <data name="ServerOnlyCommand" xml:space="preserve">
-    <value>Vous devez utiliser la commande {0} sur le serveur Discord sur lequel vous essayez d'être vérifié.</value>
+    <value>Vous devez utiliser la commande {0} sur un serveur Discord.</value>
   </data>
   <data name="AdministrativePermissionsOnly" xml:space="preserve">
     <value>Vous devez disposer des autorisations administratives pour exécuter la commande {0}.</value>
