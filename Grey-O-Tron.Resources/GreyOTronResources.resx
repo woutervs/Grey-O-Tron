@@ -168,7 +168,7 @@
     <value>Current version: {0}</value>
   </data>
   <data name="RolesWereRemoved" xml:space="preserve">
-    <value>Your gw2 world roles have been removed from {0}.
+    <value>Your GW2 world roles have been removed from {0}.
 Goodbye!</value>
   </data>
   <data name="RolesWereRemovedNoWhere" xml:space="preserve">
@@ -181,7 +181,7 @@ Goodbye!</value>
     <value>{0} set for {1}</value>
   </data>
   <data name="UserChangedDiscordUsername" xml:space="preserve">
-    <value>{0} most likely changed their discord username from {1} to {2}#{3} please ask {0} to update their key.
+    <value>{0} most likely changed their Discord username from {1} to {2}#{3} please ask {0} to update their key.
 {4}</value>
   </data>
   <data name="YouChangedDiscordUsername" xml:space="preserve">
@@ -213,7 +213,7 @@ Goodbye!</value>
     <value>You already have the role '{0}' on '{1}', nothing changed.</value>
   </data>
   <data name="NotGuildUserRoleIssue" xml:space="preserve">
-    <value>There seems to be an issue with the role '{0}' on '{1}' it's most likely above the 'Grey-O-Tron' role making it impossible for the bot the assign it.</value>
+    <value>There seems to be an issue with the role '{0}' on '{1}' it's most likely above the 'Grey-O-Tron' role making it impossible for me to assign it.</value>
   </data>
   <data name="UserMessageForRoleIssue" xml:space="preserve">
     <value>There is an issue on the '{0}' for the role '{1}' an administrator from the server is notified.</value>
@@ -237,7 +237,7 @@ For more information message me "got#help"!</value>
     <value>Your</value>
   </data>
   <data name="ServerOnlyCommand" xml:space="preserve">
-    <value>You must use the {0} command within the discord server you try to get verified on.</value>
+    <value>You must use the {0} command on a Discord server.</value>
   </data>
   <data name="AdministrativePermissionsOnly" xml:space="preserve">
     <value>You must have administrative permissions to perform the {0} command.</value>
