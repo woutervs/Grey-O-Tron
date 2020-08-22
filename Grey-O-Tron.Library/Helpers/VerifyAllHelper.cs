@@ -7,7 +7,8 @@ using System.Threading.Tasks;
 using Discord.WebSocket;
 using GreyOTron.Library.ApiClients;
 using GreyOTron.Library.Exceptions;
-using GreyOTron.Library.RepositoryInterfaces;
+using GreyOTron.Library.Extensions;
+using GreyOTron.Library.Interfaces;
 using GreyOTron.Resources;
 using Microsoft.ApplicationInsights;
 using Polly;
@@ -15,15 +16,15 @@ using Polly.CircuitBreaker;
 
 namespace GreyOTron.Library.Helpers
 {
-    public class VerifyAll
+    public class VerifyAllHelper
     {
         private readonly TelemetryClient log;
         private readonly IGw2DiscordUserRepository gw2ApiKeyRepository;
         private readonly Gw2Api gw2Api;
-        private readonly RemoveUser removeUser;
-        private readonly VerifyUser verifyUser;
+        private readonly RemoveUserHelper removeUser;
+        private readonly VerifyUserHelper verifyUser;
 
-        public VerifyAll(TelemetryClient log, IGw2DiscordUserRepository gw2ApiKeyRepository, Gw2Api gw2Api, RemoveUser removeUser, VerifyUser verifyUser)
+        public VerifyAllHelper(TelemetryClient log, IGw2DiscordUserRepository gw2ApiKeyRepository, Gw2Api gw2Api, RemoveUserHelper removeUser, VerifyUserHelper verifyUser)
         {
             this.log = log;
             this.gw2ApiKeyRepository = gw2ApiKeyRepository;

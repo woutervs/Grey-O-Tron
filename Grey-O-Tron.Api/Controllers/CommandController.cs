@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using GreyOTron.Library.Helpers;
+using GreyOTron.Library.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GreyOTron.Api.Controllers
@@ -9,9 +10,9 @@ namespace GreyOTron.Api.Controllers
     [ApiController]
     public class CommandController : ControllerBase
     {
-        private readonly CommandResolver resolver;
+        private readonly CommandResolverHelper resolver;
 
-        public CommandController(CommandResolver resolver)
+        public CommandController(CommandResolverHelper resolver)
         {
             this.resolver = resolver;
         }

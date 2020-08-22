@@ -4,6 +4,7 @@ using Autofac;
 using Autofac.Features.Metadata;
 using GreyOTron.Library.Commands;
 using GreyOTron.Library.Helpers;
+using GreyOTron.Library.Interfaces;
 
 namespace GreyOTron
 {
@@ -25,10 +26,12 @@ namespace GreyOTron
             {
                 return new NullCommand();
             }
-#if MAINTENANCE
-            return new MaintenanceCommand();
-#endif
 
+            if (EnvironmentHelper.Is(Environments.Maintenance))
+            {
+                return new MaintenanceCommand();
+            }
+            
             var commandName = message.Substring(prefix.Length, message.Length - prefix.Length);
             var i = commandName.IndexOf(' ');
             if (i >= 0)

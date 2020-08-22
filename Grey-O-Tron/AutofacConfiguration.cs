@@ -1,5 +1,4 @@
-﻿using System;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using Autofac;
 using Autofac.Core;
 using GreyOTron.Library.Helpers;
@@ -12,11 +11,9 @@ namespace GreyOTron
     {
         public static IContainer Build()
         {
-            var env = Environment.GetEnvironmentVariable("Environment");
-
             var builder = new ContainerBuilder();
 
-            builder.RegisterInstance(BootstrapConfiguration(env)).As<IConfiguration>().SingleInstance();
+            builder.RegisterInstance(BootstrapConfiguration()).As<IConfiguration>().SingleInstance();
 
             AutofacConfigurationHelper.BuildLibrary(ref builder);
 
@@ -27,7 +24,8 @@ namespace GreyOTron
 
             builder.RegisterType<AzureServiceTokenProvider>().SingleInstance();
             builder.RegisterType<Bot>().AsSelf().SingleInstance();
-            if (env == "Development")
+            
+            if (EnvironmentHelper.Is(Environments.Development))
             {
                 builder.RegisterType<SqlLocalDbConfiguration>().AsImplementedInterfaces().SingleInstance();
             }
@@ -40,18 +38,18 @@ namespace GreyOTron
             return builder.Build();
         }
 
-        private static IConfiguration BootstrapConfiguration(string env)
+        private static IConfiguration BootstrapConfiguration()
         {
             Trace.WriteLine("Setting up configuration");
             var builder = new ConfigurationBuilder();
-            Trace.WriteLine(env);
+            Trace.WriteLine(EnvironmentHelper.Current);
 
-            if (env == "Development")
+            if (EnvironmentHelper.Is(Environments.Development))
             {
                 builder.AddUserSecrets<Program>();
             }
             builder.AddJsonFile("app.json");
-            builder.AddJsonFile($"app.{env}.json", true);
+            builder.AddJsonFile($"app.{EnvironmentHelper.Current.ToString().ToLowerInvariant()}.json", true);
             builder.AddEnvironmentVariables();
             return builder.Build();
         }

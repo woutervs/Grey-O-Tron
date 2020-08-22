@@ -3,7 +3,7 @@ using System.Runtime.Caching;
 
 namespace GreyOTron.Library.Helpers
 {
-    public class Cache
+    public class CacheHelper
     {
         private T GetFromCache<T>(string name, DateTimeOffset? absoluteDateTimeOffset, TimeSpan? slidingExpiration, Func<T> create)
         {

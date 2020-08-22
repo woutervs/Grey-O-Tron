@@ -4,14 +4,14 @@ using System.Threading;
 
 namespace GreyOTron.Library.Helpers
 {
-    public sealed class TimeSpanSemaphore : IDisposable
+    public sealed class TimeSpanSemaphoreHelper : IDisposable
     {
         private readonly TimeSpan resetSpan;
         private readonly SemaphoreSlim pool;
         private readonly Queue<DateTime> releaseTimes;
         private readonly object queueLock = new object();
 
-        public TimeSpanSemaphore(int maxCount, TimeSpan resetSpan)
+        public TimeSpanSemaphoreHelper(int maxCount, TimeSpan resetSpan)
         {
             this.resetSpan = resetSpan;
             pool = new SemaphoreSlim(maxCount, maxCount);

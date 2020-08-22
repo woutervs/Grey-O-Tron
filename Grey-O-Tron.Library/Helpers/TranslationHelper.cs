@@ -1,15 +1,15 @@
 ﻿using System.Globalization;
 using System.Linq;
-using System.Resources;
+using GreyOTron.Library.Services;
 using GreyOTron.Resources;
 
 namespace GreyOTron.Library.Helpers
 {
     public class TranslationHelper
     {
-        private readonly Languages languages;
+        private readonly LanguagesService languages;
 
-        public TranslationHelper(Languages languages)
+        public TranslationHelper(LanguagesService languages)
         {
             this.languages = languages;
         }

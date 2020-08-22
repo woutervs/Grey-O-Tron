@@ -1,45 +1,29 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Discord.WebSocket;
+using GreyOTron.Library.Interfaces;
+using GreyOTron.Library.Models;
 using Microsoft.ApplicationInsights;
 
-namespace GreyOTron.Library.Helpers
+namespace GreyOTron.Library.Services
 {
-    public class TimedExecutions : IDisposable
+    public class TimedExecutionsService : IDisposable
     {
-        private readonly TelemetryClient log;
         private CancellationTokenSource cancellationTokenSource;
-        private readonly List<TimedExecution> actions = new List<TimedExecution>();
+        private readonly TelemetryClient log;
+        private readonly IDateTimeNowProvider dateTimeNowProvider;
+        private readonly List<TimedExecution> actions;
         private bool running;
-        public TimedExecutions(TelemetryClient log, BotMessages botMessages, VerifyAll verifyAll)
+        public TimedExecutionsService(TelemetryClient log,IDateTimeNowProvider dateTimeNowProvider , [NotNull] List<TimedExecution> actions)
         {
             this.log = log;
-
-            actions.Add(new TimedExecution
-            {
-                Name = "SetGameMessage",
-                Action = async (d, c) => await botMessages.SetNextMessage(d, c),
-                EnqueueTime = DateTime.UtcNow,
-                NextOccurence = () => DateTime.UtcNow.Add(TimeSpan.FromSeconds(30))
-            });
-#if !DEBUG
-            actions.Add(new TimedExecution
-            {
-                Name = "VerifyAll",
-                Action = async (d, c) => await verifyAll.Execute(d, c),
-                EnqueueTime = DateTime.UtcNow.Date.Add(new TimeSpan(0, 20, 0, 0)),
-                NextOccurence = () =>
-                {
-                    var next = DateTime.UtcNow.Date.Add(new TimeSpan(1, 20, 0, 0));
-                    log.TrackTrace($"Next verifyAll: {next}");
-                    return next;
-                }
-            });
-#endif
+            this.dateTimeNowProvider = dateTimeNowProvider;
+            this.actions = actions;
         }
 
         public async Task Start()
@@ -53,7 +37,7 @@ namespace GreyOTron.Library.Helpers
         {
             while (true)
             {
-                var action = actions.FirstOrDefault(x => x.EnqueueTime <= DateTime.UtcNow);
+                var action = actions.FirstOrDefault(x => x.EnqueueTime <= dateTimeNowProvider.UtcNow);
                 if (action != null && running)
                 {
                     var nextOccurence = action.NextOccurence();
@@ -75,7 +59,7 @@ namespace GreyOTron.Library.Helpers
                 }
                 else
                 {
-                    var result = actions.Min(x => Math.Abs((x.EnqueueTime - DateTime.UtcNow).TotalMilliseconds));
+                    var result = actions.Min(x => Math.Abs((x.EnqueueTime - dateTimeNowProvider.UtcNow).TotalMilliseconds));
                     var max = TimeSpan.FromSeconds(30).TotalMilliseconds;
                     await Task.Delay(TimeSpan.FromMilliseconds(result > max ? max : result));
                 }
@@ -94,13 +78,5 @@ namespace GreyOTron.Library.Helpers
         {
             cancellationTokenSource?.Dispose();
         }
-    }
-
-    public class TimedExecution
-    {
-        public string Name { get; set; }
-        public DateTime EnqueueTime { get; set; }
-        public Func<DiscordSocketClient, CancellationToken, Task> Action { get; set; }
-        public Func<DateTime> NextOccurence { get; set; }
     }
 }

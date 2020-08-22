@@ -2,10 +2,10 @@
 
 namespace GreyOTron.Library.Helpers
 {
-    public class Carrousel
+    public class CarrouselHelper
     {
         private readonly Queue<string> queue;
-        public Carrousel(IEnumerable<string> messages)
+        public CarrouselHelper(IEnumerable<string> messages)
         {
             queue = new Queue<string>(messages);
         }

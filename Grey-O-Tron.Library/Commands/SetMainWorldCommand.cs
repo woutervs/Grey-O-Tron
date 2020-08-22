@@ -2,9 +2,10 @@
 using System.Threading.Tasks;
 using Discord.WebSocket;
 using GreyOTron.Library.ApiClients;
+using GreyOTron.Library.Extensions;
 using GreyOTron.Library.Helpers;
+using GreyOTron.Library.Interfaces;
 using GreyOTron.Library.Models;
-using GreyOTron.Library.RepositoryInterfaces;
 using GreyOTron.Resources;
 
 namespace GreyOTron.Library.Commands

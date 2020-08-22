@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Dapper;
+using GreyOTron.Library.Interfaces;
 using GreyOTron.Library.Models;
-using GreyOTron.Library.RepositoryInterfaces;
 using Microsoft.Data.SqlClient;
 
-namespace GreyOTron.Library.RepositoryImplementationsSql
+namespace GreyOTron.Library.SqlRepositories
 {
     public class SqlDiscordUserRepository : IDiscordUserRepository
     {

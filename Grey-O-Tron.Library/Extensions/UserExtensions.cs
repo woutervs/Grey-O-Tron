@@ -2,13 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Autofac.Features.ResolveAnything;
 using Discord;
 using Discord.WebSocket;
+using GreyOTron.Library.Helpers;
 using Microsoft.ApplicationInsights;
 using Newtonsoft.Json;
 
-namespace GreyOTron.Library.Helpers
+namespace GreyOTron.Library.Extensions
 {
     public static class UserExtensions
     {

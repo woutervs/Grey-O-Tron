@@ -6,22 +6,23 @@ using System.Threading.Tasks;
 using Discord;
 using Discord.WebSocket;
 using GreyOTron.Library.Exceptions;
+using GreyOTron.Library.Extensions;
+using GreyOTron.Library.Interfaces;
 using GreyOTron.Library.Models;
-using GreyOTron.Library.RepositoryInterfaces;
 using GreyOTron.Resources;
 using Microsoft.ApplicationInsights;
 using Microsoft.Extensions.Configuration;
 
 namespace GreyOTron.Library.Helpers
 {
-    public class RemoveUser
+    public class RemoveUserHelper
     {
         private readonly IGw2DiscordUserRepository gw2Gw2ApiKeyRepository;
         private readonly IConfiguration configuration;
         private readonly TelemetryClient log;
         private readonly IGw2DiscordServerRepository gw2DiscordServerRepository;
 
-        public RemoveUser(IGw2DiscordUserRepository gw2Gw2ApiKeyRepository, IConfiguration configuration, TelemetryClient log, IGw2DiscordServerRepository gw2DiscordServerRepository)
+        public RemoveUserHelper(IGw2DiscordUserRepository gw2Gw2ApiKeyRepository, IConfiguration configuration, TelemetryClient log, IGw2DiscordServerRepository gw2DiscordServerRepository)
         {
             this.gw2Gw2ApiKeyRepository = gw2Gw2ApiKeyRepository;
             this.configuration = configuration;

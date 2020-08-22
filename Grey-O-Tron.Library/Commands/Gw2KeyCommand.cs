@@ -5,9 +5,10 @@ using System.Threading.Tasks;
 using Discord.WebSocket;
 using GreyOTron.Library.ApiClients;
 using GreyOTron.Library.Exceptions;
+using GreyOTron.Library.Extensions;
 using GreyOTron.Library.Helpers;
+using GreyOTron.Library.Interfaces;
 using GreyOTron.Library.Models;
-using GreyOTron.Library.RepositoryInterfaces;
 using GreyOTron.Resources;
 using Microsoft.ApplicationInsights;
 using Newtonsoft.Json;
@@ -20,10 +21,10 @@ namespace GreyOTron.Library.Commands
     {
         private readonly Gw2Api gw2Api;
         private readonly IGw2DiscordUserRepository gw2Gw2ApiKeyRepository;
-        private readonly VerifyUser verifyUser;
+        private readonly VerifyUserHelper verifyUser;
         private readonly TelemetryClient log;
 
-        public Gw2KeyCommand(Gw2Api gw2Api, IGw2DiscordUserRepository gw2Gw2ApiKeyRepository, VerifyUser verifyUser, TelemetryClient log)
+        public Gw2KeyCommand(Gw2Api gw2Api, IGw2DiscordUserRepository gw2Gw2ApiKeyRepository, VerifyUserHelper verifyUser, TelemetryClient log)
         {
             this.gw2Api = gw2Api;
             this.gw2Gw2ApiKeyRepository = gw2Gw2ApiKeyRepository;

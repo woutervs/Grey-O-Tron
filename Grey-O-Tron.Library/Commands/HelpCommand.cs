@@ -2,7 +2,9 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Discord.WebSocket;
+using GreyOTron.Library.Extensions;
 using GreyOTron.Library.Helpers;
+using GreyOTron.Library.Interfaces;
 using GreyOTron.Resources;
 
 namespace GreyOTron.Library.Commands
@@ -10,8 +12,8 @@ namespace GreyOTron.Library.Commands
     [Command("help", CommandDescription = "The help command that directs you to this very page.", CommandOptions = CommandOptions.DirectMessage | CommandOptions.DiscordServer)]
     public class HelpCommand : ICommand
     {
-        private readonly CommandResolver resolver;
-        public HelpCommand(CommandResolver resolver)
+        private readonly CommandResolverHelper resolver;
+        public HelpCommand(CommandResolverHelper resolver)
         {
             this.resolver = resolver;
         }

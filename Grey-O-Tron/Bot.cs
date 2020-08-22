@@ -6,9 +6,10 @@ using Discord;
 using Discord.WebSocket;
 using GreyOTron.Library.Exceptions;
 using GreyOTron.Library.Helpers;
+using GreyOTron.Library.Services;
 using Microsoft.ApplicationInsights;
 using Microsoft.Extensions.Configuration;
-using UserExtensions = GreyOTron.Library.Helpers.UserExtensions;
+using UserExtensions = GreyOTron.Library.Extensions.UserExtensions;
 
 namespace GreyOTron
 {
@@ -18,11 +19,11 @@ namespace GreyOTron
         private readonly CommandProcessor processor;
         private readonly IConfiguration configuration;
         private readonly TelemetryClient log;
-        private readonly TimedExecutions timedExecutions;
-        private readonly UserJoined userJoined;
+        private readonly TimedExecutionsService timedExecutions;
+        private readonly UserJoinedHelper userJoined;
         private CancellationToken cancellationToken;
 
-        public Bot(CommandProcessor processor, IConfiguration configuration, TelemetryClient log, TimedExecutions timedExecutions, TranslationHelper translationHelper, UserJoined userJoined)
+        public Bot(CommandProcessor processor, IConfiguration configuration, TelemetryClient log, TimedExecutionsService timedExecutions, TranslationHelper translationHelper, UserJoinedHelper userJoined)
         {
             this.processor = processor;
             this.configuration = configuration;
@@ -48,11 +49,8 @@ namespace GreyOTron
                 client.Disconnected += ClientOnDisconnected;
                 client.UserJoined += ClientOnUserJoined;
 
-#if MAINTENANCE
-                const string configurationTokenName = "GreyOTron-TokenMaintenance";
-#else
-                const string configurationTokenName = "GreyOTron-Token";
-#endif
+                var configurationTokenName = EnvironmentHelper.Is(Environments.Maintenance) ? "GreyOTron-TokenMaintenance" : "GreyOTron-Token";
+                
                 await client.LoginAsync(TokenType.Bot, configuration[configurationTokenName]);
 
                 await client.StartAsync();

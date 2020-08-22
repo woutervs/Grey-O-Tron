@@ -5,9 +5,10 @@ using System.Threading;
 using System.Threading.Tasks;
 using Discord.WebSocket;
 using GreyOTron.Library.Exceptions;
+using GreyOTron.Library.Extensions;
 using GreyOTron.Library.Helpers;
+using GreyOTron.Library.Interfaces;
 using GreyOTron.Library.Models;
-using GreyOTron.Library.RepositoryInterfaces;
 using GreyOTron.Resources;
 using Microsoft.ApplicationInsights;
 using Microsoft.Extensions.Configuration;
@@ -18,11 +19,11 @@ namespace GreyOTron.Library.Commands
     public class SyncRolesCommand : ICommand
     {
         private readonly IGw2DiscordServerRepository gw2DiscordServerRepository;
-        private readonly Cache cache;
+        private readonly CacheHelper cache;
         private readonly IConfiguration configuration;
         private readonly TelemetryClient log;
 
-        public SyncRolesCommand(IGw2DiscordServerRepository gw2DiscordServerRepository, Cache cache, IConfiguration configuration, TelemetryClient log)
+        public SyncRolesCommand(IGw2DiscordServerRepository gw2DiscordServerRepository, CacheHelper cache, IConfiguration configuration, TelemetryClient log)
         {
             this.gw2DiscordServerRepository = gw2DiscordServerRepository;
             this.cache = cache;

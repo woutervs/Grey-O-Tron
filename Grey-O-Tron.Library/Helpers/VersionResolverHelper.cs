@@ -2,7 +2,7 @@
 
 namespace GreyOTron.Library.Helpers
 {
-    public static class VersionResolver
+    public static class VersionResolverHelper
     {
         public static string Get()
         {

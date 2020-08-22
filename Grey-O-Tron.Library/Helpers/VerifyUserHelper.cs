@@ -8,8 +8,9 @@ using Discord.Net;
 using Discord.WebSocket;
 using GreyOTron.Library.ApiClients;
 using GreyOTron.Library.Exceptions;
+using GreyOTron.Library.Extensions;
+using GreyOTron.Library.Interfaces;
 using GreyOTron.Library.Models;
-using GreyOTron.Library.RepositoryInterfaces;
 using GreyOTron.Resources;
 using Microsoft.Extensions.Configuration;
 using Polly;
@@ -17,15 +18,15 @@ using Polly.Retry;
 
 namespace GreyOTron.Library.Helpers
 {
-    public class VerifyUser
+    public class VerifyUserHelper
     {
         private readonly IGw2DiscordServerRepository gw2DiscordServerRepository;
-        private readonly Cache cache;
+        private readonly CacheHelper cache;
         private readonly IConfiguration configuration;
         private readonly RoleNotFoundCircuitBreakerPolicyHelper roleNotFoundCircuitBreakerPolicyHelper;
         private readonly AsyncRetryPolicy roleNotFoundExceptionRetryPolicy;
 
-        public VerifyUser(IGw2DiscordServerRepository gw2DiscordServerRepository, Cache cache, IConfiguration configuration, RoleNotFoundCircuitBreakerPolicyHelper roleNotFoundCircuitBreakerPolicyHelper)
+        public VerifyUserHelper(IGw2DiscordServerRepository gw2DiscordServerRepository, CacheHelper cache, IConfiguration configuration, RoleNotFoundCircuitBreakerPolicyHelper roleNotFoundCircuitBreakerPolicyHelper)
         {
             this.gw2DiscordServerRepository = gw2DiscordServerRepository;
             this.cache = cache;

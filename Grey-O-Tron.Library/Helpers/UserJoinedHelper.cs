@@ -4,21 +4,22 @@ using System.Threading.Tasks;
 using Discord.WebSocket;
 using GreyOTron.Library.ApiClients;
 using GreyOTron.Library.Exceptions;
-using GreyOTron.Library.RepositoryInterfaces;
+using GreyOTron.Library.Extensions;
+using GreyOTron.Library.Interfaces;
 using GreyOTron.Resources;
 using Polly.CircuitBreaker;
 
 namespace GreyOTron.Library.Helpers
 {
-    public class UserJoined
+    public class UserJoinedHelper
     {
         private readonly IGw2DiscordServerRepository gw2DiscordServerRepository;
         private readonly IGw2DiscordUserRepository gw2DiscordUserRepository;
         private readonly Gw2Api gw2Api;
-        private readonly RemoveUser removeUser;
-        private readonly VerifyUser verifyUser;
+        private readonly RemoveUserHelper removeUser;
+        private readonly VerifyUserHelper verifyUser;
 
-        public UserJoined(IGw2DiscordServerRepository gw2DiscordServerRepository, IGw2DiscordUserRepository gw2DiscordUserRepository, Gw2Api gw2Api, RemoveUser removeUser, VerifyUser verifyUser)
+        public UserJoinedHelper(IGw2DiscordServerRepository gw2DiscordServerRepository, IGw2DiscordUserRepository gw2DiscordUserRepository, Gw2Api gw2Api, RemoveUserHelper removeUser, VerifyUserHelper verifyUser)
         {
             this.gw2DiscordServerRepository = gw2DiscordServerRepository;
             this.gw2DiscordUserRepository = gw2DiscordUserRepository;

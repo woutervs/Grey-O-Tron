@@ -5,6 +5,12 @@
       "environmentVariables": {
         "Environment": "Development"
       }
+    },
+    "Grey-O-Tron-Maintenance": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "Environment": "Maintenance"
+      }
     }
   }
 }

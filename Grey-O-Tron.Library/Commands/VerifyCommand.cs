@@ -5,7 +5,8 @@ using GreyOTron.Library.Helpers;
 using Polly.CircuitBreaker;
 using System.Threading;
 using System.Threading.Tasks;
-using GreyOTron.Library.RepositoryInterfaces;
+using GreyOTron.Library.Extensions;
+using GreyOTron.Library.Interfaces;
 using GreyOTron.Resources;
 
 namespace GreyOTron.Library.Commands
@@ -15,10 +16,10 @@ namespace GreyOTron.Library.Commands
     {
         private readonly IGw2DiscordUserRepository gw2ApiKeyRepository;
         private readonly Gw2Api gw2Api;
-        private readonly VerifyUser verifyUser;
-        private readonly RemoveUser removeUser;
+        private readonly VerifyUserHelper verifyUser;
+        private readonly RemoveUserHelper removeUser;
 
-        public VerifyCommand(IGw2DiscordUserRepository gw2ApiKeyRepository, Gw2Api gw2Api, VerifyUser verifyUser, RemoveUser removeUser)
+        public VerifyCommand(IGw2DiscordUserRepository gw2ApiKeyRepository, Gw2Api gw2Api, VerifyUserHelper verifyUser, RemoveUserHelper removeUser)
         {
             this.gw2ApiKeyRepository = gw2ApiKeyRepository;
             this.gw2Api = gw2Api;

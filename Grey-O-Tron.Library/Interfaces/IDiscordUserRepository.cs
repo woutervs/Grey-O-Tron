@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 using GreyOTron.Library.Models;
 
-namespace GreyOTron.Library.RepositoryInterfaces
+namespace GreyOTron.Library.Interfaces
 {
     public interface IDiscordUserRepository
     {

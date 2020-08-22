@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Data.Common;
-using GreyOTron.Library.RepositoryInterfaces;
+using GreyOTron.Library.Interfaces;
 using Microsoft.Azure.Services.AppAuthentication;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;

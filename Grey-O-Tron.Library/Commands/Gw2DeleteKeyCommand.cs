@@ -2,15 +2,16 @@
 using System.Threading.Tasks;
 using Discord.WebSocket;
 using GreyOTron.Library.Helpers;
+using GreyOTron.Library.Interfaces;
 
 namespace GreyOTron.Library.Commands
 {
     [Command("gw2-remove-key", CommandDescription = "Removes Guild Wars 2 key from the database.", CommandOptions = CommandOptions.DirectMessage | CommandOptions.DiscordServer)]
     public class Gw2DeleteKeyCommand : ICommand
     {
-        private readonly RemoveUser removeUser;
+        private readonly RemoveUserHelper removeUser;
 
-        public Gw2DeleteKeyCommand(RemoveUser removeUser)
+        public Gw2DeleteKeyCommand(RemoveUserHelper removeUser)
         {
             this.removeUser = removeUser;
         }

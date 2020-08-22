@@ -2,17 +2,18 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using GreyOTron.Library.RepositoryInterfaces;
+using GreyOTron.Library.Helpers;
+using GreyOTron.Library.Interfaces;
 
-namespace GreyOTron.Library.Helpers
+namespace GreyOTron.Library.Services
 {
-    public class Languages
+    public class LanguagesService
     {
-        private readonly Cache cache;
+        private readonly CacheHelper cache;
         private readonly IDiscordUserRepository discordUserRepository;
         private readonly IDiscordServerRepository discordServerRepository;
 
-        public Languages(Cache cache, IDiscordUserRepository discordUserRepository, IDiscordServerRepository discordServerRepository)
+        public LanguagesService(CacheHelper cache, IDiscordUserRepository discordUserRepository, IDiscordServerRepository discordServerRepository)
         {
             this.cache = cache;
             this.discordUserRepository = discordUserRepository;

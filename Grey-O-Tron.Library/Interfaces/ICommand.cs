@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using Discord.WebSocket;
 
-namespace GreyOTron.Library.Helpers
+namespace GreyOTron.Library.Interfaces
 {
     public interface ICommand
     {
