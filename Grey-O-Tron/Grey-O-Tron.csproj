@@ -10,9 +10,6 @@
     <Configurations>Debug;Release;Maintenance</Configurations>
   </PropertyGroup>
   <ItemGroup>
-    <None Remove="AutofacConfiguration.cs~RF73f6e0d.TMP" />
-  </ItemGroup>
-  <ItemGroup>
     <PackageReference Include="Autofac" Version="5.2.0" />
     <PackageReference Include="Autofac.Extras.AttributeMetadata" Version="5.0.0" />
     <PackageReference Include="Discord.Net" Version="2.2.0" />
@@ -23,7 +20,6 @@
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="3.1.7" />
     <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="3.1.7" />
     <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="3.1.7" />
-    <PackageReference Include="WindowsAzure.Storage" Version="9.3.3" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Grey-O-Tron.Library\Grey-O-Tron.Library.csproj" />
@@ -39,4 +35,5 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
+  <ProjectExtensions><VisualStudio><UserProperties app_1json__JsonSchema="" /></VisualStudio></ProjectExtensions>
 </Project>
