@@ -10,6 +10,9 @@
     <Configurations>Debug;Release;Maintenance</Configurations>
   </PropertyGroup>
   <ItemGroup>
+    <None Remove="AutofacConfiguration.cs~RF73f6e0d.TMP" />
+  </ItemGroup>
+  <ItemGroup>
     <PackageReference Include="Autofac" Version="5.2.0" />
     <PackageReference Include="Autofac.Extras.AttributeMetadata" Version="5.0.0" />
     <PackageReference Include="Discord.Net" Version="2.2.0" />

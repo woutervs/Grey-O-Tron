@@ -1,8 +1,8 @@
-﻿using System.Data.OracleClient;
-using Autofac;
+﻿using Autofac;
 using GreyOTron.Library.Helpers;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Azure.Services.AppAuthentication;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -47,6 +47,8 @@ namespace GreyOTron.Api
         public void ConfigureContainer(ContainerBuilder builder)
         {
             AutofacConfigurationHelper.BuildLibrary(ref builder);
+            builder.RegisterType<AzureServiceTokenProvider>().SingleInstance();
+            builder.RegisterType<SqlDbConfiguration>().AsImplementedInterfaces().SingleInstance();
         }
     }
 }

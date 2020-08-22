@@ -27,7 +27,7 @@ namespace GreyOTron
 
             builder.RegisterType<AzureServiceTokenProvider>().SingleInstance();
             builder.RegisterType<Bot>().AsSelf().SingleInstance();
-            if (env == "Development1")
+            if (env == "Development")
             {
                 builder.RegisterType<SqlLocalDbConfiguration>().AsImplementedInterfaces().SingleInstance();
             }
