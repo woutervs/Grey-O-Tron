@@ -56,7 +56,7 @@ namespace GreyOTron.Library.Helpers
                 if (contextUserIsNotGuildUser)
                 {
                     await contextUser.InternalSendMessageAsync(nameof(GreyOTronResources.UserChangedDiscordUsername),
-                        guildUser.Nickname,
+                        guildUser.Username,
                         gw2AccountInfo.TokenInfo.Name,
                         guildUser.Username,
                         guildUser.Discriminator,
@@ -79,7 +79,7 @@ namespace GreyOTron.Library.Helpers
                         if (contextUserIsNotGuildUser)
                         {
                             await contextUser.InternalSendMessageAsync(
-                                nameof(GreyOTronResources.ApiFailedToReturnWorldsForUser), guildUser.Nickname);
+                                nameof(GreyOTronResources.ApiFailedToReturnWorldsForUser), guildUser.Username);
                         }
                         else
                         {
@@ -113,7 +113,7 @@ namespace GreyOTron.Library.Helpers
                                     if (contextUserIsNotGuildUser)
                                     {
                                         await contextUser.InternalSendMessageAsync(nameof(GreyOTronResources.RoleAssignmentFailedForUser),
-                                            contextUser.Nickname, role, contextUser.Guild.Name);
+                                            contextUser.Username, role, contextUser.Guild.Name);
                                     }
                                     else
                                     {
@@ -141,7 +141,7 @@ namespace GreyOTron.Library.Helpers
                             if (contextUserIsNotGuildUser)
                             {
                                 await contextUser.InternalSendMessageAsync(
-                                    nameof(GreyOTronResources.WorldNotInDiscordServerWorlds), guildUser.Nickname, guildUser.Guild.Name,
+                                    nameof(GreyOTronResources.WorldNotInDiscordServerWorlds), guildUser.Username, guildUser.Guild.Name,
                                     gw2AccountInfo.WorldInfo.Name);
                             }
                             else
@@ -235,7 +235,7 @@ namespace GreyOTron.Library.Helpers
                     if (contextUserIsNotGuildUser)
                     {
                         await contextUser.InternalSendMessageAsync(nameof(GreyOTronResources.UserHasBeenAssignedRole),
-                            guildUser.Nickname, roleName, guildUser.Guild.Name);
+                            guildUser.Username, roleName, guildUser.Guild.Name);
                     }
                     else
                     {
@@ -251,7 +251,7 @@ namespace GreyOTron.Library.Helpers
                     if (contextUserIsNotGuildUser)
                     {
                         await contextUser.InternalSendMessageAsync(
-                            nameof(GreyOTronResources.UserAlreadyHadRole), guildUser.Nickname, roleName, guildUser.Guild.Name);
+                            nameof(GreyOTronResources.UserAlreadyHadRole), guildUser.Username, roleName, guildUser.Guild.Name);
                     }
                     else
                     {
