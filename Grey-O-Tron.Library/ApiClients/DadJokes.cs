@@ -7,13 +7,11 @@ namespace GreyOTron.Library.ApiClients
     {
         public async Task<string> GetJoke()
         {
-            using (var cli = new HttpClient())
-            {
-                cli.DefaultRequestHeaders.Clear();
-                cli.DefaultRequestHeaders.Add("Accept", "text/plain");
-                var result = await cli.GetStringAsync("https://icanhazdadjoke.com");
-                return result;
-            }
+            using var cli = new HttpClient();
+            cli.DefaultRequestHeaders.Clear();
+            cli.DefaultRequestHeaders.Add("Accept", "text/plain");
+            var result = await cli.GetStringAsync("https://icanhazdadjoke.com");
+            return result;
         }
     }
 }

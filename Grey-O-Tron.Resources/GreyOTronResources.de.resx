@@ -142,9 +142,6 @@
   <data name="CommandNotFound" xml:space="preserve">
     <value>Sie haben versucht, '{0}' zu verwenden. Leider wurde mir dieser Befehl nicht beigebracht.</value>
   </data>
-  <data name="Unauthorized" xml:space="preserve">
-    <value>Es tut mir leid, dass Sie nicht berechtigt sind, diese Art von Informationen zu erhalten.</value>
-  </data>
   <data name="UnknownWorld" xml:space="preserve">
     <value>Konnte deine Welt nicht von '{0}' auflösen</value>
   </data>
@@ -238,9 +235,6 @@ Ich habe festgestellt, dass Sie bereits einen GW2-API-Schlüssel bei mir registr
 Um sich wvw Rollen zuzuweisen, registrieren Sie bitte Ihren API-Schlüssel.
 Für weitere Informationen schreiben Sie mir 'got#help'!</value>
   </data>
-  <data name="ServerOnlyCommand" xml:space="preserve">
-    <value>Sie müssen den Befehl {0} auf dem Discord-Server verwenden, auf dem Sie eine Überprüfung durchführen möchten.</value>
-  </data>
   <data name="AdministrativePermissionsOnly" xml:space="preserve">
     <value>Sie müssen über Administratorrechte verfügen, um den Befehl {0} ausführen zu können.</value>
   </data>
@@ -249,5 +243,11 @@ Für weitere Informationen schreiben Sie mir 'got#help'!</value>
   </data>
   <data name="LanguageSet" xml:space="preserve">
     <value>Die Sprache '{0}' ist jetzt als bevorzugte Sprache für {1} festgelegt.</value>
+  </data>
+  <data name="Unauthorized" xml:space="preserve">
+    <value>Es tut mir leid, dass dieser Befehl nur für den Botowner ist!</value>
+  </data>
+  <data name="ServerOnlyCommand" xml:space="preserve">
+    <value>Sie können den Befehl {0} nur auf einem Discord-Server verwenden.</value>
   </data>
 </root>

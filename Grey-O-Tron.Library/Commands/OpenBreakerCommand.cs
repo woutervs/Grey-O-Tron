@@ -1,8 +1,11 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
+using Discord;
 using Discord.WebSocket;
+using GreyOTron.Library.Attributes;
+using GreyOTron.Library.Extensions;
 using GreyOTron.Library.Helpers;
-using GreyOTron.Resources;
+using GreyOTron.Library.Interfaces;
 using Polly.CircuitBreaker;
 
 namespace GreyOTron.Library.Commands
@@ -16,31 +19,20 @@ namespace GreyOTron.Library.Commands
         {
             this.roleNotFoundCircuitBreakerPolicyHelper = roleNotFoundCircuitBreakerPolicyHelper;
         }
-        public async Task Execute(SocketMessage message, CancellationToken cancellationToken)
+        public async Task Execute(IMessage message, CancellationToken cancellationToken)
         {
             if (cancellationToken.IsCancellationRequested) return;
-            if (message.Author.IsOwner())
+            var state = roleNotFoundCircuitBreakerPolicyHelper.RoleNotFoundCircuitBreakerPolicy.CircuitState
+                .ToString();
+            if (roleNotFoundCircuitBreakerPolicyHelper.RoleNotFoundCircuitBreakerPolicy.CircuitState !=
+                CircuitState.Closed)
             {
-                var state = roleNotFoundCircuitBreakerPolicyHelper.RoleNotFoundCircuitBreakerPolicy.CircuitState
-                    .ToString();
-                if (roleNotFoundCircuitBreakerPolicyHelper.RoleNotFoundCircuitBreakerPolicy.CircuitState !=
-                    CircuitState.Closed)
-                {
-                    roleNotFoundCircuitBreakerPolicyHelper.RoleNotFoundCircuitBreakerPolicy.Reset();
+                roleNotFoundCircuitBreakerPolicyHelper.RoleNotFoundCircuitBreakerPolicy.Reset();
 
-                }
+            }
 
-                await message.Author.InternalSendMessageAsync(
-                    $"Changed breaker from {state} to {roleNotFoundCircuitBreakerPolicyHelper.RoleNotFoundCircuitBreakerPolicy.CircuitState}");
-            }
-            else
-            {
-                await message.Author.InternalSendMessageAsync(nameof(GreyOTronResources.Unauthorized));
-            }
-            if (!(message.Channel is SocketDMChannel))
-            {
-                await message.DeleteAsync();
-            }
+            await message.Author.InternalSendMessageAsync(
+                $"Changed breaker from {state} to {roleNotFoundCircuitBreakerPolicyHelper.RoleNotFoundCircuitBreakerPolicy.CircuitState}");
         }
 
         public string Arguments { get; set; }

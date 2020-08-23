@@ -143,9 +143,6 @@
   <data name="CommandNotFound" xml:space="preserve">
     <value>Vous avez essayé d'utiliser '{0}', malheureusement je n'ai pas appris cette commande.</value>
   </data>
-  <data name="Unauthorized" xml:space="preserve">
-    <value>Je suis désolé que vous ne soyez pas autorisé à recevoir ce type d'informations.</value>
-  </data>
   <data name="UnknownWorld" xml:space="preserve">
     <value>Impossible de résoudre votre monde à partir de '{0}'</value>
   </data>
@@ -237,7 +234,7 @@ Pour plus d'informations, envoyez-moi un message 'got#help'!</value>
     <value>Votre</value>
   </data>
   <data name="ServerOnlyCommand" xml:space="preserve">
-    <value>Vous devez utiliser la commande {0} sur un serveur Discord.</value>
+    <value>Vous pouvez justement utiliser la commande {0} sur un serveur Discord.</value>
   </data>
   <data name="AdministrativePermissionsOnly" xml:space="preserve">
     <value>Vous devez disposer des autorisations administratives pour exécuter la commande {0}.</value>
@@ -250,5 +247,8 @@ Pour plus d'informations, envoyez-moi un message 'got#help'!</value>
   </data>
   <data name="You" xml:space="preserve">
     <value>vous</value>
+  </data>
+  <data name="Unauthorized" xml:space="preserve">
+    <value>Je suis désolé que cette commande soit réservée au propriétaire du bot!</value>
   </data>
 </root>

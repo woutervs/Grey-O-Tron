@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Autofac.Extensions.DependencyInjection;
+using GreyOTron.Library.Helpers;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
+using Environments = GreyOTron.Library.Helpers.Environments;
 
 namespace GreyOTron.Api
 {
@@ -21,8 +23,8 @@ namespace GreyOTron.Api
                 webBuilder
                     .ConfigureAppConfiguration(configurationBuilder =>
                     {
-                        var env = Environment.GetEnvironmentVariable("Environment");
-                        if (env == "Development")
+                        var environmentHelper = new EnvironmentHelper();
+                        if (environmentHelper.Is(Environments.Development))
                         {
                             configurationBuilder.AddUserSecrets<Program>();
                         }

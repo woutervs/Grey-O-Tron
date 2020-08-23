@@ -7,11 +7,8 @@
     <ApplicationIcon />
     <OutputType>Exe</OutputType>
     <StartupObject />
-    <Configurations>Debug;Release;Maintenance</Configurations>
+    <Configurations>Debug;Release</Configurations>
   </PropertyGroup>
-  <ItemGroup>
-    <None Remove="AutofacConfiguration.cs~RF73f6e0d.TMP" />
-  </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Autofac" Version="5.2.0" />
     <PackageReference Include="Autofac.Extras.AttributeMetadata" Version="5.0.0" />
@@ -23,20 +20,26 @@
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="3.1.7" />
     <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="3.1.7" />
     <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="3.1.7" />
-    <PackageReference Include="WindowsAzure.Storage" Version="9.3.3" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Grey-O-Tron.Library\Grey-O-Tron.Library.csproj" />
   </ItemGroup>
   <ItemGroup>
+    <None Update="app.production.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="app.development.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="app.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="app.maintenance.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Settings.job">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
+  <ProjectExtensions><VisualStudio><UserProperties app_1json__JsonSchema="" /></VisualStudio></ProjectExtensions>
 </Project>

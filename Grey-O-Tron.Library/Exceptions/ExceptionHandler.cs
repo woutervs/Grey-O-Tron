@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Discord;
 using Discord.WebSocket;
-using GreyOTron.Library.Helpers;
+using GreyOTron.Library.Extensions;
 using Microsoft.ApplicationInsights;
 using Polly.CircuitBreaker;
 

@@ -1,6 +1,11 @@
-﻿using System.Reflection;
+﻿using System.Collections.Generic;
+using System.Reflection;
 using Autofac;
+using Autofac.Core;
 using Autofac.Extras.AttributeMetadata;
+using GreyOTron.Library.Interfaces;
+using GreyOTron.Library.Models;
+using GreyOTron.Library.Services;
 using Microsoft.ApplicationInsights;
 using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.Extensions.Configuration;
@@ -32,6 +37,12 @@ namespace GreyOTron.Library.Helpers
                 //Could add processors/sinks here...
                 return telemetryConfiguration;
             }).SingleInstance();
+
+            builder.RegisterType<TimedExecutionsService>().AsSelf()
+                .WithParameter(new ResolvedParameter((pi, ctx) => pi.ParameterType == typeof(List<TimedExecution>),
+                    (pi, ctx) => ctx.Resolve<TimedExecutionsHelper>().Actions))
+                .SingleInstance();
+
         }
     }
 }

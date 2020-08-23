@@ -10,7 +10,7 @@ namespace GreyOTron.Api.Controllers
         [HttpGet]
         public ActionResult<string> Get()
         {
-            return VersionResolver.Get();
+            return VersionResolverHelper.Get();
         }
     }
 }

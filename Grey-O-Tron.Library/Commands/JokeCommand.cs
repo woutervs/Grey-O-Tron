@@ -1,8 +1,10 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
+using Discord;
 using Discord.WebSocket;
 using GreyOTron.Library.ApiClients;
-using GreyOTron.Library.Helpers;
+using GreyOTron.Library.Attributes;
+using GreyOTron.Library.Interfaces;
 
 namespace GreyOTron.Library.Commands
 {
@@ -16,14 +18,10 @@ namespace GreyOTron.Library.Commands
             this.dadJokes = dadJokes;
         }
 
-        public async Task Execute(SocketMessage message, CancellationToken cancellationToken)
+        public async Task Execute(IMessage message, CancellationToken cancellationToken)
         {
             if (cancellationToken.IsCancellationRequested) return;
             await message.Channel.SendMessageAsync(await dadJokes.GetJoke());
-            if (!(message.Channel is SocketDMChannel))
-            {
-                await message.DeleteAsync();
-            }
         }
         public string Arguments { get; set; }
         public DiscordSocketClient Client { get; set; }

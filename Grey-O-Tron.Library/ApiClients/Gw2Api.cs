@@ -16,16 +16,16 @@ namespace GreyOTron.Library.ApiClients
     public class Gw2Api : IDisposable
     {
         private const string BaseUrl = "https://api.guildwars2.com";
-        private readonly Cache cache;
-        private readonly TimeSpanSemaphore semaphore;
+        private readonly CacheHelper cache;
+        private readonly TimeSpanSemaphoreHelper semaphore;
         private readonly RetryPolicy timeOutOrTooManyRequestsRetryPolicy;
         private readonly RetryPolicy endpointRequiresAuthenticationRetryPolicy;
         private readonly CircuitBreakerPolicy circuitBreakerPolicy;
-        public Gw2Api(Cache cache)
+        public Gw2Api(CacheHelper cache)
         {
             this.cache = cache;
             //Gw2API rate limits 600 reqs per minute.
-            semaphore = new TimeSpanSemaphore(500, TimeSpan.FromMinutes(1)); //So we allow 500 requests every minute
+            semaphore = new TimeSpanSemaphoreHelper(500, TimeSpan.FromMinutes(1)); //So we allow 500 requests every minute
             circuitBreakerPolicy = Policy.Handle<TooManyRequestsException>() //If somehow the api still says they can't handle our number of requests
                 .AdvancedCircuitBreaker(
                     0.01, //when 0.01% of all requests in a timespan of 3 minutes fails we take 30s timeout before allowing to continue

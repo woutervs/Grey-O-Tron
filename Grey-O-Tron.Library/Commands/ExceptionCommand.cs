@@ -1,24 +1,20 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Discord;
 using Discord.WebSocket;
-using GreyOTron.Library.Helpers;
+using GreyOTron.Library.Attributes;
+using GreyOTron.Library.Interfaces;
 
 namespace GreyOTron.Library.Commands
 {
     [Command("exception", CommandDescription = "Throws an exception", CommandOptions = CommandOptions.RequiresOwner)]
     public class ExceptionCommand : ICommand
     {
-        public async Task Execute(SocketMessage message, CancellationToken cancellationToken)
+        public Task Execute(IMessage message, CancellationToken cancellationToken)
         {
-            if (!(message.Channel is SocketDMChannel))
-            {
-                await message.DeleteAsync();
-            }
-            if (message.Author.IsOwner())
-            {
-                throw new Exception("Exception command triggered.");
-            }
+            if (cancellationToken.IsCancellationRequested) return Task.FromCanceled(cancellationToken);
+            throw new Exception("Exception command triggered.");
         }
 
         public string Arguments { get; set; }

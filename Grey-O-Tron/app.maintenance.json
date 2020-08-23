@@ -1,0 +1,6 @@
+{
+  "tenantId": "c9aa12d9-958d-4e12-9e83-ada91e19f0be",
+  "ConnectionStrings": {
+    "SqlConnection": "Server=greyotron.database.windows.net,1433;Database=greyotron"
+  }
+}

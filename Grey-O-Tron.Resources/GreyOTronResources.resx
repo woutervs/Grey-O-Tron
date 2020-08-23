@@ -144,7 +144,7 @@
     <value>You tried using '{0}', unfortunately I haven't been taught that command.</value>
   </data>
   <data name="Unauthorized" xml:space="preserve">
-    <value>I'm sorry you're not authorized to receive this kind of information.</value>
+    <value>I'm sorry this command is for the botowner only!</value>
   </data>
   <data name="UnknownWorld" xml:space="preserve">
     <value>Could not resolve your world from '{0}'</value>
@@ -237,7 +237,7 @@ For more information message me "got#help"!</value>
     <value>Your</value>
   </data>
   <data name="ServerOnlyCommand" xml:space="preserve">
-    <value>You must use the {0} command on a Discord server.</value>
+    <value>You can only use the {0} command on a Discord server.</value>
   </data>
   <data name="AdministrativePermissionsOnly" xml:space="preserve">
     <value>You must have administrative permissions to perform the {0} command.</value>
