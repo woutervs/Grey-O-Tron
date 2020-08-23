@@ -48,7 +48,7 @@ namespace GreyOTron
             var builder = new ConfigurationBuilder();
             Trace.WriteLine(environmentHelper.Current);
 
-            if (environmentHelper.Is(Environments.Development))
+            if (environmentHelper.Is(Environments.Development) || environmentHelper.Is(Environments.Maintenance))
             {
                 builder.AddUserSecrets<Program>();
             }

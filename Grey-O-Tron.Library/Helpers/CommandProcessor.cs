@@ -2,7 +2,9 @@
 using System.Linq;
 using Autofac;
 using Autofac.Features.Metadata;
+using Discord;
 using GreyOTron.Library.Commands.ManualCommands;
+using GreyOTron.Library.Extensions;
 using GreyOTron.Library.Interfaces;
 
 namespace GreyOTron.Library.Helpers
@@ -20,15 +22,16 @@ namespace GreyOTron.Library.Helpers
             this.environmentHelper = environmentHelper;
         }
 
-        public Meta<ICommand> Parse(string message)
+        public Meta<ICommand> Parse(IMessage socketMessage)
         {
+            var message = socketMessage.Content.Trim();
             message = message.Trim();
             if (!message.StartsWith(prefix))
             {
                 return new Meta<ICommand>(new NullCommand(), new Dictionary<string, object?>());
             }
 
-            if (environmentHelper.Is(Environments.Maintenance))
+            if (environmentHelper.Is(Environments.Maintenance) && !socketMessage.Author.IsOwner())
             {
                 return new Meta<ICommand>(new MaintenanceCommand(), new Dictionary<string, object?>());
             }
