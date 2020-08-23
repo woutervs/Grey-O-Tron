@@ -32,7 +32,7 @@ namespace GreyOTron.Library.Commands
             {
                 await discordUserRepository.InsertOrUpdate(new DiscordUserDto
                     { Id = message.Author.Id, Username = message.Author.Username, Discriminator = message.Author.Discriminator, PreferredLanguage = language });
-                languages.UpdateForUserId(message.Author.Id, language);
+                languages.UpdateCacheForUserId(message.Author.Id, language);
                 await message.Author.InternalSendMessageAsync(nameof(GreyOTronResources.LanguageSet), language, nameof(GreyOTronResources.You));
             }
             else

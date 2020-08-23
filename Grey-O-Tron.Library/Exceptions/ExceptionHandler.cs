@@ -4,7 +4,6 @@ using System.Linq;
 using Discord;
 using Discord.WebSocket;
 using GreyOTron.Library.Extensions;
-using GreyOTron.Library.Helpers;
 using Microsoft.ApplicationInsights;
 using Polly.CircuitBreaker;
 

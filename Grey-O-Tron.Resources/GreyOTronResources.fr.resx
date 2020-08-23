@@ -234,7 +234,7 @@ Pour plus d'informations, envoyez-moi un message 'got#help'!</value>
     <value>Votre</value>
   </data>
   <data name="ServerOnlyCommand" xml:space="preserve">
-    <value>Vous devez utiliser la commande {0} sur un serveur Discord.</value>
+    <value>Vous pouvez justement utiliser la commande {0} sur un serveur Discord.</value>
   </data>
   <data name="AdministrativePermissionsOnly" xml:space="preserve">
     <value>Vous devez disposer des autorisations administratives pour exécuter la commande {0}.</value>

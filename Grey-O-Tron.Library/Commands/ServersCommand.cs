@@ -6,7 +6,6 @@ using Discord.WebSocket;
 using GreyOTron.Library.Attributes;
 using GreyOTron.Library.Extensions;
 using GreyOTron.Library.Interfaces;
-using GreyOTron.Resources;
 
 namespace GreyOTron.Library.Commands
 {

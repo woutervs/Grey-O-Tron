@@ -6,7 +6,6 @@ using GreyOTron.Library.Attributes;
 using GreyOTron.Library.Extensions;
 using GreyOTron.Library.Helpers;
 using GreyOTron.Library.Interfaces;
-using GreyOTron.Resources;
 using Polly.CircuitBreaker;
 
 namespace GreyOTron.Library.Commands

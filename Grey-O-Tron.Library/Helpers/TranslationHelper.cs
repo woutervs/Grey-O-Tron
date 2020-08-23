@@ -7,26 +7,21 @@ namespace GreyOTron.Library.Helpers
 {
     public class TranslationHelper
     {
-        private readonly LanguagesService languages;
+        private readonly LanguagesService languageService;
 
-        public TranslationHelper(LanguagesService languages)
+        public TranslationHelper(LanguagesService languageService)
         {
-            this.languages = languages;
+            this.languageService = languageService;
         }
 
         public string Translate(ulong userId, ulong? serverId, string key, params string[] formatParameters)
         {
-            var ci = languages.GetForUserId(userId);
-            if (ci == null && serverId.HasValue)
+            var ci = languageService.GetForUserId(userId);
+            if (ci.Equals(CultureInfo.InvariantCulture) && serverId.HasValue)
             {
-                ci = languages.GetForServerId(serverId.Value);
+                ci = languageService.GetForServerId(serverId.Value);
             }
 
-            if (ci == null)
-            {
-                ci = CultureInfo.InvariantCulture;
-            }
-            
             var message = GreyOTronResources.ResourceManager.GetString(key, ci) ?? key;
             var translatedFormatParameters = formatParameters.Select(formatParameter => GreyOTronResources.ResourceManager.GetString(formatParameter, ci) ?? formatParameter).ToList();
             return string.Format(message, translatedFormatParameters.ToArray<object>());

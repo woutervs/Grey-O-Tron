@@ -291,7 +291,7 @@ namespace GreyOTron.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to You must use the {0} command on a Discord server..
+        ///   Looks up a localized string similar to You can only use the {0} command on a Discord server..
         /// </summary>
         public static string ServerOnlyCommand {
             get {

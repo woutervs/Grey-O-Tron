@@ -2,7 +2,6 @@
 using System.Linq;
 using Autofac;
 using Autofac.Features.Metadata;
-using Discord.Commands;
 using GreyOTron.Library.Commands.ManualCommands;
 using GreyOTron.Library.Interfaces;
 

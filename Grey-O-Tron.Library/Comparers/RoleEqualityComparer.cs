@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Discord;
 
-namespace GreyOTron.Library.Helpers
+namespace GreyOTron.Library.Comparers
 {
     public class RoleEqualityComparer : IEqualityComparer<IRole>
     {

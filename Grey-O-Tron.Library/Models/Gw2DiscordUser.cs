@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace GreyOTron.Library.Models
+﻿namespace GreyOTron.Library.Models
 {
     public class Gw2DiscordUser
     {

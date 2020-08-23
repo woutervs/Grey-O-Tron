@@ -24,6 +24,6 @@ namespace GreyOTron.Library.Attributes
         DiscordServer = 1,
         DirectMessage = 2,
         RequiresAdmin = 4,
-        RequiresOwner = 8,
+        RequiresOwner = 8
     }
 }

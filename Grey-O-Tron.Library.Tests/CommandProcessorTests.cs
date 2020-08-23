@@ -7,7 +7,6 @@ using Autofac.Extras.AttributeMetadata;
 using Autofac.Extras.Moq;
 using Autofac.Features.Metadata;
 using Discord;
-using Discord.WebSocket;
 using FakeItEasy;
 using FluentAssertions;
 using GreyOTron.Library.Commands;
@@ -18,7 +17,6 @@ using GreyOTron.Library.Helpers;
 using GreyOTron.Library.Interfaces;
 using Moq;
 using Xunit;
-using UserExtensions = Discord.UserExtensions;
 
 namespace GreyOTron.Library.Tests
 {
@@ -70,7 +68,7 @@ namespace GreyOTron.Library.Tests
         [InlineData(" got#servers  ", "", typeof(ServersCommand), Environments.Production)]
         [InlineData(" got#set-language nl  ", "nl", typeof(SetLanguageCommand), Environments.Production)]
         [InlineData(" got#set-server-language nl  ", "nl", typeof(SetServerLanguageCommand), Environments.Production)]
-        [InlineData(" got#sync-roles", "", typeof(SyncRolesCommand), Environments.Production)]
+        [InlineData(" got#gw2-sync-roles", "", typeof(Gw2SyncRolesCommand), Environments.Production)]
         [InlineData(" got#version", "", typeof(VersionCommand), Environments.Production)]
         public void TestCommandProcessor_Expecting_Success_In_Production(string messageText, string arguments, Type commandType, Environments environment)
         {
@@ -97,7 +95,7 @@ namespace GreyOTron.Library.Tests
         [InlineData(" got#servers  ", typeof(ServersCommand), Environments.Maintenance)]
         [InlineData(" got#set-language nl  ", typeof(SetLanguageCommand), Environments.Maintenance)]
         [InlineData(" got#set-server-language nl  ", typeof(SetServerLanguageCommand), Environments.Maintenance)]
-        [InlineData(" got#sync-roles", typeof(SyncRolesCommand), Environments.Maintenance)]
+        [InlineData(" got#gw2-sync-roles", typeof(Gw2SyncRolesCommand), Environments.Maintenance)]
         [InlineData(" got#version", typeof(VersionCommand), Environments.Maintenance)]
         public void TestCommandProcessor_Expecting_Maintenance(string messageText, Type commandType, Environments environment)
         {
@@ -155,7 +153,7 @@ namespace GreyOTron.Library.Tests
         [GreyOTronLibraryInlineAutoData(" got#servers  ", typeof(ServersCommand), Environments.Production)]
         [GreyOTronLibraryInlineAutoData(" got#set-language nl  ", typeof(SetLanguageCommand), Environments.Production)]
         [GreyOTronLibraryInlineAutoData(" got#set-server-language nl  ", typeof(SetServerLanguageCommand), Environments.Production)]
-        [GreyOTronLibraryInlineAutoData(" got#sync-roles", typeof(SyncRolesCommand), Environments.Production)]
+        [GreyOTronLibraryInlineAutoData(" got#gw2-sync-roles", typeof(Gw2SyncRolesCommand), Environments.Production)]
         [GreyOTronLibraryInlineAutoData(" got#version", typeof(VersionCommand), Environments.Production)]
         public async Task TestCommandProcessor_ExecuteMetaCommand_AsOwner(string messageText, Type commandType, Environments environment, IMessage message, IGuildUser guildUser)
         {
@@ -189,7 +187,7 @@ namespace GreyOTron.Library.Tests
         [GreyOTronLibraryInlineAutoData(" got#servers  ", typeof(ServersCommand), Environments.Production, false)]
         [GreyOTronLibraryInlineAutoData(" got#set-language nl  ", typeof(SetLanguageCommand), Environments.Production, true)]
         [GreyOTronLibraryInlineAutoData(" got#set-server-language nl  ", typeof(SetServerLanguageCommand), Environments.Production, true)]
-        [GreyOTronLibraryInlineAutoData(" got#sync-roles", typeof(SyncRolesCommand), Environments.Production, true)]
+        [GreyOTronLibraryInlineAutoData(" got#gw2-sync-roles", typeof(Gw2SyncRolesCommand), Environments.Production, true)]
         [GreyOTronLibraryInlineAutoData(" got#version", typeof(VersionCommand), Environments.Production, true)]
         public async Task TestCommandProcessor_ExecuteMetaCommand_AsAdministrator(string messageText, Type commandType, Environments environment, bool mustHaveHappened, IMessage message, IGuildUser guildUser)
         {
@@ -230,7 +228,7 @@ namespace GreyOTron.Library.Tests
         [GreyOTronLibraryInlineAutoData(" got#servers  ", typeof(ServersCommand), Environments.Production, false)]
         [GreyOTronLibraryInlineAutoData(" got#set-language nl  ", typeof(SetLanguageCommand), Environments.Production, true)]
         [GreyOTronLibraryInlineAutoData(" got#set-server-language nl  ", typeof(SetServerLanguageCommand), Environments.Production, false)]
-        [GreyOTronLibraryInlineAutoData(" got#sync-roles", typeof(SyncRolesCommand), Environments.Production, false)]
+        [GreyOTronLibraryInlineAutoData(" got#gw2-sync-roles", typeof(Gw2SyncRolesCommand), Environments.Production, false)]
         [GreyOTronLibraryInlineAutoData(" got#version", typeof(VersionCommand), Environments.Production, true)]
         public async Task TestCommandProcessor_ExecuteMetaCommand_AsUser(string messageText, Type commandType, Environments environment, bool mustHaveHappened, IMessage message, IGuildUser guildUser)
         {
@@ -271,7 +269,7 @@ namespace GreyOTron.Library.Tests
         [GreyOTronLibraryInlineAutoData(" got#servers  ", typeof(ServersCommand), Environments.Production, true)]
         [GreyOTronLibraryInlineAutoData(" got#set-language nl  ", typeof(SetLanguageCommand), Environments.Production, true)]
         [GreyOTronLibraryInlineAutoData(" got#set-server-language nl  ", typeof(SetServerLanguageCommand), Environments.Production, false)]
-        [GreyOTronLibraryInlineAutoData(" got#sync-roles", typeof(SyncRolesCommand), Environments.Production, false)]
+        [GreyOTronLibraryInlineAutoData(" got#gw2-sync-roles", typeof(Gw2SyncRolesCommand), Environments.Production, false)]
         [GreyOTronLibraryInlineAutoData(" got#version", typeof(VersionCommand), Environments.Production, true)]
         public async Task TestCommandProcessor_ExecuteMetaCommand_AsOwner_InDm(string messageText, Type commandType, Environments environment, bool mustHaveHappened, IMessage message, IUser user)
         {
@@ -280,8 +278,6 @@ namespace GreyOTron.Library.Tests
             autoMockFixture.InitAutoMock(environment, commandType);
             var commandProcessor = autoMockFixture.Mock.Create<CommandProcessor>();
             A.CallTo(() => message.Author).Returns(user);
-            var permissions = new GuildPermissions(administrator: true);
-            //A.CallTo(() => guildUser.GuildPermissions).Returns(permissions);
             var command = new Fake<ICommand>();
             //act
             var result = commandProcessor.Parse(messageText);

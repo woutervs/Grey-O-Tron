@@ -34,25 +34,18 @@ namespace GreyOTron.Library.Extensions
                         var discordServer = commandOptions.HasFlag(CommandOptions.DiscordServer);
                         var directMessage = commandOptions.HasFlag(CommandOptions.DirectMessage);
 
-                        var isGuildUser = false;
+                        var isGuildUser = message.Author is IGuildUser;
 
-                        if (message.Author is IGuildUser)
-                        {
-                            isGuildUser = true;
-                        }
                         if (discordServer && !directMessage && !isGuildUser)
                         {
-                            canExecute = false;
                             await message.Author.InternalSendMessageAsync(nameof(GreyOTronResources.ServerOnlyCommand), commandName);
                         }
                         else if (requiresOwner && !message.Author.IsOwner())
                         {
-                            canExecute = false;
                             await message.Author.InternalSendMessageAsync(nameof(GreyOTronResources.Unauthorized));
                         }
                         else if ((requiresAdmin || requiresOwner) && !message.Author.IsAdminOrOwner())
                         {
-                            canExecute = false;
                             await message.Author.InternalSendMessageAsync(nameof(GreyOTronResources.AdministrativePermissionsOnly), commandName);
                         }
                         else

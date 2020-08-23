@@ -11,21 +11,20 @@ using GreyOTron.Library.Extensions;
 using GreyOTron.Library.Helpers;
 using GreyOTron.Library.Interfaces;
 using GreyOTron.Library.Models;
-using GreyOTron.Resources;
 using Microsoft.ApplicationInsights;
 using Microsoft.Extensions.Configuration;
 
-namespace GreyOTron.Library.Commands
+namespace GreyOTron.Library.Commands.GW2Commands
 {
-    [Command("sync-roles", CommandDescription = "Cleans up duplicate roles on a server", CommandArguments = "", CommandOptions = CommandOptions.DiscordServer | CommandOptions.RequiresAdmin)]
-    public class SyncRolesCommand : ICommand
+    [Command("gw2-sync-roles", CommandDescription = "Cleans up duplicate roles on a server", CommandArguments = "", CommandOptions = CommandOptions.DiscordServer | CommandOptions.RequiresAdmin)]
+    public class Gw2SyncRolesCommand : ICommand
     {
         private readonly IGw2DiscordServerRepository gw2DiscordServerRepository;
         private readonly CacheHelper cache;
         private readonly IConfiguration configuration;
         private readonly TelemetryClient log;
 
-        public SyncRolesCommand(IGw2DiscordServerRepository gw2DiscordServerRepository, CacheHelper cache, IConfiguration configuration, TelemetryClient log)
+        public Gw2SyncRolesCommand(IGw2DiscordServerRepository gw2DiscordServerRepository, CacheHelper cache, IConfiguration configuration, TelemetryClient log)
         {
             this.gw2DiscordServerRepository = gw2DiscordServerRepository;
             this.cache = cache;
