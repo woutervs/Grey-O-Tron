@@ -143,9 +143,6 @@
   <data name="CommandNotFound" xml:space="preserve">
     <value>Je hebt geprobeerd '{0}' te gebruiken, helaas ken ik dit commando niet.</value>
   </data>
-  <data name="Unauthorized" xml:space="preserve">
-    <value>Het spijt me u bent niet gemachtigd deze informatie te ontvangen.</value>
-  </data>
   <data name="UnknownWorld" xml:space="preserve">
     <value>Deze wereld '{0}' lijkt niet te bestaan</value>
   </data>
@@ -250,5 +247,8 @@ Voor meer informatie stuur me een bericht 'got#help'!</value>
   </data>
   <data name="You" xml:space="preserve">
     <value>u</value>
+  </data>
+  <data name="Unauthorized" xml:space="preserve">
+    <value>Het spijt me dat dit commando alleen voor de botowner is!</value>
   </data>
 </root>

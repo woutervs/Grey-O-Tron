@@ -144,7 +144,7 @@
     <value>You tried using '{0}', unfortunately I haven't been taught that command.</value>
   </data>
   <data name="Unauthorized" xml:space="preserve">
-    <value>I'm sorry you're not authorized to receive this kind of information.</value>
+    <value>I'm sorry this command is for the botowner only!</value>
   </data>
   <data name="UnknownWorld" xml:space="preserve">
     <value>Could not resolve your world from '{0}'</value>

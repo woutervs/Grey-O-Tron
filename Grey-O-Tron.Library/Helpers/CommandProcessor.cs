@@ -2,34 +2,36 @@
 using System.Linq;
 using Autofac;
 using Autofac.Features.Metadata;
-using GreyOTron.Library.Commands;
-using GreyOTron.Library.Helpers;
+using Discord.Commands;
+using GreyOTron.Library.Commands.ManualCommands;
 using GreyOTron.Library.Interfaces;
 
-namespace GreyOTron
+namespace GreyOTron.Library.Helpers
 {
     public class CommandProcessor
     {
         private readonly string prefix;
         private readonly ILifetimeScope container;
+        private readonly IEnvironmentHelper environmentHelper;
 
-        public CommandProcessor(string prefix, ILifetimeScope container)
+        public CommandProcessor(string prefix, ILifetimeScope container, IEnvironmentHelper environmentHelper)
         {
             this.prefix = prefix;
             this.container = container;
+            this.environmentHelper = environmentHelper;
         }
 
-        public ICommand Parse(string message)
+        public Meta<ICommand> Parse(string message)
         {
             message = message.Trim();
             if (!message.StartsWith(prefix))
             {
-                return new NullCommand();
+                return new Meta<ICommand>(new NullCommand(), new Dictionary<string, object?>());
             }
 
-            if (EnvironmentHelper.Is(Environments.Maintenance))
+            if (environmentHelper.Is(Environments.Maintenance))
             {
-                return new MaintenanceCommand();
+                return new Meta<ICommand>(new MaintenanceCommand(), new Dictionary<string, object?>());
             }
             
             var commandName = message[prefix.Length..];
@@ -45,14 +47,14 @@ namespace GreyOTron
                 message = string.Empty;
             }
             var command = container.Resolve<IEnumerable<Meta<ICommand>>>()
-                .FirstOrDefault(a => a.Metadata.ContainsKey("CommandName") && a.Metadata["CommandName"].Equals(commandName))?.Value;
+                .FirstOrDefault(a => a.Metadata.ContainsKey(nameof(Attributes.CommandAttribute.CommandName)) && a.Metadata[nameof(Attributes.CommandAttribute.CommandName)].Equals(commandName));
             if (command != null)
             {
-                command.Arguments = message;
+                command.Value.Arguments = message;
             }
             else
             {
-                command = new NotFoundCommand { Arguments = commandName };
+                command = new Meta<ICommand>(new NotFoundCommand { Arguments = commandName }, new Dictionary<string, object?>());
             }
             return command;
         }

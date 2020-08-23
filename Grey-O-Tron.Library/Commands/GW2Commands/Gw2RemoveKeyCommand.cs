@@ -1,11 +1,12 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
+using Discord;
 using Discord.WebSocket;
 using GreyOTron.Library.Attributes;
 using GreyOTron.Library.Helpers;
 using GreyOTron.Library.Interfaces;
 
-namespace GreyOTron.Library.Commands
+namespace GreyOTron.Library.Commands.GW2Commands
 {
     [Command("gw2-remove-key", CommandDescription = "Removes Guild Wars 2 key from the database.", CommandOptions = CommandOptions.DirectMessage | CommandOptions.DiscordServer)]
     public class Gw2RemoveKeyCommand : ICommand
@@ -17,15 +18,10 @@ namespace GreyOTron.Library.Commands
             this.removeUser = removeUser;
         }
 
-        public async Task Execute(SocketMessage message, CancellationToken cancellationToken)
+        public async Task Execute(IMessage message, CancellationToken cancellationToken)
         {
             if (cancellationToken.IsCancellationRequested) return;
             await removeUser.Execute(Client, message.Author, Client.Guilds, cancellationToken);
-
-            if (!(message.Channel is SocketDMChannel))
-            {
-                await message.DeleteAsync();
-            }
         }
 
         public string Arguments { get; set; }

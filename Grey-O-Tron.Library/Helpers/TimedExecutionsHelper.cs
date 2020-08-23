@@ -9,10 +9,11 @@ namespace GreyOTron.Library.Helpers
 {
     public class TimedExecutionsHelper
     {
-        public List<TimedExecution> Actions { get; set; }
-
-        public TimedExecutionsHelper(TelemetryClient log, CarouselMessagesService botMessages, VerifyAllHelper verifyAll, IDateTimeNowProvider dateTimeNowProvider)
+        private readonly IEnvironmentHelper environmentHelper;
+        public List<TimedExecution> Actions { get; set; } = new List<TimedExecution>();
+        public TimedExecutionsHelper(TelemetryClient log, CarouselMessagesService botMessages, VerifyAllHelper verifyAll, IDateTimeNowProvider dateTimeNowProvider, IEnvironmentHelper environmentHelper)
         {
+            this.environmentHelper = environmentHelper;
             Actions.Add(new TimedExecution
             {
                 Name = "SetGameMessage",
@@ -20,7 +21,7 @@ namespace GreyOTron.Library.Helpers
                 EnqueueTime = dateTimeNowProvider.UtcNow,
                 NextOccurence = () => dateTimeNowProvider.UtcNow.Add(TimeSpan.FromSeconds(30))
             });
-            if (EnvironmentHelper.Is(Environments.Production))
+            if (environmentHelper.Is(Environments.Production))
             {
                 Actions.Add(new TimedExecution
                 {

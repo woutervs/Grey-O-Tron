@@ -1,5 +1,5 @@
 ﻿using System;
-using Microsoft.ApplicationInsights;
+using GreyOTron.Library.Interfaces;
 
 namespace GreyOTron.Library.Helpers
 {
@@ -10,9 +10,9 @@ namespace GreyOTron.Library.Helpers
         Production
     }
 
-    public static class EnvironmentHelper
+    public class EnvironmentHelper : IEnvironmentHelper
     {
-        static EnvironmentHelper()
+        public EnvironmentHelper()
         {
             var environmentVariable = Environment.GetEnvironmentVariable("Environment");
             if (!Enum.TryParse<Environments>(environmentVariable, true, out var environment))
@@ -22,10 +22,10 @@ namespace GreyOTron.Library.Helpers
             Current = environment;
         }
 
-        public static Environments Current { get; }
+        public Environments Current { get; }
 
 
-        public static bool Is(Environments environment)
+        public bool Is(Environments environment)
         {
             return Current == environment;
         }

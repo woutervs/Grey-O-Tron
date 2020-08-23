@@ -23,7 +23,8 @@ namespace GreyOTron.Api
                 webBuilder
                     .ConfigureAppConfiguration(configurationBuilder =>
                     {
-                        if (EnvironmentHelper.Is(Environments.Development))
+                        var environmentHelper = new EnvironmentHelper();
+                        if (environmentHelper.Is(Environments.Development))
                         {
                             configurationBuilder.AddUserSecrets<Program>();
                         }

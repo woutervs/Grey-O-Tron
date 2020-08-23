@@ -3,6 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Discord.WebSocket;
 using GreyOTron.Library.Helpers;
+using GreyOTron.Library.Interfaces;
 
 namespace GreyOTron.Library.Services
 {
@@ -10,9 +11,9 @@ namespace GreyOTron.Library.Services
     {
         private readonly CarrouselHelper messages;
 
-        public CarouselMessagesService()
+        public CarouselMessagesService(IEnvironmentHelper environmentHelper)
         {
-            switch (EnvironmentHelper.Current)
+            switch (environmentHelper.Current)
             {
                 case Environments.Development:
                     messages = new CarrouselHelper(

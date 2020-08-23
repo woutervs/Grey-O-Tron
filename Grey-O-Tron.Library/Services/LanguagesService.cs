@@ -22,6 +22,7 @@ namespace GreyOTron.Library.Services
 
         public List<string> Get()
         {
+            //TODO: resolve this once from resourcemanager.
             return new List<string>
             {
                 "en", "nl", "fr", "de"

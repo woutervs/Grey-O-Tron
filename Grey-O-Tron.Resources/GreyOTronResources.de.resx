@@ -142,9 +142,6 @@
   <data name="CommandNotFound" xml:space="preserve">
     <value>Sie haben versucht, '{0}' zu verwenden. Leider wurde mir dieser Befehl nicht beigebracht.</value>
   </data>
-  <data name="Unauthorized" xml:space="preserve">
-    <value>Es tut mir leid, dass Sie nicht berechtigt sind, diese Art von Informationen zu erhalten.</value>
-  </data>
   <data name="UnknownWorld" xml:space="preserve">
     <value>Konnte deine Welt nicht von '{0}' auflösen</value>
   </data>
@@ -249,5 +246,8 @@ Für weitere Informationen schreiben Sie mir 'got#help'!</value>
   </data>
   <data name="LanguageSet" xml:space="preserve">
     <value>Die Sprache '{0}' ist jetzt als bevorzugte Sprache für {1} festgelegt.</value>
+  </data>
+  <data name="Unauthorized" xml:space="preserve">
+    <value>Es tut mir leid, dass dieser Befehl nur für den Botowner ist!</value>
   </data>
 </root>

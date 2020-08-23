@@ -1,5 +1,6 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
+using Discord;
 using Discord.WebSocket;
 using GreyOTron.Library.Attributes;
 using GreyOTron.Library.Extensions;
@@ -23,40 +24,22 @@ namespace GreyOTron.Library.Commands
         }
 
 
-        public async Task Execute(SocketMessage message, CancellationToken cancellationToken)
+        public async Task Execute(IMessage message, CancellationToken cancellationToken)
         {
             if (cancellationToken.IsCancellationRequested) return;
-            if (message.Author is SocketGuildUser guildUser)
+            var guildUser = (IGuildUser)message.Author;
+            var language = Arguments.Trim().ToLowerInvariant();
+            var languageExists = languages.Exists(language);
+            if (languageExists)
             {
-
-                if (guildUser.IsAdminOrOwner())
-                {
-                    var language = Arguments.Trim().ToLowerInvariant();
-                    var languageExists = languages.Exists(language);
-                    if (languageExists)
-                    {
-                        await discordServerRepository.InsertOrUpdate(new DiscordServerDto
-                        { Id = guildUser.Guild.Id, Name = guildUser.Guild.Name, PreferredLanguage = language });
-                        languages.UpdateForServerId(guildUser.Guild.Id, language);
-                        await guildUser.InternalSendMessageAsync(nameof(GreyOTronResources.LanguageSet), language, guildUser.Guild.Name);
-                    }
-                    else
-                    {
-                        await guildUser.InternalSendMessageAsync(nameof(GreyOTronResources.InvalidLanguage), language);
-                    }
-                }
-                else
-                {
-                    await guildUser.InternalSendMessageAsync(nameof(GreyOTronResources.AdministrativePermissionsOnly), "set-server-language command");
-                }
+                await discordServerRepository.InsertOrUpdate(new DiscordServerDto
+                { Id = guildUser.Guild.Id, Name = guildUser.Guild.Name, PreferredLanguage = language });
+                languages.UpdateForServerId(guildUser.Guild.Id, language);
+                await guildUser.InternalSendMessageAsync(nameof(GreyOTronResources.LanguageSet), language, guildUser.Guild.Name);
             }
             else
             {
-                await message.Author.InternalSendMessageAsync(nameof(GreyOTronResources.ServerOnlyCommand), "set-server-language");
-            }
-            if (!(message.Channel is SocketDMChannel))
-            {
-                await message.DeleteAsync();
+                await guildUser.InternalSendMessageAsync(nameof(GreyOTronResources.InvalidLanguage), language);
             }
         }
 

@@ -24,7 +24,7 @@ namespace GreyOTron.Library.Extensions
 
         public static bool IsAdmin(this IUser user)
         {
-            return user is SocketGuildUser guildUser && guildUser.GuildPermissions.Administrator;
+            return user is IGuildUser guildUser && guildUser.GuildPermissions.Administrator;
         }
 
         public static string UserId(this IUser user)

@@ -11,9 +11,13 @@ namespace GreyOTron
     {
         public static IContainer Build()
         {
+            var environmentHelper = new EnvironmentHelper();
+
             var builder = new ContainerBuilder();
 
-            builder.RegisterInstance(BootstrapConfiguration()).As<IConfiguration>().SingleInstance();
+            builder.RegisterInstance(environmentHelper).AsImplementedInterfaces().SingleInstance();
+
+            builder.RegisterInstance(BootstrapConfiguration(environmentHelper)).As<IConfiguration>().SingleInstance();
 
             AutofacConfigurationHelper.BuildLibrary(ref builder);
 
@@ -25,7 +29,7 @@ namespace GreyOTron
             builder.RegisterType<AzureServiceTokenProvider>().SingleInstance();
             builder.RegisterType<Bot>().AsSelf().SingleInstance();
             
-            if (EnvironmentHelper.Is(Environments.Development))
+            if (environmentHelper.Is(Environments.Development))
             {
                 builder.RegisterType<SqlLocalDbConfiguration>().AsImplementedInterfaces().SingleInstance();
             }
@@ -38,18 +42,18 @@ namespace GreyOTron
             return builder.Build();
         }
 
-        private static IConfiguration BootstrapConfiguration()
+        private static IConfiguration BootstrapConfiguration(EnvironmentHelper environmentHelper)
         {
             Trace.WriteLine("Setting up configuration");
             var builder = new ConfigurationBuilder();
-            Trace.WriteLine(EnvironmentHelper.Current);
+            Trace.WriteLine(environmentHelper.Current);
 
-            if (EnvironmentHelper.Is(Environments.Development))
+            if (environmentHelper.Is(Environments.Development))
             {
                 builder.AddUserSecrets<Program>();
             }
             builder.AddJsonFile("app.json");
-            builder.AddJsonFile($"app.{EnvironmentHelper.Current.ToString().ToLowerInvariant()}.json", true);
+            builder.AddJsonFile($"app.{environmentHelper.Current.ToString().ToLowerInvariant()}.json", true);
             builder.AddEnvironmentVariables();
             return builder.Build();
         }

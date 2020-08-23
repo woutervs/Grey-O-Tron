@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Discord;
 using Discord.WebSocket;
 using GreyOTron.Library.ApiClients;
 using GreyOTron.Library.Attributes;
@@ -15,7 +16,7 @@ using Microsoft.ApplicationInsights;
 using Newtonsoft.Json;
 using Polly.CircuitBreaker;
 
-namespace GreyOTron.Library.Commands
+namespace GreyOTron.Library.Commands.GW2Commands
 {
     [Command("gw2-key", CommandDescription = "Stores Guild Wars 2 key in the database.", CommandArguments = "{key}", CommandOptions = CommandOptions.DirectMessage | CommandOptions.DiscordServer)]
     public class Gw2KeyCommand : ICommand
@@ -33,7 +34,7 @@ namespace GreyOTron.Library.Commands
             this.log = log;
         }
 
-        public async Task Execute(SocketMessage message, CancellationToken cancellationToken)
+        public async Task Execute(IMessage message, CancellationToken cancellationToken)
         {
             if (cancellationToken.IsCancellationRequested) return;
             var key = Arguments;
@@ -78,14 +79,14 @@ namespace GreyOTron.Library.Commands
                     {
                         await verifyUser.Execute(acInfo, guildUser, guildUser);
                     }
-                    else
+                    else if(message.Author is SocketUser socketUser)
                     {
-                        foreach (var guild in message.Author.MutualGuilds)
+                        foreach (var guild in socketUser.MutualGuilds)
                         {
                             guildUser = guild.GetUser(message.Author.Id);
                             await verifyUser.Execute(acInfo, guildUser, guildUser);
                         }
-                        await message.Author.InternalSendMessageAsync(nameof(GreyOTronResources.SuccessfullyVerified), message.Author.MutualGuilds.Aggregate("", (x, y) => $"{x}{y.Name}\n"));
+                        await message.Author.InternalSendMessageAsync(nameof(GreyOTronResources.SuccessfullyVerified), socketUser.MutualGuilds.Aggregate("", (x, y) => $"{x}{y.Name}\n"));
                     }
                 }
                 else
@@ -93,11 +94,6 @@ namespace GreyOTron.Library.Commands
                     await message.Author.InternalSendMessageAsync(nameof(GreyOTronResources.DiscordNameDifferentFromGw2Key), message.Author.Username, message.Author.Discriminator);
                     await message.Author.InternalSendMessageAsync(nameof(GreyOTronResources.FindYourGW2ApplicationKey));
                 }
-            }
-
-            if (!(message.Channel is SocketDMChannel))
-            {
-                await message.DeleteAsync();
             }
         }
 

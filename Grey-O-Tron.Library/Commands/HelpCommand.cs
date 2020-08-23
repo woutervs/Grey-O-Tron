@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Discord;
 using Discord.WebSocket;
 using GreyOTron.Library.Attributes;
 using GreyOTron.Library.Extensions;
@@ -18,7 +19,7 @@ namespace GreyOTron.Library.Commands
         {
             this.resolver = resolver;
         }
-        public async Task Execute(SocketMessage message, CancellationToken cancellationToken)
+        public async Task Execute(IMessage message, CancellationToken cancellationToken)
         {
             if (cancellationToken.IsCancellationRequested) return;
             var resolverCommands = resolver.Commands;
@@ -32,12 +33,6 @@ namespace GreyOTron.Library.Commands
                 resolverCommands = resolverCommands.Where(x => !x.Options.HasFlag(CommandOptions.RequiresAdmin));
             }
             await message.Author.InternalSendMessageAsync(nameof(GreyOTronResources.HelpMessage), $"{resolverCommands.Aggregate("", (s, command) => $"{s} {command}\n")}");
-
-
-            if (!(message.Channel is SocketDMChannel))
-            {
-                await message.DeleteAsync();
-            }
         }
         public string Arguments { get; set; }
         public DiscordSocketClient Client { get; set; }

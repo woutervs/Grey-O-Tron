@@ -1,9 +1,9 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
+using Discord;
 using Discord.WebSocket;
 using GreyOTron.Library.Attributes;
 using GreyOTron.Library.Extensions;
-using GreyOTron.Library.Helpers;
 using GreyOTron.Library.Interfaces;
 using GreyOTron.Library.Models;
 using GreyOTron.Library.Services;
@@ -23,7 +23,7 @@ namespace GreyOTron.Library.Commands
             this.languages = languages;
         }
 
-        public async Task Execute(SocketMessage message, CancellationToken cancellationToken)
+        public async Task Execute(IMessage message, CancellationToken cancellationToken)
         {
             if (cancellationToken.IsCancellationRequested) return;
             var language = Arguments.Trim().ToLowerInvariant();
@@ -38,11 +38,6 @@ namespace GreyOTron.Library.Commands
             else
             {
                 await message.Author.InternalSendMessageAsync(nameof(GreyOTronResources.InvalidLanguage), language);
-            }
-            
-            if (!(message.Channel is SocketDMChannel))
-            {
-                await message.DeleteAsync();
             }
         }
 

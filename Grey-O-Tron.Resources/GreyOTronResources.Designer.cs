@@ -310,7 +310,7 @@ namespace GreyOTron.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to I&apos;m sorry you&apos;re not authorized to receive this kind of information..
+        ///   Looks up a localized string similar to I&apos;m sorry this command is for the botowner only!.
         /// </summary>
         public static string Unauthorized {
             get {
