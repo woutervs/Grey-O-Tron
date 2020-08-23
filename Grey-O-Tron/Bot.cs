@@ -123,7 +123,7 @@ namespace GreyOTron
         {
             try
             {
-                await processor.Parse(socketMessage.Content).Execute(client, socketMessage, cancellationToken);
+                await processor.Parse(socketMessage).Execute(client, socketMessage, cancellationToken);
             }
             catch (Exception e)
             {

@@ -56,85 +56,90 @@ namespace GreyOTron.Library.Tests
         }
 
         [Theory]
-        [InlineData("got#exception", "", typeof(ExceptionCommand), Environments.Production)]
-        [InlineData(" got#gw2-key AEREQREW ", "AEREQREW", typeof(Gw2KeyCommand), Environments.Production)]
-        [InlineData("got#gw2-remove-key", "", typeof(Gw2RemoveKeyCommand), Environments.Production)]
-        [InlineData(" got#gw2-set-main-world 2003  ", "2003", typeof(Gw2SetMainWorldCommand), Environments.Production)]
-        [InlineData(" got#gw2-set-worlds 2003;Augury Rock;  ", "2003;Augury Rock;", typeof(Gw2SetWorldsCommand), Environments.Production)]
-        [InlineData(" got#gw2-verify", "", typeof(Gw2VerifyCommand), Environments.Production)]
-        [InlineData(" got#help ", "", typeof(HelpCommand), Environments.Production)]
-        [InlineData("    got#joke ", "", typeof(JokeCommand), Environments.Production)]
-        [InlineData("    got#open-breaker ", "", typeof(OpenBreakerCommand), Environments.Production)]
-        [InlineData(" got#servers  ", "", typeof(ServersCommand), Environments.Production)]
-        [InlineData(" got#set-language nl  ", "nl", typeof(SetLanguageCommand), Environments.Production)]
-        [InlineData(" got#set-server-language nl  ", "nl", typeof(SetServerLanguageCommand), Environments.Production)]
-        [InlineData(" got#gw2-sync-roles", "", typeof(Gw2SyncRolesCommand), Environments.Production)]
-        [InlineData(" got#version", "", typeof(VersionCommand), Environments.Production)]
-        public void TestCommandProcessor_Expecting_Success_In_Production(string messageText, string arguments, Type commandType, Environments environment)
+        [GreyOTronLibraryInlineAutoData("got#exception", "", typeof(ExceptionCommand), Environments.Production)]
+        [GreyOTronLibraryInlineAutoData(" got#gw2-key AEREQREW ", "AEREQREW", typeof(Gw2KeyCommand), Environments.Production)]
+        [GreyOTronLibraryInlineAutoData("got#gw2-remove-key", "", typeof(Gw2RemoveKeyCommand), Environments.Production)]
+        [GreyOTronLibraryInlineAutoData(" got#gw2-set-main-world 2003  ", "2003", typeof(Gw2SetMainWorldCommand), Environments.Production)]
+        [GreyOTronLibraryInlineAutoData(" got#gw2-set-worlds 2003;Augury Rock;  ", "2003;Augury Rock;", typeof(Gw2SetWorldsCommand), Environments.Production)]
+        [GreyOTronLibraryInlineAutoData(" got#gw2-verify", "", typeof(Gw2VerifyCommand), Environments.Production)]
+        [GreyOTronLibraryInlineAutoData(" got#help ", "", typeof(HelpCommand), Environments.Production)]
+        [GreyOTronLibraryInlineAutoData("    got#joke ", "", typeof(JokeCommand), Environments.Production)]
+        [GreyOTronLibraryInlineAutoData("    got#open-breaker ", "", typeof(OpenBreakerCommand), Environments.Production)]
+        [GreyOTronLibraryInlineAutoData(" got#servers  ", "", typeof(ServersCommand), Environments.Production)]
+        [GreyOTronLibraryInlineAutoData(" got#set-language nl  ", "nl", typeof(SetLanguageCommand), Environments.Production)]
+        [GreyOTronLibraryInlineAutoData(" got#set-server-language nl  ", "nl", typeof(SetServerLanguageCommand), Environments.Production)]
+        [GreyOTronLibraryInlineAutoData(" got#gw2-sync-roles", "", typeof(Gw2SyncRolesCommand), Environments.Production)]
+        [GreyOTronLibraryInlineAutoData(" got#version", "", typeof(VersionCommand), Environments.Production)]
+        public void TestCommandProcessor_Expecting_Success_In_Production(string messageText, string arguments, Type commandType, Environments environment, IMessage message)
         {
             //arrange
             autoMockFixture.InitAutoMock(environment, commandType);
             var commandProcessor = autoMockFixture.Mock.Create<CommandProcessor>();
+            A.CallTo(() => message.Content).Returns(messageText);
             //act
-            var result = commandProcessor.Parse(messageText).Value;
+            var result = commandProcessor.Parse(message).Value;
             //assert
             result.Should().BeOfType(commandType);
             result.Arguments.Should().Be(arguments);
         }
 
         [Theory]
-        [InlineData("got#exception", typeof(ExceptionCommand), Environments.Maintenance)]
-        [InlineData(" got#gw2-key AEREQREW ", typeof(Gw2KeyCommand), Environments.Maintenance)]
-        [InlineData("got#gw2-remove-key", typeof(Gw2RemoveKeyCommand), Environments.Maintenance)]
-        [InlineData(" got#gw2-set-main-world 2003  ", typeof(Gw2SetMainWorldCommand), Environments.Maintenance)]
-        [InlineData(" got#gw2-set-worlds 2003;Augury Rock;  ", typeof(Gw2SetWorldsCommand), Environments.Maintenance)]
-        [InlineData(" got#gw2-verify", typeof(Gw2VerifyCommand), Environments.Maintenance)]
-        [InlineData(" got#help ", typeof(HelpCommand), Environments.Maintenance)]
-        [InlineData("    got#joke ", typeof(JokeCommand), Environments.Maintenance)]
-        [InlineData("    got#open-breaker ", typeof(OpenBreakerCommand), Environments.Maintenance)]
-        [InlineData(" got#servers  ", typeof(ServersCommand), Environments.Maintenance)]
-        [InlineData(" got#set-language nl  ", typeof(SetLanguageCommand), Environments.Maintenance)]
-        [InlineData(" got#set-server-language nl  ", typeof(SetServerLanguageCommand), Environments.Maintenance)]
-        [InlineData(" got#gw2-sync-roles", typeof(Gw2SyncRolesCommand), Environments.Maintenance)]
-        [InlineData(" got#version", typeof(VersionCommand), Environments.Maintenance)]
-        public void TestCommandProcessor_Expecting_Maintenance(string messageText, Type commandType, Environments environment)
+        [GreyOTronLibraryInlineAutoData("got#exception", typeof(ExceptionCommand), Environments.Maintenance)]
+        [GreyOTronLibraryInlineAutoData(" got#gw2-key AEREQREW ", typeof(Gw2KeyCommand), Environments.Maintenance)]
+        [GreyOTronLibraryInlineAutoData("got#gw2-remove-key", typeof(Gw2RemoveKeyCommand), Environments.Maintenance)]
+        [GreyOTronLibraryInlineAutoData(" got#gw2-set-main-world 2003  ", typeof(Gw2SetMainWorldCommand), Environments.Maintenance)]
+        [GreyOTronLibraryInlineAutoData(" got#gw2-set-worlds 2003;Augury Rock;  ", typeof(Gw2SetWorldsCommand), Environments.Maintenance)]
+        [GreyOTronLibraryInlineAutoData(" got#gw2-verify", typeof(Gw2VerifyCommand), Environments.Maintenance)]
+        [GreyOTronLibraryInlineAutoData(" got#help ", typeof(HelpCommand), Environments.Maintenance)]
+        [GreyOTronLibraryInlineAutoData("    got#joke ", typeof(JokeCommand), Environments.Maintenance)]
+        [GreyOTronLibraryInlineAutoData("    got#open-breaker ", typeof(OpenBreakerCommand), Environments.Maintenance)]
+        [GreyOTronLibraryInlineAutoData(" got#servers  ", typeof(ServersCommand), Environments.Maintenance)]
+        [GreyOTronLibraryInlineAutoData(" got#set-language nl  ", typeof(SetLanguageCommand), Environments.Maintenance)]
+        [GreyOTronLibraryInlineAutoData(" got#set-server-language nl  ", typeof(SetServerLanguageCommand), Environments.Maintenance)]
+        [GreyOTronLibraryInlineAutoData(" got#gw2-sync-roles", typeof(Gw2SyncRolesCommand), Environments.Maintenance)]
+        [GreyOTronLibraryInlineAutoData(" got#version", typeof(VersionCommand), Environments.Maintenance)]
+        public void TestCommandProcessor_Expecting_Maintenance(string messageText, Type commandType, Environments environment, IMessage message)
         {
             //arrange
             autoMockFixture.InitAutoMock(environment, commandType);
             var commandProcessor = autoMockFixture.Mock.Create<CommandProcessor>();
+            A.CallTo(() => message.Content).Returns(messageText);
+            A.CallTo(() => message.Author.Id).Returns((ulong)1);
             //act
-            var result = commandProcessor.Parse(messageText).Value;
+            var result = commandProcessor.Parse(message).Value;
             //assert
             result.Should().BeOfType<MaintenanceCommand>();
             result.Arguments.Should().BeNullOrEmpty();
         }
 
         [Theory]
-        [InlineData("some text", typeof(VersionCommand), Environments.Production)]
-        [InlineData("some text", typeof(VersionCommand), Environments.Maintenance)]
-        [InlineData("some text", typeof(VersionCommand), Environments.Development)]
-        public void TestCommandProcessor_Expecting_Null(string messageText, Type commandType, Environments environment)
+        [GreyOTronLibraryInlineAutoData("some text", typeof(VersionCommand), Environments.Production)]
+        [GreyOTronLibraryInlineAutoData("some text", typeof(VersionCommand), Environments.Maintenance)]
+        [GreyOTronLibraryInlineAutoData("some text", typeof(VersionCommand), Environments.Development)]
+        public void TestCommandProcessor_Expecting_Null(string messageText, Type commandType, Environments environment, IMessage message)
         {
             //arrange
             autoMockFixture.InitAutoMock(environment, commandType);
             var commandProcessor = autoMockFixture.Mock.Create<CommandProcessor>();
+            A.CallTo(() => message.Content).Returns(messageText);
             //act
-            var result = commandProcessor.Parse(messageText).Value;
+            var result = commandProcessor.Parse(message).Value;
             //assert
             result.Should().BeOfType<NullCommand>();
             result.Arguments.Should().BeNull();
         }
 
         [Theory]
-        [InlineData("got#command-that-doesn't-exist", "command-that-doesn't-exist", typeof(VersionCommand), Environments.Production)]
-        [InlineData("got#command-that-doesn't-exist", "command-that-doesn't-exist", typeof(VersionCommand), Environments.Development)]
-        public void TestCommandProcessor_Expecting_NotFound(string messageText, string arguments, Type commandType, Environments environment)
+        [GreyOTronLibraryInlineAutoData("got#command-that-doesn't-exist", "command-that-doesn't-exist", typeof(VersionCommand), Environments.Production)]
+        [GreyOTronLibraryInlineAutoData("got#command-that-doesn't-exist", "command-that-doesn't-exist", typeof(VersionCommand), Environments.Development)]
+        public void TestCommandProcessor_Expecting_NotFound(string messageText, string arguments, Type commandType, Environments environment, IMessage message)
         {
             //arrange
             autoMockFixture.InitAutoMock(environment, commandType);
             var commandProcessor = autoMockFixture.Mock.Create<CommandProcessor>();
+            A.CallTo(() => message.Content).Returns(messageText);
             //act
-            var result = commandProcessor.Parse(messageText).Value;
+            var result = commandProcessor.Parse(message).Value;
             //assert
             result.Should().BeOfType<NotFoundCommand>();
             result.Arguments.Should().Be(arguments);
@@ -165,8 +170,9 @@ namespace GreyOTron.Library.Tests
             var permissions = new GuildPermissions(administrator: false);
             A.CallTo(() => guildUser.GuildPermissions).Returns(permissions);
             var command = new Fake<ICommand>();
+            A.CallTo(() => message.Content).Returns(messageText);
             //act
-            var result = commandProcessor.Parse(messageText);
+            var result = commandProcessor.Parse(message);
             var toExecute = new Meta<ICommand>(command.FakedObject, result.Metadata);
             await toExecute.Execute(null, message, CancellationToken.None);
             //assert
@@ -199,8 +205,9 @@ namespace GreyOTron.Library.Tests
             var permissions = new GuildPermissions(administrator: true);
             A.CallTo(() => guildUser.GuildPermissions).Returns(permissions);
             var command = new Fake<ICommand>();
+            A.CallTo(() => message.Content).Returns(messageText);
             //act
-            var result = commandProcessor.Parse(messageText);
+            var result = commandProcessor.Parse(message);
             var toExecute = new Meta<ICommand>(command.FakedObject, result.Metadata);
             await toExecute.Execute(null, message, CancellationToken.None);
             //assert
@@ -240,8 +247,9 @@ namespace GreyOTron.Library.Tests
             var permissions = new GuildPermissions(administrator: false);
             A.CallTo(() => guildUser.GuildPermissions).Returns(permissions);
             var command = new Fake<ICommand>();
+            A.CallTo(() => message.Content).Returns(messageText);
             //act
-            var result = commandProcessor.Parse(messageText);
+            var result = commandProcessor.Parse(message);
             var toExecute = new Meta<ICommand>(command.FakedObject, result.Metadata);
             await toExecute.Execute(null, message, CancellationToken.None);
             //assert
@@ -279,8 +287,9 @@ namespace GreyOTron.Library.Tests
             var commandProcessor = autoMockFixture.Mock.Create<CommandProcessor>();
             A.CallTo(() => message.Author).Returns(user);
             var command = new Fake<ICommand>();
+            A.CallTo(() => message.Content).Returns(messageText);
             //act
-            var result = commandProcessor.Parse(messageText);
+            var result = commandProcessor.Parse(message);
             var toExecute = new Meta<ICommand>(command.FakedObject, result.Metadata);
             await toExecute.Execute(null, message, CancellationToken.None);
             //assert

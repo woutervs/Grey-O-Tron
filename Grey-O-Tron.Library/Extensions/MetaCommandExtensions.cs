@@ -5,6 +5,7 @@ using Autofac.Features.Metadata;
 using Discord;
 using Discord.WebSocket;
 using GreyOTron.Library.Attributes;
+using GreyOTron.Library.Commands.ManualCommands;
 using GreyOTron.Library.Interfaces;
 using GreyOTron.Resources;
 
@@ -60,7 +61,7 @@ namespace GreyOTron.Library.Extensions
             {
                 await commandWithMeta.Value.Execute(message, cancellationToken);
             }
-            if (!(message.Channel is SocketDMChannel))
+            if (!(message.Channel is SocketDMChannel) && !(commandWithMeta.Value is NullCommand))
             {
                 await message.DeleteAsync();
             }
