@@ -9,11 +9,9 @@ namespace GreyOTron.Library.Helpers
 {
     public class TimedExecutionsHelper
     {
-        private readonly IEnvironmentHelper environmentHelper;
         public List<TimedExecution> Actions { get; set; } = new List<TimedExecution>();
         public TimedExecutionsHelper(TelemetryClient log, CarouselMessagesService botMessages, VerifyAllHelper verifyAll, IDateTimeNowProvider dateTimeNowProvider, IEnvironmentHelper environmentHelper)
         {
-            this.environmentHelper = environmentHelper;
             Actions.Add(new TimedExecution
             {
                 Name = "SetGameMessage",

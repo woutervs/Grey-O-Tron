@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Discord;
 using Discord.WebSocket;
 using GreyOTron.Library.ApiClients;
 using GreyOTron.Library.Exceptions;
@@ -33,10 +34,15 @@ namespace GreyOTron.Library.Helpers
             this.verifyUser = verifyUser;
         }
 
-        public async Task Execute(DiscordSocketClient client, CancellationToken cancellationToken)
+        public async Task Execute(IDiscordClient client, CancellationToken cancellationToken)
         {
-            await client.SetGameAsync("Verifying users.");
-            var guildUsersQueue = new Queue<SocketGuildUser>(client.Guilds.SelectMany(x => x.Users));
+            if (!(client is DiscordSocketClient socketClient))
+            {
+                return;
+            }
+
+            await socketClient.SetGameAsync("Verifying users.");
+            var guildUsersQueue = new Queue<SocketGuildUser>(socketClient.Guilds.SelectMany(x => x.Users));
             log.TrackEvent("UserVerification.Started",
                 metrics: new Dictionary<string, double> { { "Count", guildUsersQueue.Count } });
             var stopWatch = Stopwatch.StartNew();
@@ -60,7 +66,7 @@ namespace GreyOTron.Library.Helpers
                             catch (InvalidKeyException)
                             {
                                 await guildUser.InternalSendMessageAsync(nameof(GreyOTronResources.InvalidApiKey));
-                                await removeUser.Execute(client, guildUser, client.Guilds, cancellationToken);
+                                await removeUser.Execute(socketClient, guildUser, socketClient.Guilds, cancellationToken);
                                 throw;
                             }
 
@@ -68,7 +74,7 @@ namespace GreyOTron.Library.Helpers
                         }
                         catch (Exception e)
                         {
-                            ExceptionHandler.HandleException(client, log, e, guildUser);
+                            ExceptionHandler.HandleException(socketClient, log, e, guildUser);
                         }
                     });
                 guildUsersQueue.Dequeue();

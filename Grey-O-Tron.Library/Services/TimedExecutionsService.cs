@@ -5,6 +5,7 @@ using System.Globalization;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Discord;
 using Discord.WebSocket;
 using GreyOTron.Library.Interfaces;
 using GreyOTron.Library.Models;
@@ -33,7 +34,7 @@ namespace GreyOTron.Library.Services
             await Task.CompletedTask;
         }
 
-        public async Task Setup(DiscordSocketClient client)
+        public async Task Setup(IDiscordClient client)
         {
             while (true)
             {

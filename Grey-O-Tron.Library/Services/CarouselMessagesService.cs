@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using Discord;
+using Discord.Net.WebSockets;
 using Discord.WebSocket;
 using GreyOTron.Library.Helpers;
 using GreyOTron.Library.Interfaces;
@@ -42,11 +44,15 @@ namespace GreyOTron.Library.Services
             }
         }
 
-        public async Task SetNextMessage(DiscordSocketClient client, CancellationToken token)
+        public async Task SetNextMessage(IDiscordClient client, CancellationToken token)
         {
             if (!token.IsCancellationRequested)
             {
-                await client.SetGameAsync(messages.Next());
+                if (!(client is DiscordSocketClient socketClient))
+                {
+                    return;
+                }
+                await socketClient.SetGameAsync(messages.Next());
             }
         }
     }

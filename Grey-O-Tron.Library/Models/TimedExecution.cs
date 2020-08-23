@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Discord.WebSocket;
+using Discord;
 
 namespace GreyOTron.Library.Models
 {
@@ -9,7 +9,7 @@ namespace GreyOTron.Library.Models
     {
         public string Name { get; set; }
         public DateTime EnqueueTime { get; set; }
-        public Func<DiscordSocketClient, CancellationToken, Task> Action { get; set; }
+        public Func<IDiscordClient, CancellationToken, Task> Action { get; set; }
         public Func<DateTime> NextOccurence { get; set; }
     }
 }
