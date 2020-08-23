@@ -1,9 +1,9 @@
-﻿using GreyOTron.Library.Helpers;
-using Xunit;
-using FluentAssertions;
+﻿using FluentAssertions;
+using GreyOTron.Library.Helpers;
 using GreyOTron.Library.Services;
+using Xunit;
 
-namespace Grey_O_Tron.Library.Tests
+namespace GreyOTron.Library.Tests
 {
     public class TranslationsTests
     {

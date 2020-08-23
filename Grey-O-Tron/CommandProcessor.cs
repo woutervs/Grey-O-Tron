@@ -32,12 +32,11 @@ namespace GreyOTron
                 return new MaintenanceCommand();
             }
             
-            var commandName = message.Substring(prefix.Length, message.Length - prefix.Length);
+            var commandName = message[prefix.Length..];
             var i = commandName.IndexOf(' ');
             if (i >= 0)
             {
-                var j = i + 1;
-                message = commandName.Substring(j, commandName.Length - j);
+                message = commandName[(i+1)..];
                 commandName = commandName.Substring(0, i).ToLowerInvariant();
             }
             else

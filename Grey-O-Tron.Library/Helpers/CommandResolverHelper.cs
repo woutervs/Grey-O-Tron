@@ -2,6 +2,7 @@
 using System.Linq;
 using Autofac;
 using Autofac.Features.Metadata;
+using GreyOTron.Library.Attributes;
 using GreyOTron.Library.Interfaces;
 using GreyOTron.Library.Models;
 using Microsoft.Extensions.Configuration;

@@ -2,7 +2,7 @@ using GreyOTron.Library.ApiClients;
 using GreyOTron.Library.Helpers;
 using Xunit;
 
-namespace Grey_O_Tron.Library.Tests
+namespace GreyOTron.Library.Tests
 {
     public class Gw2ApiTests
     {

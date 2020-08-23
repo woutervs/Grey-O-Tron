@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Discord.WebSocket;
+using GreyOTron.Library.Attributes;
 using GreyOTron.Library.Exceptions;
 using GreyOTron.Library.Extensions;
 using GreyOTron.Library.Helpers;

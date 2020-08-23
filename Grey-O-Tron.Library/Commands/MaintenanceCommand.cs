@@ -2,7 +2,6 @@
 using System.Threading.Tasks;
 using Discord;
 using Discord.WebSocket;
-using GreyOTron.Library.Helpers;
 using GreyOTron.Library.Interfaces;
 
 namespace GreyOTron.Library.Commands

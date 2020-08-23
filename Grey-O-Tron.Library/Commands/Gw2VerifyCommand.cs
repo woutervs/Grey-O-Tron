@@ -5,6 +5,7 @@ using GreyOTron.Library.Helpers;
 using Polly.CircuitBreaker;
 using System.Threading;
 using System.Threading.Tasks;
+using GreyOTron.Library.Attributes;
 using GreyOTron.Library.Extensions;
 using GreyOTron.Library.Interfaces;
 using GreyOTron.Resources;
@@ -12,14 +13,14 @@ using GreyOTron.Resources;
 namespace GreyOTron.Library.Commands
 {
     [Command("gw2-verify", CommandDescription = "Use the stored Guild Wars 2 key to verify if a user belongs to worlds set by the discord server.", CommandOptions = CommandOptions.DiscordServer)]
-    public class VerifyCommand : ICommand
+    public class Gw2VerifyCommand : ICommand
     {
         private readonly IGw2DiscordUserRepository gw2ApiKeyRepository;
         private readonly Gw2Api gw2Api;
         private readonly VerifyUserHelper verifyUser;
         private readonly RemoveUserHelper removeUser;
 
-        public VerifyCommand(IGw2DiscordUserRepository gw2ApiKeyRepository, Gw2Api gw2Api, VerifyUserHelper verifyUser, RemoveUserHelper removeUser)
+        public Gw2VerifyCommand(IGw2DiscordUserRepository gw2ApiKeyRepository, Gw2Api gw2Api, VerifyUserHelper verifyUser, RemoveUserHelper removeUser)
         {
             this.gw2ApiKeyRepository = gw2ApiKeyRepository;
             this.gw2Api = gw2Api;

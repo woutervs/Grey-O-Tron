@@ -1,7 +1,7 @@
 ﻿using System;
 using System.ComponentModel.Composition;
 
-namespace GreyOTron.Library.Helpers
+namespace GreyOTron.Library.Attributes
 {
     [MetadataAttribute]
     public class CommandAttribute : Attribute

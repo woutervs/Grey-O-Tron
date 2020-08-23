@@ -2,8 +2,8 @@
 using System.Threading.Tasks;
 using Discord.WebSocket;
 using GreyOTron.Library.ApiClients;
+using GreyOTron.Library.Attributes;
 using GreyOTron.Library.Extensions;
-using GreyOTron.Library.Helpers;
 using GreyOTron.Library.Interfaces;
 using GreyOTron.Library.Models;
 using GreyOTron.Resources;
@@ -11,12 +11,12 @@ using GreyOTron.Resources;
 namespace GreyOTron.Library.Commands
 {
     [Command("gw2-set-main-world", CommandDescription = "Stores the discord server's main world to the database.", CommandArguments = "{world (name|id)}", CommandOptions = CommandOptions.DiscordServer | CommandOptions.RequiresAdmin)]
-    public class SetMainWorldCommand : ICommand
+    public class Gw2SetMainWorldCommand : ICommand
     {
         private readonly IGw2DiscordServerRepository gw2DiscordServerRepository;
         private readonly Gw2Api gw2Api;
 
-        public SetMainWorldCommand(IGw2DiscordServerRepository gw2DiscordServerRepository, Gw2Api gw2Api)
+        public Gw2SetMainWorldCommand(IGw2DiscordServerRepository gw2DiscordServerRepository, Gw2Api gw2Api)
         {
             this.gw2DiscordServerRepository = gw2DiscordServerRepository;
             this.gw2Api = gw2Api;
