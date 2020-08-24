@@ -96,7 +96,7 @@ namespace GreyOTron.Library.Helpers
                         role = gw2AccountInfo.WorldInfo.Name;
 
                     }
-                    else if (gw2AccountInfo.WorldInfo.LinkedWorlds.Any(x => string.Equals(x.Name, gw2DiscordServer?.MainWorld.Name, StringComparison.InvariantCultureIgnoreCase)))
+                    else if (gw2AccountInfo.WorldInfo.LinkedWorlds.Any(x => string.Equals(x.Name, gw2DiscordServer?.MainWorld?.Name, StringComparison.InvariantCultureIgnoreCase)))
                     {
                         role = configuration["LinkedServerRole"];
 
