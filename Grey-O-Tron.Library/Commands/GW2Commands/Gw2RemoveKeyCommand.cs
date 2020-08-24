@@ -1,10 +1,13 @@
-﻿using System.Threading;
+﻿using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Discord;
 using Discord.WebSocket;
 using GreyOTron.Library.Attributes;
+using GreyOTron.Library.Extensions;
 using GreyOTron.Library.Helpers;
 using GreyOTron.Library.Interfaces;
+using Microsoft.ApplicationInsights;
 
 namespace GreyOTron.Library.Commands.GW2Commands
 {
