@@ -51,7 +51,7 @@ namespace GreyOTron.Library.Helpers
 
             var userOwnedRolesMatchingWorlds = guildUser.Roles.Where(x => worlds.Any(y => y.Equals(x.Name, StringComparison.InvariantCultureIgnoreCase)) || x.Name.Equals(configuration["LinkedServerRole"], StringComparison.InvariantCultureIgnoreCase)).ToList();
 
-            if (gw2AccountInfo.TokenInfo.Name != $"{guildUser.Username}#{guildUser.Discriminator}")
+            if (gw2AccountInfo.TokenInfo.Name != guildUser.UserId())
             {
                 if (contextUserIsNotGuildUser)
                 {

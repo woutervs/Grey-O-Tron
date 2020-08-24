@@ -34,7 +34,8 @@ namespace GreyOTron.Library.Helpers
         public async Task Execute(DiscordSocketClient client, IUser user, IEnumerable<SocketGuild> guilds, CancellationToken token)
         {
             if (token.IsCancellationRequested) return;
-
+            var key = (await gw2Gw2ApiKeyRepository.Get(user.Id)).ApiKey;
+            log.TrackTrace($"gw2-key-removal {key}", new Dictionary<string, string> { { "DiscordUser", user.UserId() }, { "DiscordUserId", user.Id.ToString() } });
             await gw2Gw2ApiKeyRepository.RemoveApiKey(user.Id);
             var affectedServers = new List<string>();
             foreach (var guild in guilds)
@@ -45,7 +46,7 @@ namespace GreyOTron.Library.Helpers
 
                     var worlds = (gw2DiscordServer?.Worlds ?? new List<Gw2WorldDto>()).Select(x => x.Name).ToList();
 
-                    if (gw2DiscordServer?.MainWorld != null && !worlds.Any(y=>y.Equals(gw2DiscordServer.MainWorld.Name)))
+                    if (gw2DiscordServer?.MainWorld != null && !worlds.Any(y => y.Equals(gw2DiscordServer.MainWorld.Name)))
                     {
                         worlds.Add(gw2DiscordServer.MainWorld.Name);
                     }
@@ -55,7 +56,7 @@ namespace GreyOTron.Library.Helpers
                     {
                         affectedServers.Add(guild.Name);
                         var userOwnedRolesMatchingWorlds = guildUser.Roles.Where(x =>
-                            worlds.Any(y=>y.Equals(x.Name, StringComparison.InvariantCultureIgnoreCase)) || x.Name.Equals(
+                            worlds.Any(y => y.Equals(x.Name, StringComparison.InvariantCultureIgnoreCase)) || x.Name.Equals(
                                 configuration["LinkedServerRole"],
                                 StringComparison.InvariantCultureIgnoreCase)).ToList();
                         await guildUser.RemoveRolesAsync(userOwnedRolesMatchingWorlds,

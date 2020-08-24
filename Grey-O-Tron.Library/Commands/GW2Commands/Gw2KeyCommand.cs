@@ -59,8 +59,9 @@ namespace GreyOTron.Library.Commands.GW2Commands
                     await message.Author.InternalSendMessageAsync(nameof(GreyOTronResources.InvalidApiKey));
                     throw;
                 }
-                log.TrackTrace(message.Content, new Dictionary<string, string> { { "DiscordUser", message.Author.UserId() }, { "AccountInfo", JsonConvert.SerializeObject(acInfo, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }) } });
-                if (acInfo?.TokenInfo?.Name == $"{message.Author.Username}#{message.Author.Discriminator}")
+                var guildUser = message.Author as SocketGuildUser;
+                log.TrackTrace(message.Content, new Dictionary<string, string> { { "DiscordUser", message.Author.UserId() }, { "DiscordServer", guildUser?.Guild.Name }, { "AccountInfo", JsonConvert.SerializeObject(acInfo, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }) } });
+                if (acInfo?.TokenInfo?.Name == message.Author.UserId())
                 {
                     var gw2DiscordUser = new Gw2DiscordUser
                     {
@@ -75,11 +76,11 @@ namespace GreyOTron.Library.Commands.GW2Commands
                     };
                     await gw2Gw2ApiKeyRepository.InsertOrUpdate(gw2DiscordUser);
 
-                    if (message.Author is SocketGuildUser guildUser)
+                    if (guildUser != null)
                     {
                         await verifyUser.Execute(acInfo, guildUser, guildUser);
                     }
-                    else if(message.Author is SocketUser socketUser)
+                    else if (message.Author is SocketUser socketUser)
                     {
                         foreach (var guild in socketUser.MutualGuilds)
                         {
