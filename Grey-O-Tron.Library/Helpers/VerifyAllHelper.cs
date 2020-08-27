@@ -34,14 +34,16 @@ namespace GreyOTron.Library.Helpers
             this.verifyUser = verifyUser;
         }
 
+        public bool IsExecuting { get; private set; } = false;
+
         public async Task Execute(IDiscordClient client, CancellationToken cancellationToken)
         {
             if (!(client is DiscordSocketClient socketClient))
             {
                 return;
             }
-
-            await socketClient.SetGameAsync("Verifying users.");
+            IsExecuting = true;
+            await socketClient.SetGameAsync("Verifying users.", null, ActivityType.CustomStatus);
             var guildUsersQueue = new Queue<SocketGuildUser>(socketClient.Guilds.SelectMany(x => x.Users));
             log.TrackEvent("UserVerification.Started",
                 metrics: new Dictionary<string, double> { { "Count", guildUsersQueue.Count } });
@@ -80,6 +82,8 @@ namespace GreyOTron.Library.Helpers
                 guildUsersQueue.Dequeue();
             }
             stopWatch.Stop();
+            await socketClient.SetGameAsync("Successfully re-verified users.", null, ActivityType.CustomStatus);
+            IsExecuting = false;
             log.TrackEvent("UserVerification.Ended",
                 new Dictionary<string, string> { { "run-time", stopWatch.Elapsed.ToString("c") } });
         }
