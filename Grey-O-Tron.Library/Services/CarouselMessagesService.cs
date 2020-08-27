@@ -43,7 +43,7 @@ namespace GreyOTron.Library.Services
                             new GameMessage {ActivityType = ActivityType.Playing, Message = $"v{VersionResolverHelper.Get()}"},
                             new GameMessage {ActivityType = ActivityType.Watching, Url = "https://greyotron.eu",Message = "greyotron.eu"},
                             new GameMessage {ActivityType = ActivityType.Listening, Message = "got#help"},
-                            new GameMessage {ActivityType = ActivityType.Streaming, Message = "how to assign a role", Url = "https://greyotron.eu/how-to/get-a-role"}
+                            //new GameMessage {ActivityType = ActivityType.Streaming, Message = "how to assign a role", Url = "https://greyotron.eu/how-to/get-a-role"}
                         });
 
                     break;
@@ -60,7 +60,7 @@ namespace GreyOTron.Library.Services
                 }
 
                 var next = messages.Next();
-                await socketClient.SetGameAsync(next.Message, null, next.ActivityType);
+                await socketClient.SetGameAsync(next.Message, next.Url, next.ActivityType); //Url functionality doesn't seem to do anything yet...
             }
         }
     }
