@@ -11,6 +11,7 @@ namespace GreyOTron.Library.Services
     public class GameMessage
     {
         public string Message { get; set; }
+        public string Url { get; set; }
         public ActivityType ActivityType { get; set; }
     }
     public class CarouselMessagesService
@@ -40,8 +41,9 @@ namespace GreyOTron.Library.Services
                         new List<GameMessage>
                         {
                             new GameMessage {ActivityType = ActivityType.Playing, Message = $"v{VersionResolverHelper.Get()}"},
-                            new GameMessage {ActivityType = ActivityType.Watching, Message = "greyotron.eu"},
-                            new GameMessage {ActivityType = ActivityType.Listening, Message = "to got#help"}
+                            new GameMessage {ActivityType = ActivityType.Watching, Url = "https://greyotron.eu",Message = "greyotron.eu"},
+                            new GameMessage {ActivityType = ActivityType.Listening, Message = "got#help"},
+                            new GameMessage {ActivityType = ActivityType.Streaming, Message = "how to assign a role", Url = "https://greyotron.eu/how-to/get-a-role"}
                         });
 
                     break;
