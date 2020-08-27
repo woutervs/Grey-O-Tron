@@ -15,7 +15,13 @@ namespace GreyOTron.Library.Helpers
             Actions.Add(new TimedExecution
             {
                 Name = "SetGameMessage",
-                Action = async (d, c) => await botMessages.SetNextMessage(d, c),
+                Action = async (d, c) =>
+                {
+                    if (!verifyAll.IsExecuting)
+                    {
+                        await botMessages.SetNextMessage(d, c);
+                    }
+                },
                 EnqueueTime = dateTimeNowProvider.UtcNow,
                 NextOccurence = () => dateTimeNowProvider.UtcNow.Add(TimeSpan.FromSeconds(30))
             });

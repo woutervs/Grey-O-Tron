@@ -20,7 +20,7 @@ namespace GreyOTron.Library.Services
         private readonly IDateTimeNowProvider dateTimeNowProvider;
         private readonly List<TimedExecution> actions;
         private bool running;
-        public TimedExecutionsService(TelemetryClient log,IDateTimeNowProvider dateTimeNowProvider , [NotNull] List<TimedExecution> actions)
+        public TimedExecutionsService(TelemetryClient log, IDateTimeNowProvider dateTimeNowProvider, [NotNull] List<TimedExecution> actions)
         {
             this.log = log;
             this.dateTimeNowProvider = dateTimeNowProvider;
@@ -36,33 +36,42 @@ namespace GreyOTron.Library.Services
 
         public async Task Setup(IDiscordClient client)
         {
+            var epsilon = TimeSpan.FromSeconds(30).TotalMilliseconds;
             while (true)
             {
-                var action = actions.FirstOrDefault(x => x.EnqueueTime <= dateTimeNowProvider.UtcNow);
-                if (action != null && running)
+                var current = dateTimeNowProvider.UtcNow;
+                actions.Where(x => x.EnqueueTime < current.AddMilliseconds(-epsilon / 2)).ToList().ForEach(x => x.EnqueueTime = x.NextOccurence());
+                var actionsToExecute = actions.Where(x => x.EnqueueTime >= current.AddMilliseconds(-epsilon / 2) && x.EnqueueTime <= current.AddMilliseconds(epsilon / 2)).ToList();
+                if (actionsToExecute.Any() && running)
                 {
-                    var nextOccurence = action.NextOccurence();
-                    try
+                    var tasks = actionsToExecute.Select(x =>
                     {
-                        await action.Action(client, cancellationTokenSource.Token);
-                        action.EnqueueTime = nextOccurence;
-                    }
-                    catch (Exception e)
-                    {
-                        log.TrackException(e, new Dictionary<string, string>
+                        var nextOccurence = x.NextOccurence();
+                        return Task.Run(async () =>
                         {
-                            { "section", "TimedExecutions" },
-                            { "action.name", action.Name },
-                            { "action.enqueueTime", action.EnqueueTime.ToString(CultureInfo.InvariantCulture)},
-                            { "action.nextOccurence", nextOccurence.ToString(CultureInfo.InvariantCulture) }
+                            try
+                            {
+                                await x.Action(client, cancellationTokenSource.Token);
+                            }
+                            catch (Exception e)
+                            {
+                                log.TrackException(e, new Dictionary<string, string>
+                            {
+                                    { "section", "TimedExecutions" },
+                                    { "action.name", x.Name },
+                                    { "action.enqueueTime", x.EnqueueTime.ToString(CultureInfo.InvariantCulture)},
+                                    { "action.nextOccurence", nextOccurence.ToString(CultureInfo.InvariantCulture) }
+                            });
+                            }
+                            x.EnqueueTime = nextOccurence;
                         });
-                    }
+                    });
+                    await Task.WhenAll(tasks);
                 }
                 else
                 {
                     var result = actions.Min(x => Math.Abs((x.EnqueueTime - dateTimeNowProvider.UtcNow).TotalMilliseconds));
-                    var max = TimeSpan.FromSeconds(30).TotalMilliseconds;
-                    await Task.Delay(TimeSpan.FromMilliseconds(result > max ? max : result));
+                    await Task.Delay(TimeSpan.FromMilliseconds(result > epsilon ? epsilon : result));
                 }
             }
         }
