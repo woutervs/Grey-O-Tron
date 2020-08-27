@@ -52,7 +52,7 @@ namespace GreyOTron.Library.Services
                 {
                     return;
                 }
-                await socketClient.SetGameAsync(messages.Next());
+                await socketClient.SetGameAsync(messages.Next(), null, ActivityType.CustomStatus);
             }
         }
     }
