@@ -2,42 +2,46 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Discord;
-using Discord.Net.WebSockets;
 using Discord.WebSocket;
 using GreyOTron.Library.Helpers;
 using GreyOTron.Library.Interfaces;
 
 namespace GreyOTron.Library.Services
 {
+    public class GameMessage
+    {
+        public string Message { get; set; }
+        public ActivityType ActivityType { get; set; }
+    }
     public class CarouselMessagesService
     {
-        private readonly CarrouselHelper messages;
+        private readonly CarrouselHelper<GameMessage> messages;
 
         public CarouselMessagesService(IEnvironmentHelper environmentHelper)
         {
             switch (environmentHelper.Current)
             {
                 case Environments.Development:
-                    messages = new CarrouselHelper(
-                        new List<string>
+                    messages = new CarrouselHelper<GameMessage>(
+                        new List<GameMessage>
                         {
-                            "DEV MODE ON LOCALDB",
+                            new GameMessage  {ActivityType = ActivityType.Watching, Message = "dev database"}
                         });
 
                     break;
                 case Environments.Maintenance:
-                    messages = new CarrouselHelper(
-                        new List<string> {
-                            "MAINTENANCE MODE"
+                    messages = new CarrouselHelper<GameMessage>(
+                        new List<GameMessage> {
+                            new GameMessage {ActivityType = ActivityType.Playing, Message = "in maintenance mode"}
                         });
                     break;
                 case Environments.Production:
-                    messages = new CarrouselHelper(
-                        new List<string>
+                    messages = new CarrouselHelper<GameMessage>(
+                        new List<GameMessage>
                         {
-                            $"v{VersionResolverHelper.Get()}",
-                            "greyotron.eu",
-                            "got#help"
+                            new GameMessage {ActivityType = ActivityType.Playing, Message = $"v{VersionResolverHelper.Get()}"},
+                            new GameMessage {ActivityType = ActivityType.Watching, Message = "greyotron.eu"},
+                            new GameMessage {ActivityType = ActivityType.Listening, Message = "to got#help"}
                         });
 
                     break;
@@ -52,7 +56,9 @@ namespace GreyOTron.Library.Services
                 {
                     return;
                 }
-                await socketClient.SetGameAsync(messages.Next(), null, ActivityType.CustomStatus);
+
+                var next = messages.Next();
+                await socketClient.SetGameAsync(next.Message, null, next.ActivityType);
             }
         }
     }
