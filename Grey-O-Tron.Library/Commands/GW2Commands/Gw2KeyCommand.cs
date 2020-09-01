@@ -47,7 +47,7 @@ namespace GreyOTron.Library.Commands.GW2Commands
                 AccountInfo acInfo;
                 try
                 {
-                    acInfo = gw2Api.GetInformationForUserByKey(key);
+                    acInfo = gw2Api.GetInformationForUserByKey(key, false, true);
                 }
                 catch (BrokenCircuitException)
                 {

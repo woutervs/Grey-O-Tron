@@ -36,7 +36,7 @@ namespace GreyOTron.Library.Helpers
                 .WaitAndRetryAsync(1, x => TimeSpan.FromSeconds(x * 30));
         }
 
-        public async Task Execute(AccountInfo gw2AccountInfo, SocketGuildUser guildUser, SocketGuildUser contextUser, bool bypassMessages = false)
+        public async Task Execute(AccountInfo gw2AccountInfo, SocketGuildUser guildUser, SocketGuildUser contextUser, bool bypassMessages = false, bool bypassTokenNameCheck = false)
         {
             var contextUserIsNotGuildUser = guildUser.Id != contextUser.Id;
 
@@ -51,7 +51,7 @@ namespace GreyOTron.Library.Helpers
 
             var userOwnedRolesMatchingWorlds = guildUser.Roles.Where(x => worlds.Any(y => y.Equals(x.Name, StringComparison.InvariantCultureIgnoreCase)) || x.Name.Equals(configuration["LinkedServerRole"], StringComparison.InvariantCultureIgnoreCase)).ToList();
 
-            if (gw2AccountInfo.TokenInfo.Name != guildUser.UserId())
+            if (!bypassTokenNameCheck && gw2AccountInfo.TokenInfo.Name != guildUser.UserId())
             {
                 if (contextUserIsNotGuildUser)
                 {
@@ -103,7 +103,7 @@ namespace GreyOTron.Library.Helpers
                     }
                     if (role != null)
                     {
-                        async Task catchRoleNotFoundOrBreakerAndNotifyUser(Func<Task<PolicyResult>> action)
+                        async Task CatchRoleNotFoundOrBreakerAndNotifyUser(Func<Task<PolicyResult>> action)
                         {
                             var p = await action();
                             if (p.Outcome == OutcomeType.Failure)
@@ -126,9 +126,9 @@ namespace GreyOTron.Library.Helpers
                             }
                         }
 
-                        //This we can reset using a command TODO: create this command.
-                        await catchRoleNotFoundOrBreakerAndNotifyUser(async () => await roleNotFoundCircuitBreakerPolicyHelper.RoleNotFoundCircuitBreakerPolicy.ExecuteAndCaptureAsync(
-                             async () => await catchRoleNotFoundOrBreakerAndNotifyUser(async () =>
+                        //This we can reset using a command
+                        await CatchRoleNotFoundOrBreakerAndNotifyUser(async () => await roleNotFoundCircuitBreakerPolicyHelper.RoleNotFoundCircuitBreakerPolicy.ExecuteAndCaptureAsync(
+                             async () => await CatchRoleNotFoundOrBreakerAndNotifyUser(async () =>
                                  await roleNotFoundExceptionRetryPolicy.ExecuteAndCaptureAsync(
                                      async () => await CreateRoleIfNotExistsAndAssignIfNeeded(guildUser, contextUser,
                                          userOwnedRolesMatchingWorlds, role, bypassMessages)))));
@@ -222,8 +222,6 @@ namespace GreyOTron.Library.Helpers
                             cache.GetFromCacheSliding(cachedName, TimeSpan.FromDays(1),
                                 () => (IRole)guildUser.Guild.CreateRoleAsync(roleName, GuildPermissions.None, null, false, false).Result);
                             throw new RoleNotFoundException(cachedName, e);
-                        //await CreateRoleIfNotExistsAndAssignIfNeeded(guildUser, contextUser,
-                        //    userOwnedRolesMatchingWorlds, roleName, bypassMessages);
                         default:
                             throw;
                     }

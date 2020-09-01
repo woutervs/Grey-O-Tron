@@ -43,7 +43,7 @@ namespace GreyOTron.Library.Helpers
                 return;
             }
             IsExecuting = true;
-            await socketClient.SetGameAsync("user re-verification", null, ActivityType.Streaming);
+            await socketClient.SetGameAsync("user re-verification", null, ActivityType.Watching);
             var guildUsersQueue = new Queue<SocketGuildUser>(socketClient.Guilds.SelectMany(x => x.Users));
             log.TrackEvent("UserVerification.Started",
                 metrics: new Dictionary<string, double> { { "Count", guildUsersQueue.Count } });
@@ -63,7 +63,7 @@ namespace GreyOTron.Library.Helpers
                             AccountInfo acInfo;
                             try
                             {
-                                acInfo = gw2Api.GetInformationForUserByKey(discordClientWithKey.ApiKey);
+                                acInfo = gw2Api.GetInformationForUserByKey(discordClientWithKey.ApiKey, true);
                             }
                             catch (InvalidKeyException)
                             {
@@ -72,7 +72,7 @@ namespace GreyOTron.Library.Helpers
                                 throw;
                             }
 
-                            await verifyUser.Execute(acInfo, guildUser, guildUser, true);
+                            await verifyUser.Execute(acInfo, guildUser, guildUser, true, true);
                         }
                         catch (Exception e)
                         {

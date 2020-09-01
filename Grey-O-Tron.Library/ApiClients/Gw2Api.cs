@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Net.Http;
 using System.Threading;
 using GreyOTron.Library.Exceptions;
 using Polly;
@@ -17,13 +18,15 @@ namespace GreyOTron.Library.ApiClients
     {
         private const string BaseUrl = "https://api.guildwars2.com";
         private readonly CacheHelper cache;
+        private readonly DateTimeProvider dateTimeProvider;
         private readonly TimeSpanSemaphoreHelper semaphore;
         private readonly RetryPolicy timeOutOrTooManyRequestsRetryPolicy;
         private readonly RetryPolicy endpointRequiresAuthenticationRetryPolicy;
         private readonly CircuitBreakerPolicy circuitBreakerPolicy;
-        public Gw2Api(CacheHelper cache)
+        public Gw2Api(CacheHelper cache, DateTimeProvider dateTimeProvider)
         {
             this.cache = cache;
+            this.dateTimeProvider = dateTimeProvider;
             //Gw2API rate limits 600 reqs per minute.
             semaphore = new TimeSpanSemaphoreHelper(500, TimeSpan.FromMinutes(1)); //So we allow 500 requests every minute
             circuitBreakerPolicy = Policy.Handle<TooManyRequestsException>() //If somehow the api still says they can't handle our number of requests
@@ -44,45 +47,67 @@ namespace GreyOTron.Library.ApiClients
             semaphore.Dispose();
         }
 
-        public AccountInfo GetInformationForUserByKey(string key)
+        public AccountInfo GetInformationForUserByKey(string key, bool bypassTokenInfo = false, bool clearCache = false)
         {
-            return endpointRequiresAuthenticationRetryPolicy
-                .Wrap(timeOutOrTooManyRequestsRetryPolicy)
-                .Wrap(circuitBreakerPolicy)
-                .Execute(() =>
+            if (clearCache)
+            {
+                cache.RemoveFromCache($"got-user-{key}");
+            }
+            var accountInfo = cache.GetFromCacheAbsolute($"got-user-{key}", dateTimeProvider.UtcNow.AddHours(3), () =>
+            {
+                return endpointRequiresAuthenticationRetryPolicy
+                    .Wrap(timeOutOrTooManyRequestsRetryPolicy)
+                    .Wrap(circuitBreakerPolicy)
+                    .Execute(() =>
+                    {
+                        var client = new RestClient(BaseUrl);
+                        client.AddDefaultHeader("Authorization", $"Bearer {key}");
+                        TokenInfo tokenInfo = null;
+                        if (!bypassTokenInfo)
+                        {
+                            tokenInfo = GetTokenInfo(client, key);
+                        }
+                        var accountRequest = new RestRequest("v2/account");
+                        IRestResponse<AccountInfo> accountResponse = null;
+                        semaphore.Run(() => accountResponse = client.Execute<AccountInfo>(accountRequest, Method.GET), CancellationToken.None);
+                        if (accountResponse.IsSuccessful)
+                        {
+                            var account = accountResponse.Data;
+                            account.TokenInfo = tokenInfo;
+                            var accountWorld = GetWorlds().FirstOrDefault(x => x.Id == account.World);
+                            if (accountWorld != null)
+                            {
+                                account.WorldInfo = SetLinkedWorlds(accountWorld);
+                                return account;
+                            }
+                        }
+                        else
+                        {
+                            ParseResponse(accountResponse, "accountResponse", key);
+                        }
+                        throw new ApiInformationForUserByKeyException("Should never get here", key, null, null);
+                    });
+            });
+            if (!bypassTokenInfo && string.IsNullOrWhiteSpace(accountInfo.TokenInfo?.Name))
             {
                 var client = new RestClient(BaseUrl);
                 client.AddDefaultHeader("Authorization", $"Bearer {key}");
-                IRestResponse<TokenInfo> tokenInfoResponse = null;
-                var tokenInfoRequest = new RestRequest("v2/tokeninfo");
-                semaphore.Run(() => tokenInfoResponse = client.Execute<TokenInfo>(tokenInfoRequest, Method.GET), CancellationToken.None);
-                if (tokenInfoResponse.IsSuccessful)
-                {
-                    var accountRequest = new RestRequest("v2/account");
-                    IRestResponse<AccountInfo> accountResponse = null;
-                    semaphore.Run(() => accountResponse = client.Execute<AccountInfo>(accountRequest, Method.GET), CancellationToken.None);
-                    if (accountResponse.IsSuccessful)
-                    {
-                        var account = accountResponse.Data;
-                        account.TokenInfo = tokenInfoResponse.Data;
-                        var accountWorld = GetWorlds().FirstOrDefault(x => x.Id == account.World);
-                        if (accountWorld != null)
-                        {
-                            account.WorldInfo = SetLinkedWorlds(accountWorld);
-                            return account;
-                        }
-                    }
-                    else
-                    {
-                        ParseResponse(accountResponse, "accountResponse", key);
-                    }
-                }
-                else
-                {
-                    ParseResponse(tokenInfoResponse, "tokenInfoResponse", key);
-                }
-                throw new ApiInformationForUserByKeyException("Should never get here", key, null, null);
-            });
+                accountInfo.TokenInfo = GetTokenInfo(client, key);
+            }
+            return accountInfo;
+        }
+
+        private TokenInfo GetTokenInfo(RestClient client, string key)
+        {
+            IRestResponse<TokenInfo> tokenInfoResponse = null;
+            var tokenInfoRequest = new RestRequest("v2/tokeninfo");
+            semaphore.Run(() => tokenInfoResponse = client.Execute<TokenInfo>(tokenInfoRequest, Method.GET), CancellationToken.None);
+            if (tokenInfoResponse.IsSuccessful)
+            {
+                return tokenInfoResponse.Data;
+            }
+            ParseResponse(tokenInfoResponse, "tokenInfoResponse", key);
+            return null; //This won't happen because previous throws...
         }
 
         private void ParseResponse(IRestResponse response, string section, string key)
@@ -137,7 +162,7 @@ namespace GreyOTron.Library.ApiClients
         private DateTimeOffset CalculateNextReset()
         {
             var now = DateTimeOffset.UtcNow;
-            var resetTime = new TimeSpan(18, 0, 0).Add(new TimeSpan(1,55,0)); //let's place it somewhat before reverify time.
+            var resetTime = new TimeSpan(18, 0, 0).Add(new TimeSpan(1, 55, 0)); //let's place it somewhat before reverify time.
             var daysUntilNextFriday = ((11 - (int)now.DayOfWeek) % 7) + 1;
             if (daysUntilNextFriday == 7 && now.TimeOfDay < resetTime)
             {
