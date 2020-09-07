@@ -5,12 +5,15 @@ namespace GreyOTron.Library.ApiClients
 {
     public class DadJokes
     {
+        private static readonly HttpClient Client = new HttpClient();
+        
         public async Task<string> GetJoke()
         {
-            using var cli = new HttpClient();
-            cli.DefaultRequestHeaders.Clear();
-            cli.DefaultRequestHeaders.Add("Accept", "text/plain");
-            var result = await cli.GetStringAsync("https://icanhazdadjoke.com");
+            Client.DefaultRequestHeaders.Clear();
+            Client.DefaultRequestHeaders.Add("Accept", "text/plain");
+            
+            var result = await Client.GetStringAsync("https://icanhazdadjoke.com");
+            
             return result;
         }
     }
